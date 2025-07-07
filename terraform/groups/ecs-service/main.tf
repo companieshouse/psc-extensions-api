@@ -42,7 +42,7 @@ module "ecs-service" {
   # Docker container details
   docker_registry   = var.docker_registry
   docker_repo       = local.docker_repo
-  container_version = var.psc_verification_api_version
+  container_version = var.psc_extensions_api_version
   container_port    = local.container_port
   read_only_root_filesystem = true
   volumes         = [ { "name": "tmp" } ]
