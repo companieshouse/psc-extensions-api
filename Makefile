@@ -52,16 +52,16 @@ dist: clean build package
 
 # Updated sonar dependency check
 dependency-check:
-        dependency-check.sh --project psc-extensions-api \
-                --scan './**/*.jar' \
-                --format HTML \
-                --out .
+    dependency-check.sh --project psc-extensions-api \
+        --scan './**/*.jar' \
+        --format HTML \
+        --out .
 
 sonar-analysis:
-        sonar-scanner \
-                -Dproject.settings=sonar-project.properties \
-                -Dsonar.internal.analysis.dbd=false \
-                -Dsonar.dependencyCheck.htmlReportPath=./dependency-check-report.html
+    sonar-scanner \
+        -Dproject.settings=sonar-project.properties \
+        -Dsonar.internal.analysis.dbd=false \
+        -Dsonar.dependencyCheck.htmlReportPath=./dependency-check-report.html
 
 .PHONY: security-check
 security-check:
