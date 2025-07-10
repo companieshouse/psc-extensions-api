@@ -50,13 +50,18 @@ endif
 .PHONY: dist
 dist: clean build package
 
-.PHONY: sonar
-sonar:
-	mvn sonar:sonar -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
+# Updated sonar dependency check
+dependency-check:
+        dependency-check.sh --project psc-extensions-api \
+                --scan './**/*.jar' \
+                --format HTML \
+                --out .
 
-.PHONY: sonar-pr-analysis
-sonar-pr-analysis:
-		mvn sonar:sonar -P sonar-pr-analysis -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
+sonar-analysis:
+        sonar-scanner \
+                -Dproject.settings=sonar-project.properties \
+                -Dsonar.internal.analysis.dbd=false \
+                -Dsonar.dependencyCheck.htmlReportPath=./dependency-check-report.html
 
 .PHONY: security-check
 security-check:

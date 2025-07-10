@@ -15,34 +15,36 @@
     <properties>
         <java.version>21</java.version>
         <spring-boot.version>3.4.3</spring-boot.version>
+        <!--- Maven -->
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
+        <!--- CH -->
         <structured-logging.version>3.0.20</structured-logging.version>
-        <log4j-version>2.24.2</log4j-version>
-        <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
         <private-api-sdk-java.version>4.0.281</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
         <api-security-java-version>2.0.8</api-security-java-version>
+        <api-helper-java.version>3.0.1</api-helper-java.version>
+        <!--sonar configuration-->
+        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
+        <sonar.projectName>psc-extensions-api</sonar.projectName>
+        <sonar.projectKey>uk.gov.companieshouse:psc-extensions-api</sonar.projectKey>
+        <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+        <log4j-version>2.24.2</log4j-version>
+        <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
         <org.mapstruct.version>1.6.2</org.mapstruct.version>
         <junit-jupiter.version>1.20.3</junit-jupiter.version>
         <version.kafka-clients>3.1.0</version.kafka-clients>
         <junit.version>4.13.2</junit.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <google-http-client.version>1.45.0</google-http-client.version>
-        <api-helper-java.version>3.0.1</api-helper-java.version>
         <email-producer-java.version>3.0.3</email-producer-java.version>
         <flapdoodle.version>4.20.0</flapdoodle.version>
         <logback-classic.version>1.5.16</logback-classic.version>
 
-        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
-        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
-        <sonar.login></sonar.login>
-        <sonar.password></sonar.password>
-        <!--TODO: double check this-->
-        <sonar.projectName>psc-extensions-api</sonar.projectName>
-        <sonar.projectKey>uk.gov.companieshouse:psc-extensions-api</sonar.projectKey>
-        <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
     </properties>
     <dependencyManagement>
         <dependencies>
