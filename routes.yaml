@@ -1,1 +1,6 @@
-// TODO: Complete this file when routes are known
+app_name: psc-extensions-api
+group: api
+
+weight: 100
+routes:
+  1: ^/psc-extensions/*
