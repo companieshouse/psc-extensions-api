@@ -25,6 +25,8 @@
         <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
         <api-security-java-version>2.0.8</api-security-java-version>
         <api-helper-java.version>3.0.1</api-helper-java.version>
+        <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
+        <org.mapstruct.version>1.6.2</org.mapstruct.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
@@ -34,14 +36,9 @@
         <sonar.projectKey>uk.gov.companieshouse:psc-extensions-api</sonar.projectKey>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
         <log4j-version>2.24.2</log4j-version>
-        <rest-service-common-library-version>2.0.2</rest-service-common-library-version>
-        <org.mapstruct.version>1.6.2</org.mapstruct.version>
-        <junit-jupiter.version>1.20.3</junit-jupiter.version>
-        <version.kafka-clients>3.1.0</version.kafka-clients>
         <junit.version>4.13.2</junit.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <google-http-client.version>1.45.0</google-http-client.version>
-        <email-producer-java.version>3.0.3</email-producer-java.version>
         <flapdoodle.version>4.20.0</flapdoodle.version>
         <logback-classic.version>1.5.16</logback-classic.version>
 
@@ -129,7 +126,6 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -177,22 +173,6 @@
             <version>${api-helper-java.version}</version>
         </dependency>
         <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>email-producer-java</artifactId>
-            <version>${email-producer-java.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka-clients</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${version.kafka-clients}</version>
-        </dependency>
-        <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
             <version>${flapdoodle.version}</version>
@@ -233,7 +213,6 @@
                         <image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/ci-corretto-build-21</image>
                     </from>
                     <to>
-                        <!--TODO: double check this-->
                         <image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/psc-extensions-api</image>
                     </to>
                     <container>
