@@ -19,7 +19,7 @@ terraform {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.333"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.336"
 
   # Environmental configuration
   environment             = var.environment
@@ -68,7 +68,6 @@ module "ecs-service" {
 
   # Cloudwatch
   cloudwatch_alarms_enabled         = var.cloudwatch_alarms_enabled
-  multilb_cloudwatch_alarms_enabled = var.multilb_cloudwatch_alarms_enabled
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
@@ -89,7 +88,7 @@ module "ecs-service" {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.333"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.336"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
