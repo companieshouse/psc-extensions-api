@@ -16,7 +16,6 @@ import uk.gov.companieshouse.api.filter.CustomCorsFilter;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.RequestLifecycleInterceptor;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
@@ -26,33 +25,33 @@ import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplicati
 @EnableWebSecurity
 public class WebSecurityConfig implements WebMvcConfigurer {
 
-    private final SecurityProperties securityProperties;
-    private final RequestLifecycleInterceptor loggingInterceptor;
+  private final SecurityProperties securityProperties;
+  private final RequestLifecycleInterceptor loggingInterceptor;
 
-    private static final Supplier<List<String>> externalMethods = () -> List.of( GET.name() );
+  public WebSecurityConfig(final SecurityProperties securityProperties,
+      final RequestLifecycleInterceptor loggingInterceptor) {
+    this.securityProperties = securityProperties;
+    this.loggingInterceptor = loggingInterceptor;
+  }
 
-    public WebSecurityConfig(final SecurityProperties securityProperties, final RequestLifecycleInterceptor loggingInterceptor) {
-        this.securityProperties = securityProperties;
-        this.loggingInterceptor = loggingInterceptor;
-}
-@Override
-public void addInterceptors(@NonNull final InterceptorRegistry registry) {
+  @Override
+  public void addInterceptors(@NonNull final InterceptorRegistry registry) {
     registry.addInterceptor(loggingInterceptor);
     registry.addInterceptor(new InternalUserInterceptor(APPLICATION_NAMESPACE));
-}
+  }
 
-@Bean
-public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
+  @Bean
+  public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
     return http.cors(AbstractHttpConfigurer::disable)
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(new CustomCorsFilter(List.of(GET.name())), CsrfFilter.class)
-            .authorizeHttpRequests(request -> request
-                    .requestMatchers(POST, securityProperties.getApiSecurityPath()).permitAll()
-                    .requestMatchers(GET, securityProperties.getHealthcheckPath()).permitAll()
-                    .anyRequest().denyAll()
-            ).build();
+        .csrf(AbstractHttpConfigurer::disable)
+        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(new CustomCorsFilter(List.of(GET.name())), CsrfFilter.class)
+        .authorizeHttpRequests(request -> request
+            .requestMatchers(POST, securityProperties.getApiSecurityPath()).permitAll()
+            .requestMatchers(GET, securityProperties.getHealthcheckPath()).permitAll()
+            .anyRequest().denyAll()
+        ).build();
 
-}
+  }
 
 }
