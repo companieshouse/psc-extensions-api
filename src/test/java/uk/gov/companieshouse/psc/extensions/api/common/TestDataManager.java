@@ -3,7 +3,11 @@ package uk.gov.companieshouse.psc.extensions.api.common;
 
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
