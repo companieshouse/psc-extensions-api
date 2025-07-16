@@ -63,7 +63,9 @@ To build the `psc-extensions-api`, you will need:
 * Internal Companies House core services
 
 You will also need a REST client (e.g. Postman or Bruno) if you wish to interact with the `psc-extensions-api` service endpoints.
-
+## Running Locally with Intellij
+1. Mongo database needs to be running before trying to run application
+2. Mongo database properties set in application.properties
 ## Running Locally using Docker
 
 1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the README.
