@@ -1,23 +1,18 @@
-**Jira ticket**: 
+__Short description outlining key changes/additions__
 
-## Brief description of the change(s)
+__JIRA Ticket Number__
 
-## Working example
->
-> Use screenshots or logs to show what your changes do.
+### Type of change
 
-## Test notes
->
-> Add test notes only if they're **not** already included in the Jira ticket.
+* [ ] Bug fix
+* [ ] New feature
+* [ ] Breaking change
+* [ ] Infrastructure change
 
-## Checklist
+### Pull request checklist
 
-- [ ] Adhered to the [coding style guidelines](https://companieshouse.atlassian.net/wiki/spaces/DEV/pages/4290084946/Coding+Standards+and+Styleguides).
-- [ ] Added/updated logging appropriately.
-- [ ] Written tests.
-- [ ] Tested the new code in my local environment.
-- [ ] Updated Docker/ECS configs.
-- [ ] Added all new properties to chs-configs.
-- [ ] Updated release notes.
+* [ ] I have added unit tests for new code that I have added
+* [ ] I have added/updated functional tests where appropriate
+* [ ] The code follows our [coding standards](https://github.com/companieshouse/styleguides/blob/master/java.md)
 
-Strikethrough (`~~like this~~`) anything not applicable to your changes.
+__An exhaustive list of peer review checks can be read [here](https://github.com/companieshouse/styleguides/blob/master/java_review.md#developer-actions-prior-to-code-commitreview-started)__
