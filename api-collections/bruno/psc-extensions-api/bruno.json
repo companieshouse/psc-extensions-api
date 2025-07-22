@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "psc-extensions-api",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
