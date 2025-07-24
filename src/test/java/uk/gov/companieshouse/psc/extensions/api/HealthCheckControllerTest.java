@@ -20,8 +20,8 @@ class HealthCheckControllerTest {
   private MockMvc mockMvc;
 
   public HealthCheckControllerTest(
-      final @Value("""
-          ${management.endpoints.web.path-mapping.health:/psc-extensions-api/healthcheck}""") String healthcheckUrl
+      final @Value(
+          "${management.endpoints.web.path-mapping.health:/actuator/health}") String healthcheckUrl
   ) {
     this.healthcheckUrl = healthcheckUrl;
   }
