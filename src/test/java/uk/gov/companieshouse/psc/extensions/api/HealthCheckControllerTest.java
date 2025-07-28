@@ -21,7 +21,8 @@ class HealthCheckControllerTest {
 
   public HealthCheckControllerTest(
       final @Value(
-          "${management.endpoints.web.path-mapping.health:/psc-extensions-api/healthcheck}") String healthcheckUrl
+          "${management.endpoints.web.base-path:/psc-extensions}" +
+          "${management.endpoints.web.path-mapping.health:healthcheck}") String healthcheckUrl
   ) {
     this.healthcheckUrl = healthcheckUrl;
   }
