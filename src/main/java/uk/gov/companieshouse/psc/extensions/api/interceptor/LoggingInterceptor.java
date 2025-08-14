@@ -36,4 +36,5 @@ public class LoggingInterceptor implements HandlerInterceptor, RequestLogger {
   ) {
     logEndRequestProcessing(request, response, LOG);
   }
+
 }
