@@ -34,9 +34,9 @@
         <equalsverifier.version>3.15.1</equalsverifier.version>
         <!--- CH -->
         <structured-logging.version>3.0.39</structured-logging.version>
-        <api-security-java.version>2.0.10</api-security-java.version>
-        <api-helper-java.version>3.0.1</api-helper-java.version>
-        <api-sdk-java.version>6.3.4</api-sdk-java.version>
+        <api-security-java.version>2.0.11</api-security-java.version>
+        <api-helper-java.version>3.0.2</api-helper-java.version>
+        <api-sdk-java.version>6.4.4</api-sdk-java.version>
         <sdk-manager-java.version>3.0.10</sdk-manager-java.version>
         <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
         <!--sonar configuration-->
