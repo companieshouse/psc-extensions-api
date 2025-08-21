@@ -1,16 +1,14 @@
 package uk.gov.companieshouse.psc.extensions.api.mongo.document;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ExtensionDetails {
 
-        @Field("extensions_reason")
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String extensionReason;
-
-        @Field("extension_status")
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String extensionStatus;
-
-        @Field("extension_request_date")
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String extensionRequestDate;
 
         public String getExtensionReason() {

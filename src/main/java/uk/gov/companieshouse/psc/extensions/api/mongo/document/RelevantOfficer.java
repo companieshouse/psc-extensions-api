@@ -1,14 +1,13 @@
 package uk.gov.companieshouse.psc.extensions.api.mongo.document;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.api.officer.NameElements;
 
 public class RelevantOfficer {
 
-        @Field("date_of_birth")
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String dateOfBirth;
-
-        @Field("name_elements")
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private NameElements nameElements;
 
         public String getDateOfBirth() {
