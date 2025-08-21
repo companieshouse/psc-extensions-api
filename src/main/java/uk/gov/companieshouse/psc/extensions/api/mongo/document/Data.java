@@ -1,16 +1,16 @@
 package uk.gov.companieshouse.psc.extensions.api.mongo.document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Data {
+
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String companyNumber;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String pscAppointmentId;
-        @Field("relevant_officer")
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private RelevantOfficer relevantOfficer;
-        @Field("extension_details")
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private ExtensionDetails extensionDetails;
 
         public String getCompanyNumber() {
