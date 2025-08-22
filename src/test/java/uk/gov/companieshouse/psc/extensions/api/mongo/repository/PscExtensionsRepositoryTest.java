@@ -11,7 +11,6 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtensions;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.RelevantOfficer;
 
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -70,8 +69,8 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
         PscExtensions pscExtensionsRequest =  new PscExtensions();
 
         ResourceLinks links = new ResourceLinks(
-                new URI("https://google.com"),
-                new URI("https://google.com")
+                new URI("https://example.com"),
+                new URI("https://example.com")
         );
         pscExtensionsRequest.setLinks(links);
         pscExtensionsRequest.setId("2222");
@@ -103,4 +102,19 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
         return pscExtensionsRequest;
     }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
