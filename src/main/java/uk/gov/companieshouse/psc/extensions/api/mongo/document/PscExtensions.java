@@ -31,6 +31,11 @@ public class PscExtensions {
         @JsonProperty("data")
         private Data data;
 
+        // No @JsonMerge: this property MUST NOT be modifiable by PATCH requests
+        // todo: we dont have any patch requests right? (atm)
+        @JsonProperty("internal_data")
+        private InternalData internalData;
+
         public PscExtensions() {
                 // required by Spring Data
         }
@@ -73,6 +78,14 @@ public class PscExtensions {
 
         public void setData(Data data) {
                 this.data = data;
+        }
+
+        public InternalData getInternalData() {
+                return internalData;
+        }
+
+        public void setInternalData(InternalData internalData) {
+                this.internalData = internalData;
         }
 }
 
