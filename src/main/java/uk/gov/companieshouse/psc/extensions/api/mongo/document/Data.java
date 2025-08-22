@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Data {
 
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty("company_number")
         private String companyNumber;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        private String pscAppointmentId;
+
+        // todo: pscAppointmentId or pscNotificationId?
+        //  should we be more clean in naming, or consistent with psc-verification-api?
+        @JsonProperty("psc_notification_id")
+        private String pscNotificationId;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private RelevantOfficer relevantOfficer;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -21,12 +24,12 @@ public class Data {
                 this.companyNumber = companyNumber;
         }
 
-        public String getPscAppointmentId() {
-                return pscAppointmentId;
+        public String getPscNotificationId() {
+                return pscNotificationId;
         }
 
-        public void setPscAppointmentId(String pscAppointmentId) {
-                this.pscAppointmentId = pscAppointmentId;
+        public void setPscNotificationId(String pscNotificationId) {
+                this.pscNotificationId = pscNotificationId;
         }
 
         public RelevantOfficer getRelevantOfficer() {
