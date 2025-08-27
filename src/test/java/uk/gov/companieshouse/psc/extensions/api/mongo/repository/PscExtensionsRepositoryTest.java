@@ -9,7 +9,6 @@ import uk.gov.companieshouse.psc.extensions.api.MongoDBTest;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtensions;
-import uk.gov.companieshouse.psc.extensions.api.mongo.document.RelevantOfficer;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,15 +53,6 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
         assertEquals("123", retrievedExtensionDetails.getExtensionReason());
         assertEquals("12/01/2025", retrievedExtensionDetails.getExtensionRequestDate());
         assertEquals("done", retrievedExtensionDetails.getExtensionStatus());
-
-        RelevantOfficer retrievedOfficer = retrieved.getData().getRelevantOfficer();
-        assertEquals("12/01/1970", retrievedOfficer.getDateOfBirth());
-
-        NameElements retrievedName = retrievedOfficer.getNameElements();
-        assertEquals("Frank", retrievedName.getForename());
-        assertEquals("Clark", retrievedName.getSurname());
-        assertEquals("Mr", retrievedName.getTitle());
-        assertEquals("Sinatra", retrievedName.getOtherForenames());
     }
 
     private PscExtensions createTestExtensionRequest() throws URISyntaxException {
