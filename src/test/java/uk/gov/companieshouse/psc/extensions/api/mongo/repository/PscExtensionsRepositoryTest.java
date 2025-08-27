@@ -78,18 +78,6 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
         data.setCompanyNumber("1234");
         data.setPscAppointmentId("345");
 
-        RelevantOfficer relevantOfficer = new RelevantOfficer();
-        relevantOfficer.setDateOfBirth("12/01/1970");
-
-        NameElements nameElements = new NameElements();
-        nameElements.setForename("Frank");
-        nameElements.setSurname("Clark");
-        nameElements.setTitle("Mr");
-        nameElements.setOtherForenames("Sinatra");
-        relevantOfficer.setNameElements(nameElements);
-
-        data.setRelevantOfficer(relevantOfficer);
-
         return pscExtensionsRequest;
     }
 
