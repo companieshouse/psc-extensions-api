@@ -6,13 +6,8 @@ public class Data {
 
         @JsonProperty("company_number")
         private String companyNumber;
-
-        // todo: pscAppointmentId or pscNotificationId?
-        //  should we be more clean in naming, or consistent with psc-verification-api?
-        @JsonProperty("psc_notification_id")
-        private String pscNotificationId;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        private RelevantOfficer relevantOfficer;
+        private String pseNotificationId;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private ExtensionDetails extensionDetails;
 
@@ -24,20 +19,12 @@ public class Data {
                 this.companyNumber = companyNumber;
         }
 
-        public String getPscNotificationId() {
-                return pscNotificationId;
+        public String getPseNotificationId() {
+                return pseNotificationId;
         }
 
-        public void setPscNotificationId(String pscNotificationId) {
-                this.pscNotificationId = pscNotificationId;
-        }
-
-        public RelevantOfficer getRelevantOfficer() {
-                return relevantOfficer;
-        }
-
-        public void setRelevantOfficer(RelevantOfficer relevantOfficer) {
-                this.relevantOfficer = relevantOfficer;
+        public void setPseNotificationId(String pseNotificationId) {
+                this.pseNotificationId = pseNotificationId;
         }
 
         public ExtensionDetails getExtensionDetails() {

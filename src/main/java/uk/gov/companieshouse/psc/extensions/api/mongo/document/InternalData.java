@@ -2,6 +2,8 @@ package uk.gov.companieshouse.psc.extensions.api.mongo.document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public class InternalData {
     
     @JsonProperty("internal_id")
@@ -15,6 +17,10 @@ public class InternalData {
         this.internalId = internalId;
     }
 
+    public InternalData(InternalData other) {
+        this.internalId = other.internalId;
+    }
+
     public String getInternalId() {
         return internalId;
     }
@@ -23,7 +29,20 @@ public class InternalData {
         this.internalId = internalId;
     }
 
-    public static Builder newBuilder() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InternalData that = (InternalData) o;
+        return Objects.equals(internalId, that.internalId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(internalId);
+    }
+
+    public static Builder builder() {
         return new Builder();
     }
 
