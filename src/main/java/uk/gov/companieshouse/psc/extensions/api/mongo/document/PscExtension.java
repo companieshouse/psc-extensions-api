@@ -6,24 +6,22 @@ import com.fasterxml.jackson.annotation.JsonMerge;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
-import uk.gov.companieshouse.api.officer.NameElements;
-
-import java.time.Instant;
-
 
 @Document(collection = "psc_extensions")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PscExtensions {
+public class PscExtension {
         @Id
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String id;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        private Instant createdAt;
+        private LocalDateTime createdAt;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        private Instant updatedAt;
+        private LocalDateTime updatedAt;
         @JsonMerge
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private ResourceLinks links;
@@ -31,7 +29,28 @@ public class PscExtensions {
         @JsonProperty("data")
         private Data data;
 
-        public PscExtensions() {
+        @Override
+        public boolean equals(Object o) {
+                if (o == null || getClass() != o.getClass()) return false;
+                PscExtension that = (PscExtension) o;
+                return Objects.equals(id, that.id) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(links, that.links) && Objects.equals(data, that.data);
+        }
+
+        @Override
+        public int hashCode() {
+                return Objects.hash(id, createdAt, updatedAt, links, data);
+        }
+
+
+        public PscExtension(String id, ResourceLinks links, LocalDateTime updatedAt, LocalDateTime createdAt, Data data) {
+                this.id = id;
+                this.links = links;
+                this.updatedAt = updatedAt;
+                this.createdAt = createdAt;
+                this.data = data;
+        }
+
+        public PscExtension() {
                 // required by Spring Data
         }
 
@@ -43,19 +62,19 @@ public class PscExtensions {
                 this.id = id;
         }
 
-        public Instant getCreatedAt() {
+        public LocalDateTime getCreatedAt() {
                 return createdAt;
         }
 
-        public void setCreatedAt(Instant createdAt) {
+        public void setCreatedAt(LocalDateTime createdAt) {
                 this.createdAt = createdAt;
         }
 
-        public Instant getUpdatedAt() {
+        public LocalDateTime getUpdatedAt() {
                 return updatedAt;
         }
 
-        public void setUpdatedAt(Instant updatedAt) {
+        public void setUpdatedAt(LocalDateTime updatedAt) {
                 this.updatedAt = updatedAt;
         }
 

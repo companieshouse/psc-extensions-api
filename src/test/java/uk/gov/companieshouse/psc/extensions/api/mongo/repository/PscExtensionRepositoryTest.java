@@ -4,15 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
-import uk.gov.companieshouse.api.officer.NameElements;
 import uk.gov.companieshouse.psc.extensions.api.MongoDBTest;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
-import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtensions;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 
@@ -21,16 +20,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class PscExtensionsRepositoryTest extends MongoDBTest {
+public class PscExtensionRepositoryTest extends MongoDBTest {
 
     @Autowired
     private PscExtensionsRepository requestRepository;
 
     @Test
     public void When_NewRequestSaved_Expect_IdAssigned() throws URISyntaxException {
-        PscExtensions pscExtensionsRequest = createTestExtensionRequest();
+        PscExtension pscExtensionRequest = createTestExtensionRequest();
 
-        PscExtensions savedRequest = requestRepository.save(pscExtensionsRequest);
+        PscExtension savedRequest = requestRepository.save(pscExtensionRequest);
 
         assertNotNull(savedRequest.toString());
         assertNotNull(savedRequest.getId());
@@ -40,14 +39,14 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
     @Test
     public void When_RequestRetrieved_Expect_DataMatchedSavedValues() throws URISyntaxException {
-        PscExtensions pscExtensionsRequest = createTestExtensionRequest();
+        PscExtension pscExtensionRequest = createTestExtensionRequest();
 
-        PscExtensions savedRequest = requestRepository.save(pscExtensionsRequest);
+        PscExtension savedRequest = requestRepository.save(pscExtensionRequest);
 
-        Optional<PscExtensions> retrievedPscDetail = requestRepository.findById(savedRequest.getId());
+        Optional<PscExtension> retrievedPscDetail = requestRepository.findById(savedRequest.getId());
 
         assertTrue(retrievedPscDetail.isPresent());
-        PscExtensions retrieved = retrievedPscDetail.get();
+        PscExtension retrieved = retrievedPscDetail.get();
 
         ExtensionDetails retrievedExtensionDetails = retrieved.getData().getExtensionDetails();
         assertEquals("123", retrievedExtensionDetails.getExtensionReason());
@@ -55,20 +54,20 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
         assertEquals("done", retrievedExtensionDetails.getExtensionStatus());
     }
 
-    private PscExtensions createTestExtensionRequest() throws URISyntaxException {
-        PscExtensions pscExtensionsRequest =  new PscExtensions();
+    private PscExtension createTestExtensionRequest() throws URISyntaxException {
+        PscExtension pscExtensionRequest =  new PscExtension();
 
         ResourceLinks links = new ResourceLinks(
                 new URI("https://example.com"),
                 new URI("https://example.com")
         );
-        pscExtensionsRequest.setLinks(links);
-        pscExtensionsRequest.setId("2222");
-        pscExtensionsRequest.setCreatedAt(Instant.parse("2025-08-21T10:15:30.00Z"));
-        pscExtensionsRequest.setUpdatedAt(Instant.now());
+        pscExtensionRequest.setLinks(links);
+        pscExtensionRequest.setId("2222");
+        pscExtensionRequest.setCreatedAt(LocalDateTime.parse("2025-08-21T10:15:30.00Z"));
+        pscExtensionRequest.setUpdatedAt(LocalDateTime.now());
 
         Data data = new Data();
-        pscExtensionsRequest.setData(data);
+        pscExtensionRequest.setData(data);
 
         ExtensionDetails extensionDetails = new ExtensionDetails();
         extensionDetails.setExtensionReason("123");
@@ -76,9 +75,9 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
         extensionDetails.setExtensionStatus("done");
         data.setExtensionDetails(extensionDetails);
         data.setCompanyNumber("1234");
-        data.setPscAppointmentId("345");
+        data.setPscNotificationId("345");
 
-        return pscExtensionsRequest;
+        return pscExtensionRequest;
     }
 
 }
