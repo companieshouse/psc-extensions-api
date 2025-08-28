@@ -7,7 +7,7 @@ public class Data {
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String companyNumber;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        private String pscAppointmentId;
+        private String pseNotificationId;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private ExtensionDetails extensionDetails;
 
@@ -19,12 +19,12 @@ public class Data {
                 this.companyNumber = companyNumber;
         }
 
-        public String getPscAppointmentId() {
-                return pscAppointmentId;
+        public String getPseNotificationId() {
+                return pseNotificationId;
         }
 
-        public void setPscAppointmentId(String pscAppointmentId) {
-                this.pscAppointmentId = pscAppointmentId;
+        public void setPseNotificationId(String pseNotificationId) {
+                this.pseNotificationId = pseNotificationId;
         }
 
         public ExtensionDetails getExtensionDetails() {
