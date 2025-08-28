@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @Tag("app")
 @SpringBootTest
-class PscExtensionsApiApplicationTest {
+class PscExtensionApiApplicationTest {
 
     @Mock
     private PscExtensionsApiApplication app;
