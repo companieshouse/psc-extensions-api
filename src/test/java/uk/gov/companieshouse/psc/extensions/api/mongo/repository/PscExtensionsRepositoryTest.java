@@ -79,7 +79,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
         extensionDetails.setExtensionStatus("done");
         data.setExtensionDetails(extensionDetails);
         data.setCompanyNumber("1234");
-        data.setPseNotificationId("345");
+        data.setPscNotificationId("345");
 
         return pscExtensionsRequest;
     }
@@ -143,10 +143,10 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     public void When_TestingPseNotificationId_Expect_CorrectFieldName() throws URISyntaxException {
         PscExtension pscExtension = createTestExtensionRequest();
         
-        assertEquals("345", pscExtension.getData().getPseNotificationId());
+        assertEquals("345", pscExtension.getData().getPscNotificationId());
         
-        pscExtension.getData().setPseNotificationId("new-notification-id");
-        assertEquals("new-notification-id", pscExtension.getData().getPseNotificationId());
+        pscExtension.getData().setPscNotificationId("new-notification-id");
+        assertEquals("new-notification-id", pscExtension.getData().getPscNotificationId());
     }
 
     @Test

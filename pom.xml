@@ -20,7 +20,7 @@
         <commons-compress.version>1.27.1</commons-compress.version>
         <!-- Spring -->
         <spring-boot-dependencies.version>3.5.4</spring-boot-dependencies.version>
-        <spring-boot-testcontainers-version>3.4.5</spring-boot-testcontainers-version>
+        <spring-boot-testcontainers-version>3.5.4</spring-boot-testcontainers-version>
         <!-- Maven -->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
