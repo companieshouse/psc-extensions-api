@@ -3,7 +3,6 @@ package uk.gov.companieshouse.psc.extensions.api.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import uk.gov.companieshouse.psc.extensions.api.mongo.document.RelevantOfficer;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
 
 public class PscExtensionsData {
@@ -16,9 +15,6 @@ public class PscExtensionsData {
     @JsonProperty("psc_notification_id")
     private String pscNotificationId;
 
-    @JsonProperty("relevant_officer")
-    private RelevantOfficer relevantOfficer;
-
     @NotNull(message = "Extension details are required")
     @JsonProperty("extension_details")
     private ExtensionDetails extensionDetails;
@@ -30,7 +26,6 @@ public class PscExtensionsData {
     private PscExtensionsData(Builder builder) {
         this.companyNumber = builder.companyNumber;
         this.pscNotificationId = builder.pscNotificationId;
-        this.relevantOfficer = builder.relevantOfficer;
         this.extensionDetails = builder.extensionDetails;
     }
 
@@ -50,14 +45,6 @@ public class PscExtensionsData {
         this.pscNotificationId = pscNotificationId;
     }
 
-    public RelevantOfficer getRelevantOfficer() {
-        return relevantOfficer;
-    }
-
-    public void setRelevantOfficer(RelevantOfficer relevantOfficer) {
-        this.relevantOfficer = relevantOfficer;
-    }
-
     public ExtensionDetails getExtensionDetails() {
         return extensionDetails;
     }
@@ -74,7 +61,6 @@ public class PscExtensionsData {
         Builder builder = new Builder();
         builder.companyNumber = copy.companyNumber;
         builder.pscNotificationId = copy.pscNotificationId;
-        builder.relevantOfficer = copy.relevantOfficer;
         builder.extensionDetails = copy.extensionDetails;
         return builder;
     }
@@ -82,7 +68,6 @@ public class PscExtensionsData {
     public static class Builder {
         private String companyNumber;
         private String pscNotificationId;
-        private RelevantOfficer relevantOfficer;
         private ExtensionDetails extensionDetails;
 
         public Builder companyNumber(String companyNumber) {
@@ -95,10 +80,6 @@ public class PscExtensionsData {
             return this;
         }
 
-        public Builder relevantOfficer(RelevantOfficer relevantOfficer) {
-            this.relevantOfficer = relevantOfficer;
-            return this;
-        }
 
         public Builder extensionDetails(ExtensionDetails extensionDetails) {
             this.extensionDetails = extensionDetails;

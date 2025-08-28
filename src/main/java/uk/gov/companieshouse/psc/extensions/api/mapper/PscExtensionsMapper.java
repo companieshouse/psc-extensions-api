@@ -5,13 +5,13 @@ import org.mapstruct.Mapping;
 import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsApi;
 import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
-import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtensions;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 
 @Mapper(componentModel = "spring")
 public interface PscExtensionsMapper {
-    
-    default PscExtensions toEntity(final PscExtensionsData data) {
-        PscExtensions entity = new PscExtensions();
+
+    default PscExtension toEntity(final PscExtensionsData data) {
+        PscExtension entity = new PscExtension();
         entity.setData(toData(data));
         return entity;
     }
@@ -20,12 +20,10 @@ public interface PscExtensionsMapper {
 
     @Mapping(target = "companyNumber", source = "data.companyNumber")
     @Mapping(target = "pscNotificationId", source = "data.pscNotificationId")
-    @Mapping(target = "relevantOfficer", source = "data.relevantOfficer")
     @Mapping(target = "extensionDetails", source = "data.extensionDetails")
-    PscExtensionsData toDto(final PscExtensions extensions);
+    PscExtensionsData toDto(final PscExtension extensions);
 
     @Mapping(target = "etag", ignore = true)
     @Mapping(target = "kind", ignore = true)
-    @Mapping(target = "internalData", ignore = true)
-    PscExtensionsApi toApi(final PscExtensions extensions);
+    PscExtensionsApi toApi(final PscExtension extensions);
 }

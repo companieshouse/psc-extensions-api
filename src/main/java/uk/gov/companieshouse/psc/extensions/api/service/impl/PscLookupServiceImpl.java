@@ -1,22 +1,22 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
-import java.text.MessageFormat;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
-import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.FilingResourceNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
+import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
+
+import java.text.MessageFormat;
 
 @Service
 public class PscLookupServiceImpl implements PscLookupService {

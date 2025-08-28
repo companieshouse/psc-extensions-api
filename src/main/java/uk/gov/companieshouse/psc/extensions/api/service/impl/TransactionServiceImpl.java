@@ -2,18 +2,19 @@ package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
-import java.io.IOException;
-import java.text.MessageFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.exception.TransactionServiceException;
-import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
+import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
+import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
+
+import java.io.IOException;
+import java.text.MessageFormat;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -22,7 +23,10 @@ public class TransactionServiceImpl implements TransactionService {
     private final ApiClientService apiClientService;
     private final Logger logger;
 
-    public TransactionServiceImpl(final ApiClientService apiClientService, final Logger logger) {
+    public TransactionServiceImpl(
+            final ApiClientService apiClientService,
+            final Logger logger
+    ) {
         this.apiClientService = apiClientService;
         this.logger = logger;
     }

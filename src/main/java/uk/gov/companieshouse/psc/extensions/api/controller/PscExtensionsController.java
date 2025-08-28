@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
 import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsApi;
 import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 
@@ -29,7 +30,7 @@ public interface PscExtensionsController {
             @RequestAttribute(required = false, name = "transaction") Transaction transaction,
             @RequestBody @Valid @NotNull PscExtensionsData data,
             BindingResult result,
-            HttpServletRequest request);
+            HttpServletRequest request) throws PscLookupServiceException;
 
     // todo(1): potential methods to implement and be used by psc-verifications-web (for rendering logic etc)
     // int getExtensionCount for psc??

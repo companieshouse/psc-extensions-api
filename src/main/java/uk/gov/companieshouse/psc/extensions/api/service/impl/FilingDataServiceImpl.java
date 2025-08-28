@@ -2,15 +2,12 @@ package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
+import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.psc.extensions.api.exception.FilingResourceNotFoundException;
-import uk.gov.companieshouse.psc.extensions.api.model.FilingKind;
 import uk.gov.companieshouse.psc.extensions.api.service.FilingDataService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 import uk.gov.companieshouse.psc.extensions.api.utils.MapHelper;
-
-import java.util.Map;
 
 import static uk.gov.companieshouse.psc.extensions.api.model.FilingKind.PSC_EXTENSION_INDIVIDUAL;
 

@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.service;
 
-import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
+import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
 public interface FilingDataService {

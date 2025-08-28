@@ -5,19 +5,22 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.companieshouse.api.model.common.Resource;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
+import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.api.sdk.manager.ApiSdkManager;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsController;
@@ -28,15 +31,21 @@ import uk.gov.companieshouse.psc.extensions.api.mapper.PscExtensionsMapper;
 import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsApi;
 import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
-import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtensions;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
+import uk.gov.companieshouse.psc.extensions.api.service.ExtensionValidityService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
+import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import java.time.Clock;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/transactions/{transactionId}/persons-with-significant-control-extensions")
@@ -49,6 +58,7 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
     private final PscExtensionsService pscExtensionsService;
     private final PscLookupService pscLookupService;
     private final PscExtensionsMapper filingMapper;
+    private final ExtensionValidityService extensionValidityService;
     private final Clock clock;
     private final Logger logger;
 
@@ -57,11 +67,13 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
                                       final PscExtensionsService pscExtensionsService,
                                       final PscLookupService pscLookupService,
                                       PscExtensionsMapper filingMapper,
+                                       final ExtensionValidityService extensionValidityService,
                                       final Clock clock) {
         this.transactionService = transactionService;
         this.pscExtensionsService = pscExtensionsService;
         this.pscLookupService = pscLookupService;
         this.filingMapper = filingMapper;
+        this.extensionValidityService = extensionValidityService;
         this.clock = clock;
         this.logger = LoggerFactory.getLogger(PSC_EXTENSIONS_APP_NAME);
     }
@@ -75,16 +87,18 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
             @RequestBody @Valid @NotNull final PscExtensionsData data,
             final BindingResult result,
             final HttpServletRequest request
-    ) {
-        // todo(any): server-side validation that the psc already doesnt have 2 extension requests.
-        //  they can at a maximum submit two extension requests, we need to validate this server side.
-        //  or on psc-extensions-web before we decide to call this - either way it needs handled.
+    ) throws PscLookupServiceException {
         final var logMap = LogMapHelper.createLogMap(transId);
         logMap.put("path", request.getRequestURI());
         logMap.put("method", request.getMethod());
         logger.debugRequest(request, "POST", logMap);
 
         Optional.ofNullable(result).ifPresent(PscExtensionsControllerImpl::checkBindingErrors);
+
+        if (!extensionValidityService.canSubmitExtensionRequest(data)) {
+            logger.errorContext(transId, "PSC already has maximum number of extension requests", null, logMap);
+            throw new RuntimeException("PSC has already submitted the maximum number of extension requests");
+        }
 
         final var requestTransaction = getTransaction(transId, transaction, logMap,
                 getPassthroughHeader(request));
@@ -146,8 +160,8 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
         }
     }
 
-    private PscExtensions saveFilingWithLinks(
-            final PscExtensions entity,
+    private PscExtension saveFilingWithLinks(
+            final PscExtension entity,
             final String transId,
             final HttpServletRequest request,
             final Map<String, Object> logMap
@@ -170,7 +184,7 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
     }
 
     private ResourceLinks buildLinks(final HttpServletRequest request,
-                                   final PscExtensions savedFiling) {
+                                     final PscExtension savedFiling) {
         final var objectId = new ObjectId(Objects.requireNonNull(savedFiling.getId()));
         final var selfUri = UriComponentsBuilder.fromUriString(request.getRequestURI())
                 .pathSegment(objectId.toHexString())

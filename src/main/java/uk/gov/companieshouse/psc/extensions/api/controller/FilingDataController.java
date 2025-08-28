@@ -3,7 +3,7 @@ package uk.gov.companieshouse.psc.extensions.api.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
-import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
+import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
 import java.util.List;
