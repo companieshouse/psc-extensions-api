@@ -2,8 +2,6 @@ package uk.gov.companieshouse.psc.extensions.api.mongo.document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDate;
-
 public class ExtensionDetails {
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -11,7 +9,7 @@ public class ExtensionDetails {
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String extensionStatus;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        private LocalDate extensionRequestDate;
+        private String extensionRequestDate;
 
         public String getExtensionReason() {
                 return extensionReason;
@@ -29,11 +27,11 @@ public class ExtensionDetails {
                 this.extensionStatus = extensionStatus;
         }
 
-        public LocalDate getExtensionRequestDate() {
+        public String getExtensionRequestDate() {
                 return extensionRequestDate;
         }
 
-        public void setExtensionRequestDate(LocalDate extensionRequestDate) {
+        public void setExtensionRequestDate(String extensionRequestDate) {
                 this.extensionRequestDate = extensionRequestDate;
         }
 }
