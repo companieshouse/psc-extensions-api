@@ -8,10 +8,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
-import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -65,7 +65,7 @@ class PscLookupServiceImplTest {
 
         assertThrows(
                 RuntimeException.class,
-                () -> pscLookupService.getPscIndividualFullRecord(testTransaction, testData, PscType.INDIVIDUAL)
+                () -> pscLookupService.getPscIndividualFullRecord(testTransaction.getId(), testData.getCompanyNumber(), testData.getPscNotificationId(), PscType.INDIVIDUAL)
         );
     }
 
@@ -76,7 +76,7 @@ class PscLookupServiceImplTest {
 
         assertThrows(
                 RuntimeException.class,
-                () -> pscLookupService.getPscIndividualFullRecord(testTransaction, testData, PscType.INDIVIDUAL)
+                () -> pscLookupService.getPscIndividualFullRecord(testTransaction.getId(), testData.getCompanyNumber(), testData.getPscNotificationId(), PscType.INDIVIDUAL)
         );
     }
 

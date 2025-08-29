@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.service;
 
-import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
+import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 
 public interface ExtensionValidityService {
 

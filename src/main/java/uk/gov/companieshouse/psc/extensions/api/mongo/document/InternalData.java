@@ -42,24 +42,4 @@ public class InternalData {
         return Objects.hash(internalId);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private String internalId;
-
-        public Builder internalId(String internalId) {
-            this.internalId = internalId;
-            return this;
-        }
-
-        public InternalData build() {
-            return new InternalData(internalId);
-        }
-    }
 }

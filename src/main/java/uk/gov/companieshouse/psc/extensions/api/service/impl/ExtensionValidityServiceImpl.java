@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
+import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.service.ExtensionValidityService;
 
 @Service

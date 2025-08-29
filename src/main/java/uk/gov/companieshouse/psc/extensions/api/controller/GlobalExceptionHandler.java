@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-import uk.gov.companieshouse.psc.extensions.api.exception.InvalidFilingException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -30,17 +29,6 @@ public class GlobalExceptionHandler {
         logger.error("Constraint validation failed", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Validation failed: " + e.getMessage());
-    }
-
-    @ExceptionHandler(InvalidFilingException.class)
-    public ResponseEntity<String> handleInvalidFilingException(InvalidFilingException e) {
-        logger.error("Invalid filing exception occurred", e);
-        String errorMessage = e.getValidationErrors().stream()
-                .map(error -> error.getField() + " " + error.getDefaultMessage())
-                .findFirst()
-                .orElse("Invalid filing data");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Validation failed: " + errorMessage);
     }
 
     @ExceptionHandler(RuntimeException.class)

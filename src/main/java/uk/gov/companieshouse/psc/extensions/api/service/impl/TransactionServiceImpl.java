@@ -13,7 +13,6 @@ import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 
 @Service
@@ -29,43 +28,6 @@ public class TransactionServiceImpl implements TransactionService {
     ) {
         this.apiClientService = apiClientService;
         this.logger = logger;
-    }
-
-    /**
-     * Query the transaction service for a given transaction.
-     *
-     * @param transactionId         the Transaction ID
-     * @param ericPassThroughHeader includes authorisation for the transaction query
-     * @return the transaction if found
-     *
-     * @throws TransactionServiceException if not found or an error occurred
-     */
-    @Override
-    public Transaction getTransaction(final String transactionId,
-            final String ericPassThroughHeader) throws TransactionServiceException {
-        final var logMap = LogMapHelper.createLogMap(transactionId);
-
-        try {
-            final var uri = "/transactions/" + transactionId;
-            final var transaction =
-                    apiClientService.getApiClient(ericPassThroughHeader)
-                            .transactions()
-                            .get(uri)
-                            .execute()
-                            .getData();
-            logger.debugContext(transactionId, "Retrieved transaction details", logMap);
-            return transaction;
-        }
-        catch (final ApiErrorResponseException e) {
-            logger.errorContext(transactionId, UNEXPECTED_STATUS_CODE, e, logMap);
-            throw new TransactionServiceException(
-                    MessageFormat.format("Error Updating Transaction details for {0}: {1} {2}",
-                            transactionId, e.getStatusCode(), e.getStatusMessage()), e);
-        }
-        catch (final URIValidationException | IOException e) {
-            throw new TransactionServiceException("Error Retrieving Transaction " + transactionId,
-                    e);
-        }
     }
 
     /**

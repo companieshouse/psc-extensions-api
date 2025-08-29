@@ -54,7 +54,7 @@ class FilingDataServiceImplTest {
         FilingApi result = filingDataService.generateFilingApi(TEST_FILING_ID, testTransaction);
 
         assertNotNull(result);
-        assertEquals(FilingKind.PSC_EXTENSION_INDIVIDUAL.getValue(), result.getKind());
+        assertEquals(FilingKind.FULL_KIND, result.getKind());
         assertEquals("Extension request for PSC verification deadline", result.getDescription());
         assertNotNull(result.getData());
 
@@ -109,9 +109,8 @@ class FilingDataServiceImplTest {
     private PscExtension createTestPscExtension() {
         PscExtension extension = new PscExtension();
 
-        InternalData internalData = InternalData.builder()
-                .internalId(TEST_APPOINTMENT_ID)
-                .build();
+        InternalData internalData = new InternalData();
+        internalData.setInternalId(TEST_APPOINTMENT_ID);
         extension.setInternalData(internalData);
 
         Data data = new Data();

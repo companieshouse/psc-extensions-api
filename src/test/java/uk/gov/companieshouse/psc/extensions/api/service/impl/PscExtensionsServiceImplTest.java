@@ -45,9 +45,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     @Test
     void save_WhenExtensionWithInternalData_ShouldPreserveInternalData() throws URISyntaxException {
         PscExtension extension = createTestPscExtension();
-        InternalData internalData = InternalData.builder()
-                .internalId("internal-appointment-123")
-                .build();
+        InternalData internalData = new InternalData("internal-appointment-123");
         extension.setInternalData(internalData);
 
         PscExtension savedExtension = pscExtensionsService.save(extension);

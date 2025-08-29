@@ -85,7 +85,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
     @Test
     public void When_UsingBuilder_Expect_ObjectCreatedCorrectly() {
-        InternalData internalData = InternalData.builder().internalId("internal-123").build();
+        InternalData internalData = new InternalData("internal-123");
 
         PscExtension pscExtension = PscExtension.builder()
                 .id("66c8a1b2c3d4e5f6a7b8c9d2")
@@ -150,9 +150,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
     @Test
     public void When_TestingInternalDataOperations_Expect_AllFunctionalityWorks() {
-        InternalData builderData = InternalData.builder()
-                .internalId("internal-123")
-                .build();
+        InternalData builderData = new InternalData("internal-123");
         assertEquals("internal-123", builderData.getInternalId());
 
         InternalData original = new InternalData("original-id");
@@ -164,9 +162,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
     @Test
     public void When_AddingInternalDataToPscExtension_Expect_StoredAndRetrievedCorrectly() throws URISyntaxException {
-        InternalData internalData = InternalData.builder()
-                .internalId("test-internal-123")
-                .build();
+        InternalData internalData = new InternalData("test-internal-123");
 
         PscExtension pscExtension = createTestExtensionRequest();
         pscExtension.setInternalData(internalData);
