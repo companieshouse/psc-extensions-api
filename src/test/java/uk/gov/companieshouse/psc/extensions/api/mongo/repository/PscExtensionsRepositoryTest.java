@@ -86,7 +86,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     @Test
     public void When_UsingBuilder_Expect_ObjectCreatedCorrectly() {
         InternalData internalData = InternalData.builder().internalId("internal-123").build();
-        
+
         PscExtension pscExtension = PscExtension.builder()
                 .id("66c8a1b2c3d4e5f6a7b8c9d2")
                 .createdAt(Instant.parse("2025-08-21T10:15:30.00Z"))
@@ -105,7 +105,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
         PscExtension original = createTestExtensionRequest();
         InternalData originalInternalData = new InternalData("copy-test-internal");
         original.setInternalData(originalInternalData);
-        
+
         PscExtension copy = new PscExtension(original);
 
         assertEquals(original.getId(), copy.getId());
@@ -176,7 +176,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
         assertTrue(retrievedOptional.isPresent());
         PscExtension retrieved = retrievedOptional.get();
-        
+
         assertNotNull(retrieved.getInternalData());
         assertEquals("test-internal-123", retrieved.getInternalData().getInternalId());
     }
@@ -186,9 +186,9 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     public void When_InternalDataIsNull_Expect_HandledCorrectly() throws URISyntaxException {
         PscExtension pscExtension = createTestExtensionRequest();
         // internalData should be null by default
-        
+
         assertNull(pscExtension.getInternalData());
-        
+
         PscExtension savedExtension = requestRepository.save(pscExtension);
         Optional<PscExtension> retrievedOptional = requestRepository.findById(savedExtension.getId());
 

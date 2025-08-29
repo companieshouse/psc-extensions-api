@@ -3,6 +3,7 @@ package uk.gov.companieshouse.psc.extensions.api.mongo.document;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class ExtensionDetails {
 
@@ -74,5 +75,17 @@ public class ExtensionDetails {
                 public ExtensionDetails build() {
                         return new ExtensionDetails(this);
                 }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+                if (o == null || getClass() != o.getClass()) return false;
+                ExtensionDetails that = (ExtensionDetails) o;
+                return Objects.equals(extensionReason, that.extensionReason) && Objects.equals(extensionStatus, that.extensionStatus) && Objects.equals(extensionRequestDate, that.extensionRequestDate);
+        }
+
+        @Override
+        public int hashCode() {
+                return Objects.hash(extensionReason, extensionStatus, extensionRequestDate);
         }
 }
