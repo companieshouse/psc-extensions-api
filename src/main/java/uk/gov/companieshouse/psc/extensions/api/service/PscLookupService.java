@@ -1,16 +1,23 @@
 package uk.gov.companieshouse.psc.extensions.api.service;
 
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
-import uk.gov.companieshouse.api.model.pscverification.PscVerificationData;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
-import uk.gov.companieshouse.psc.extensions.api.exceptions.PscLookupServiceException;
+import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
+import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 
-/**
- * Interacts with the external CHS PSC API service to retrieve PSCs.
- */
 public interface PscLookupService {
-
-    PscIndividualFullRecordApi getPscIndividualFullRecord(Transaction transaction, PscVerificationData data, PscType pscType)
-            throws PscLookupServiceException;
+    
+    /**
+     * Retrieves the PSC individual full record from the PSC Data API.
+     *
+     * @param transaction the transaction containing company information
+     * @param data the extension data containing PSC notification ID
+     * @param pscType the type of PSC (individual/corporate)
+     * @return the PSC individual full record
+     * @throws PscLookupServiceException if PSC cannot be found or accessed
+     */
+    PscIndividualFullRecordApi getPscIndividualFullRecord(Transaction transaction, 
+                                                         PscExtensionsData data, 
+                                                         PscType pscType) throws PscLookupServiceException;
 }

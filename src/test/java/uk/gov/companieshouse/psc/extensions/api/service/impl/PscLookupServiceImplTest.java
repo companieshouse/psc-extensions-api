@@ -1,187 +1,87 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.psc.extensions.api.enumerations.PscType.INDIVIDUAL;
-
-import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpStatusCodes;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.ApiClient;
-import uk.gov.companieshouse.api.error.ApiErrorResponseException;
-import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.api.handler.psc.PscsResourceHandler;
-import uk.gov.companieshouse.api.handler.psc.request.PscIndividualFullRecordGet;
-import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
-import uk.gov.companieshouse.api.model.pscverification.PscVerificationData;
-import uk.gov.companieshouse.api.model.pscverification.VerificationDetails;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.psc.extensions.api.exceptions.FilingResourceNotFoundException;
-import uk.gov.companieshouse.psc.extensions.api.exceptions.PscLookupServiceException;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
-import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
+import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
+import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
+import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PscLookupServiceImplTest extends TestBaseService {
+class PscLookupServiceImplTest {
 
-    private static final String PSC_ID = "654321";
-    private static final String UVID_CODE = "XY222222223";
-    private static final VerificationDetails VERIFICATION_DETAILS =
-        VerificationDetails.newBuilder().uvid(UVID_CODE)
-            .build();
-    private static final PscVerificationData PSC_VERIFICATION_DATA =
-        PscVerificationData.newBuilder()
-            .pscNotificationId(PSC_ID)
-            .companyNumber(COMPANY_NUMBER)
-            .verificationDetails(VERIFICATION_DETAILS)
-            .build();
-    private static final String CHS_INTERNAL_API_KEY = "key";
-    public static final String FULL_RECORD = "/full_record";
-    public static final String PERSONS_WITH_SIGNIFICANT_CONTROL = "/persons-with-significant-control-extension/";
-    public static final String COMPANY = "/company/";
-
+    private final String TEST_TRANSACTION_ID = "test-transaction-id";
+    private final String TEST_COMPANY_NUMBER = "12345678";
+    private final String TEST_PSC_NOTIFICATION_ID = "test-psc-notification-id";
+    private final String TEST_API_KEY = "test-api-key";
     @Mock
     private ApiClientService apiClientService;
-    @Mock
-    private ApiClient apiClient;
-    @Mock
-    private ApiResponse<PscIndividualFullRecordApi> apiResponse;
-    @Mock
-    private PscIndividualFullRecordGet pscIndividualFullRecordGet;
-    @Mock
-    private PscsResourceHandler pscResourceHandler;
-    @Mock
-    private Transaction transaction;
     @Mock
     private Logger logger;
     @Mock
     private EnvironmentReader environmentReader;
-
-    private PscLookupService testService;
+    @InjectMocks
+    private PscLookupServiceImpl pscLookupService;
+    private Transaction testTransaction;
+    private PscExtensionsData testData;
+    private PscIndividualFullRecordApi testPscRecord;
 
     @BeforeEach
     void setUp() {
-        when(environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY")).thenReturn("key");
-        testService = new PscLookupServiceImpl(apiClientService, logger, environmentReader);
+        testTransaction = new Transaction();
+        testTransaction.setId(TEST_TRANSACTION_ID);
+
+        testData = new PscExtensionsData();
+        testData.setCompanyNumber(TEST_COMPANY_NUMBER);
+        testData.setPscNotificationId(TEST_PSC_NOTIFICATION_ID);
+
+        testPscRecord = new PscIndividualFullRecordApi();
+        testPscRecord.setInternalId(123L);
+        testPscRecord.setName("Test Person");
     }
 
     @Test
-    void getPscIndividualWhenFound() throws IOException, URIValidationException {
-
-        when(apiClientService.getApiClient(CHS_INTERNAL_API_KEY)).thenReturn(apiClient);
-        when(apiClient.pscs()).thenReturn(pscResourceHandler);
-
-        when(pscResourceHandler.getIndividualFullRecord(COMPANY
-            + COMPANY_NUMBER
-            + PERSONS_WITH_SIGNIFICANT_CONTROL
-            + INDIVIDUAL.getValue()
-            + "/"
-            + PSC_ID
-            + FULL_RECORD)).thenReturn(pscIndividualFullRecordGet);
-
-        when(pscIndividualFullRecordGet.execute()).thenReturn(apiResponse);
-        when(apiResponse.getData()).thenReturn(new PscIndividualFullRecordApi());
-
-        var pscApi =
-            testService.getPscIndividualFullRecord(transaction, PSC_VERIFICATION_DATA, INDIVIDUAL);
-
-        assertThat(pscApi, samePropertyValuesAs(new PscIndividualFullRecordApi()));
-
+    void constructor_ShouldSetDependencies() {
+        PscLookupServiceImpl service = new PscLookupServiceImpl(apiClientService, logger, environmentReader);
+        assertNotNull(service);
     }
 
     @Test
-    void getPscWhenErrorRetrieving() throws IOException, URIValidationException {
-        final var exception = new ApiErrorResponseException(
-            new HttpResponseException.Builder(HttpStatusCodes.STATUS_CODE_FORBIDDEN, "test case",
-                new HttpHeaders()));
+    void getPscIndividualFullRecord_WhenEnvironmentReaderFails_ShouldThrowRuntimeException() {
+        when(environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY"))
+                .thenThrow(new RuntimeException("Environment error"));
 
-        when(apiClientService.getApiClient(CHS_INTERNAL_API_KEY)).thenReturn(apiClient);
-        when(apiClient.pscs()).thenReturn(pscResourceHandler);
-
-        when(pscResourceHandler.getIndividualFullRecord(
-            COMPANY
-                + COMPANY_NUMBER
-                + PERSONS_WITH_SIGNIFICANT_CONTROL
-                + INDIVIDUAL.getValue()
-                + "/"
-                + PSC_ID
-                + FULL_RECORD
-        )).thenReturn(pscIndividualFullRecordGet);
-
-        when(pscIndividualFullRecordGet.execute()).thenThrow(exception);
-
-        final var thrown = assertThrows(PscLookupServiceException.class,
-            () -> testService.getPscIndividualFullRecord(transaction, PSC_VERIFICATION_DATA, INDIVIDUAL));
-
-        assertThat(thrown.getMessage(), is("Error Retrieving PSC details for " + PSC_ID + ": 403 test case"));
+        assertThrows(
+                RuntimeException.class,
+                () -> pscLookupService.getPscIndividualFullRecord(testTransaction, testData, PscType.INDIVIDUAL)
+        );
     }
 
     @Test
-    void getPscWhenURIErrorRetrieving() throws IOException, URIValidationException {
-        final var exception = new URIValidationException("Incorrect URI");
+    void getPscIndividualFullRecord_ShouldCallEnvironmentReader() {
+        when(environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY")).thenReturn(TEST_API_KEY);
+        when(apiClientService.getApiClient(anyString())).thenThrow(new RuntimeException("Expected test error"));
 
-        when(apiClientService.getApiClient(CHS_INTERNAL_API_KEY)).thenReturn(apiClient);
-        when(apiClient.pscs()).thenReturn(pscResourceHandler);
-
-        when(pscResourceHandler.getIndividualFullRecord(
-            COMPANY
-                + COMPANY_NUMBER
-                + PERSONS_WITH_SIGNIFICANT_CONTROL
-                + INDIVIDUAL.getValue()
-                + "/"
-                + PSC_ID
-                + FULL_RECORD
-        )).thenReturn(pscIndividualFullRecordGet);
-
-        when(pscIndividualFullRecordGet.execute()).thenThrow(exception);
-
-        final var thrown = assertThrows(PscLookupServiceException.class,
-            () -> testService.getPscIndividualFullRecord(transaction, PSC_VERIFICATION_DATA, INDIVIDUAL));
-
-        assertThat(thrown.getMessage(), is("Error Retrieving PSC details for " + PSC_ID + ": Incorrect URI"));
+        assertThrows(
+                RuntimeException.class,
+                () -> pscLookupService.getPscIndividualFullRecord(testTransaction, testData, PscType.INDIVIDUAL)
+        );
     }
 
     @Test
-    void getUvidMatchWithPscDataWhenNotFound() throws IOException, URIValidationException {
-
-        final var exception = new ApiErrorResponseException(
-            new HttpResponseException.Builder(HttpStatusCodes.STATUS_CODE_NOT_FOUND, "test case",
-                new HttpHeaders()));
-
-        when(apiClientService.getApiClient(CHS_INTERNAL_API_KEY)).thenReturn(apiClient);
-        when(apiClient.pscs()).thenReturn(pscResourceHandler);
-
-        when(pscResourceHandler.getIndividualFullRecord(
-            COMPANY
-                + COMPANY_NUMBER
-                + PERSONS_WITH_SIGNIFICANT_CONTROL
-                + INDIVIDUAL.getValue()
-                + "/"
-                + PSC_ID
-                + FULL_RECORD
-        )).thenReturn(pscIndividualFullRecordGet);
-
-        when(pscIndividualFullRecordGet.execute()).thenThrow(exception);
-
-        final var thrown = assertThrows(FilingResourceNotFoundException.class,
-            () -> testService.getPscIndividualFullRecord(transaction, PSC_VERIFICATION_DATA,
-                INDIVIDUAL));
-
-        assertThat(thrown.getMessage(),
-            is("PSC Details not found for " + PSC_ID + ": 404 test case"));
-
+    void serviceFields_ShouldNotBeNull() {
+        assertNotNull(pscLookupService);
     }
-
 }

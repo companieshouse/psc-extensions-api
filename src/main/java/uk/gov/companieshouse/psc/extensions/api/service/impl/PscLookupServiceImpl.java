@@ -1,21 +1,22 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
-import java.text.MessageFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
-import uk.gov.companieshouse.api.model.pscverification.PscVerificationData;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
-import uk.gov.companieshouse.psc.extensions.api.exceptions.FilingResourceNotFoundException;
-import uk.gov.companieshouse.psc.extensions.api.exceptions.PscLookupServiceException;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.exception.FilingResourceNotFoundException;
+import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
+import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
+import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
-import uk.gov.companieshouse.psc.extensions.api.utils.LogHelper;
+import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
+
+import java.text.MessageFormat;
 
 @Service
 public class PscLookupServiceImpl implements PscLookupService {
@@ -31,20 +32,29 @@ public class PscLookupServiceImpl implements PscLookupService {
         this.environmentReader = environmentReader;
     }
 
-
+    /**
+     * Retrieve a PSC by PscExtensionsData.
+     *
+     * @param transaction           the Transaction
+     * @param data                  the PSC extensions data
+     * @param pscType               the PSC Type
+     * @return the PSC Full Record details, if found
+     * @throws PscLookupServiceException if the PSC was not found or an error occurred
+     */
     @Override
-    public PscIndividualFullRecordApi getPscIndividualFullRecord(final Transaction transaction, final PscVerificationData data,
+    public PscIndividualFullRecordApi getPscIndividualFullRecord(final Transaction transaction,
+                                                                 final PscExtensionsData data,
                                                                  final PscType pscType)
             throws PscLookupServiceException {
 
-        final var logMap = LogHelper.createLogMap(transaction.getId());
-        String pscNotificationId = data.pscNotificationId();
+        final var logMap = LogMapHelper.createLogMap(transaction.getId());
+        String pscNotificationId = data.getPscNotificationId();
         String chsInternalApiKey = environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY");
 
         try {
             final var uri = "/company/"
-                    + data.companyNumber()
-                    + "/persons-with-significant-control-extension/"
+                    + data.getCompanyNumber()
+                    + "/persons-with-significant-control/"
                     + pscType.getValue()
                     + "/"
                     + pscNotificationId

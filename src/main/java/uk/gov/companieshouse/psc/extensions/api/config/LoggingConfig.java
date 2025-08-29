@@ -17,11 +17,6 @@ public class LoggingConfig {
     @Value("${logger.namespace}")
     private String loggerNamespace;
 
-    /**
-     * Creates a CH logger bean with specified namespace for use throughout this application.
-     *
-     * @return the {@link LoggerFactory} for the specified namespace
-     */
     @Bean
     public Logger logger() {
         return LoggerFactory.getLogger(loggerNamespace);

@@ -1,23 +1,16 @@
 package uk.gov.companieshouse.psc.extensions.api.enumerations;
 
-import java.util.EnumSet;
-import java.util.Optional;
-
-
 public enum PscType {
-    INDIVIDUAL("individual");
-
-    PscType(final String value) {
-        this.value = value;
-    }
+    INDIVIDUAL("individual"),
+    CORPORATE("corporate");
 
     private final String value;
 
-    public String getValue() {
-        return value;
+    PscType(String value) {
+        this.value = value;
     }
 
-    public static Optional<PscType> nameOf(final String value) {
-        return EnumSet.allOf(PscType.class).stream().filter(v -> v.getValue().equals(value)).findAny();
+    public String getValue() {
+        return value;
     }
 }
