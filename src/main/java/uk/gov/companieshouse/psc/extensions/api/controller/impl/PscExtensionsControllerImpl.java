@@ -10,15 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
+import uk.gov.companieshouse.api.model.pscverification.PscVerificationApi;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
@@ -128,6 +124,27 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
         final var response = filingMapper.toApi(savedEntity);
 
         return ResponseEntity.created(savedEntity.getLinks().self()).body(response);
+    }
+
+    /**
+     * Retrieve PSC Extension request details submission.
+     *
+     * @param pscNotificationId  the PSC ID
+     */
+
+    @Override
+    @GetMapping(value = "/{pscNotificationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PscExtensionsApi> getPscExtensionDetails(
+            @PathVariable("pscNotificationId") final String pscNotificationId,
+            final HttpServletRequest request) {
+
+        final var pscExtensions = pscExtensionsService.get(pscNotificationId)
+                .filter(f -> pscExtensionsService.requestMatchesResourceSelf(request,
+                        f));
+
+        return pscExtensions.map(filingMapper::toApi).map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound()
+                        .build());
     }
 
     private Transaction getTransaction(final String transId, Transaction transaction,
