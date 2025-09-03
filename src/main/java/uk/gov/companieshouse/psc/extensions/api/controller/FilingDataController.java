@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
@@ -20,6 +21,7 @@ public interface FilingDataController {
      * @param request        the servlet request
      * @return List of FilingApi resources
      */
+    @GetMapping
     List<FilingApi> getFilingsData(
             @PathVariable("transactionId") String transId,
             @PathVariable("filingResourceId") String filingResource,

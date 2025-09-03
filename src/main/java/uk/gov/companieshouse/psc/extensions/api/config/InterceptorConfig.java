@@ -23,12 +23,12 @@ import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
 @ComponentScan("uk.gov.companieshouse.api")
 public class InterceptorConfig implements WebMvcConfigurer {
     public static final String COMMON_INTERCEPTOR_PATH =
-            "/transactions/{transaction_id}/persons-with-significant-control-verification";
+            "/transactions/{transactionId}/persons-with-significant-control-extensions";
     public static final String COMMON_INTERCEPTOR_RESOURCE_PATH =
             COMMON_INTERCEPTOR_PATH + "/{filing_resource_id}";
     public static final String FILINGS_RESOURCE_PATH =
             "/private" + COMMON_INTERCEPTOR_RESOURCE_PATH + "/filings";
-    private static final String PSC_VERIFICATION_API = "psc-verification-api";
+    private static final String PSC_EXTENSIONS_API = "psc-extensions-api";
 
     /**
      * Set up the interceptors to run against endpoints when the endpoints are called
@@ -84,12 +84,12 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     @Bean("chsTransactionInterceptor")
     public TransactionInterceptor transactionInterceptor() {
-        return new TransactionInterceptor(PSC_VERIFICATION_API);
+        return new TransactionInterceptor(PSC_EXTENSIONS_API);
     }
 
     @Bean("chsOpenTransactionInterceptor")
     public OpenTransactionInterceptor openTransactionInterceptor() {
-        return new OpenTransactionInterceptor(PSC_VERIFICATION_API);
+        return new OpenTransactionInterceptor(PSC_EXTENSIONS_API);
     }
 
     @Bean("chsTokenPermissionInterceptor")

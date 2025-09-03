@@ -29,6 +29,7 @@ import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.service.ExtensionValidityService;
+import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionDetailsService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
@@ -46,12 +47,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/transactions/{transactionId}/persons-with-significant-control-extensions")
 public class PscExtensionsControllerImpl implements PscExtensionsController {
-    
+
     public static final String VALIDATION_STATUS = "validation_status";
     private static final String PSC_EXTENSIONS_APP_NAME = "psc-extensions-api";
-    
+
     private final TransactionService transactionService;
     private final PscExtensionsService pscExtensionsService;
+    private final PscExtensionDetailsService pscExtensionDetailsService;
     private final PscLookupService pscLookupService;
     private final PscExtensionsMapper filingMapper;
     private final ExtensionValidityService extensionValidityService;
@@ -61,12 +63,14 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
     @Autowired
     public PscExtensionsControllerImpl(final TransactionService transactionService,
                                       final PscExtensionsService pscExtensionsService,
+        PscExtensionDetailsService pscExtensionDetailsService,
                                       final PscLookupService pscLookupService,
                                       PscExtensionsMapper filingMapper,
                                        final ExtensionValidityService extensionValidityService,
                                       final Clock clock) {
         this.transactionService = transactionService;
         this.pscExtensionsService = pscExtensionsService;
+        this.pscExtensionDetailsService = pscExtensionDetailsService;
         this.pscLookupService = pscLookupService;
         this.filingMapper = filingMapper;
         this.extensionValidityService = extensionValidityService;
@@ -126,25 +130,39 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
         return ResponseEntity.created(savedEntity.getLinks().self()).body(response);
     }
 
-    /**
-     * Retrieve PSC Extension request details submission.
-     *
-     * @param pscNotificationId  the PSC ID
-     */
+//    /**
+//     * Retrieve PSC Extension request details submission.
+//     *
+//     * @param pscNotificationId  the PSC ID
+//     */
+//
+//    @Override
+//    @GetMapping("/{pscNotificationId}")
+//    public ResponseEntity<PscExtensionsApi> getPscExtensionDetails(
+//            @PathVariable("pscNotificationId") final String pscNotificationId,
+//            final HttpServletRequest request) {
+//
+//        final var pscExtensions = pscExtensionDetailsService.(pscNotificationId);
+//
+//        return pscExtensions.map(filingMapper::toApi).map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound()
+//                        .build());
+//    }
 
     @Override
-    @GetMapping(value = "/{pscNotificationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PscExtensionsApi> getPscExtensionDetails(
-            @PathVariable("pscNotificationId") final String pscNotificationId,
-            final HttpServletRequest request) {
+    @GetMapping("/{pscNotificationId}")
+    public ResponseEntity<PscExtension> getPscExtensionCount(
+        @PathVariable("pscNotificationId") final String pscNotificationId) {
 
-        final var pscExtensions = pscExtensionsService.get(pscNotificationId)
-                .filter(f -> pscExtensionsService.requestMatchesResourceSelf(request,
-                        f));
+        final var extensionCount = pscExtensionDetailsService.getExtensionCount(pscNotificationId);
+        if (extensionCount.isPresent()){
+            logger.info("Extension found for the given notification ID.");
+        }else{
+            throw new IllegalArgumentException("No extension found for the given notification ID.");
+        }
 
-        return pscExtensions.map(filingMapper::toApi).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound()
-                        .build());
+
+        return ResponseEntity.ok(extensionCount.get());
     }
 
     private Transaction getTransaction(final String transId, Transaction transaction,
@@ -188,7 +206,7 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
         final var now = clock.instant();
         entity.setCreatedAt(now);
         entity.setUpdatedAt(now);
-        
+
         final var saved = pscExtensionsService.save(entity);
         final var links = buildLinks(request, saved);
         saved.setLinks(links);

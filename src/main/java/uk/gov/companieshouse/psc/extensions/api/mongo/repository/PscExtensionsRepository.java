@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 
 @Repository
-public interface PscExtensionsRepository extends MongoRepository<PscExtension, String> { }
+public interface PscExtensionsRepository extends MongoRepository<PscExtension, String> {
+  long countByDataPscNotificationId(String pscNotificationId);
+}

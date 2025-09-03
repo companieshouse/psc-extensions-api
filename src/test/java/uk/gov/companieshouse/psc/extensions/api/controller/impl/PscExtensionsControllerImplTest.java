@@ -18,6 +18,7 @@ import uk.gov.companieshouse.psc.extensions.api.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.service.ExtensionValidityService;
+import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionDetailsService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
@@ -43,6 +44,8 @@ class PscExtensionsControllerImplTest {
     private TransactionService transactionService;
     @Mock
     private PscExtensionsService pscExtensionsService;
+    @Mock
+    private PscExtensionDetailsService pscExtensionDetailsService;
     @Mock
     private PscLookupService pscLookupService;
     @Mock
@@ -90,7 +93,7 @@ class PscExtensionsControllerImplTest {
     @Test
     void constructor_ShouldSetDependencies() {
         PscExtensionsControllerImpl testController = new PscExtensionsControllerImpl(
-                transactionService, pscExtensionsService, pscLookupService, filingMapper, extensionValidityService, clock);
+                transactionService, pscExtensionsService, pscExtensionDetailsService, pscLookupService, filingMapper, extensionValidityService, clock);
         assertNotNull(testController);
     }
 

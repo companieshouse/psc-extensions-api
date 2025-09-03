@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 @Service
 public class PscExtensionsServiceImpl implements PscExtensionsService {
-    
+
     private final PscExtensionsRepository repository;
 
     @Autowired
@@ -38,5 +39,10 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
     @Override
     public Optional<PscExtension> get(String filingId) {
         return repository.findById(filingId);
+    }
+
+    @Override
+    public boolean requestMatchesResourceSelf(HttpServletRequest request, PscExtension filing) {
+        return false;
     }
 }
