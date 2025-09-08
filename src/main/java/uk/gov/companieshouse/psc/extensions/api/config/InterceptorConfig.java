@@ -77,7 +77,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Bean("chsRequestPermissionInterceptor")
     public MappablePermissionsInterceptor requestPermissionsInterceptor() {
         return new MappablePermissionsInterceptor(
-                Permission.Key.USER_PSC_VERIFICATION, // todo(user psc extension?)
+                Permission.Key.USER_PSC_EXTENSION,
                 true,
                 PermissionsMapping.builder()
                         .defaultRequireAnyOf(Permission.Value.CREATE)
