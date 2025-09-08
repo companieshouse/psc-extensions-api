@@ -63,6 +63,13 @@ public class PscExtensionDetailsServiceImpl implements PscExtensionDetailsServic
 //        }
 //    }
 
+    /**
+     * Query the mongoDB for the number psc extension requests.
+     *
+     * @param pscNotificationId         the PSC ID
+     * @return the number of psc extension requests if found.
+     *
+     */
     @Override
     public Optional<PscExtension> getExtensionCount(String pscNotificationId) {
         if (pscNotificationId == null || pscNotificationId.isEmpty()) {
