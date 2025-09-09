@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -26,9 +28,9 @@ import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -142,6 +144,35 @@ class PscExtensionsControllerImplTest {
                 () -> controller.createPscExtension(TEST_TRANSACTION_ID, testTransaction, testData, null, mockRequest)
         );
     }
+
+
+    @Test
+    void getPscExtensionRequestCount_WhenExtensionsFound_ShouldReturnNumberOfExtensionRequests() {
+        String notificationId = "ABC123";
+        PscExtension mockExtension = new PscExtension();
+        when(pscExtensionDetailsService.getExtensionCount(notificationId))
+                .thenReturn(Optional.of(mockExtension));
+
+        ResponseEntity<PscExtension> response = controller.getPscExtensionCount(notificationId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(mockExtension, response.getBody());
+    }
+
+    @Test
+    void getPscExtensionRequestCount_WhenNoExtensionsFound_ShouldThrowRuntimeException() {
+
+        String notificationId = "XYZ789";
+        when(pscExtensionDetailsService.getExtensionCount(notificationId))
+                .thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            controller.getPscExtensionCount(notificationId);
+        });
+
+        assertEquals("No extension found for the given notification ID.", exception.getMessage());
+    }
+
 
     @Test
     void serviceFields_ShouldNotBeNull() {
