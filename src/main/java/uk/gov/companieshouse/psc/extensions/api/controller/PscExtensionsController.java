@@ -22,7 +22,7 @@ public interface PscExtensionsController {
      * Create a new PSC Extension filing.
      *
      * @param transId     the transaction ID
-     * @param transaction the transaction object (may be null)
+     * @param transaction the transaction object
      * @param data        the extension data
      * @param result      validation binding result
      * @param request     the servlet request
@@ -35,22 +35,6 @@ public interface PscExtensionsController {
             BindingResult result,
             HttpServletRequest request) throws PscLookupServiceException;
 
-    // todo(1): potential methods to implement and be used by psc-verifications-web (for rendering logic etc)
-    // int getExtensionCount for psc??
-    // bool canRequestExtension for psc??
-//
-//    /**
-//     * Retrieve PSC extension details.
-//     *
-//     * @param pscNotificationId the PSC ID
-//     */
-//
-//    @GetMapping
-//    default ResponseEntity<PscExtensionsApi> getPscExtensionDetails(
-//            @PathVariable("pscNotificationId") final String pscNotificationId,
-//            final HttpServletRequest request) {
-//        throw new NotImplementedException();
-//    }
 
     @GetMapping
     default ResponseEntity<PscExtension> getPscExtensionCount(

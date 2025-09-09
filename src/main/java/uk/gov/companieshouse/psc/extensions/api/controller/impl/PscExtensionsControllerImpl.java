@@ -130,25 +130,6 @@ public class PscExtensionsControllerImpl implements PscExtensionsController {
         return ResponseEntity.created(savedEntity.getLinks().self()).body(response);
     }
 
-//    /**
-//     * Retrieve PSC Extension request details submission.
-//     *
-//     * @param pscNotificationId  the PSC ID
-//     */
-//
-//    @Override
-//    @GetMapping("/{pscNotificationId}")
-//    public ResponseEntity<PscExtensionsApi> getPscExtensionDetails(
-//            @PathVariable("pscNotificationId") final String pscNotificationId,
-//            final HttpServletRequest request) {
-//
-//        final var pscExtensions = pscExtensionDetailsService.(pscNotificationId);
-//
-//        return pscExtensions.map(filingMapper::toApi).map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound()
-//                        .build());
-//    }
-
     @Override
     @GetMapping("/{pscNotificationId}")
     public ResponseEntity<PscExtension> getPscExtensionCount(
