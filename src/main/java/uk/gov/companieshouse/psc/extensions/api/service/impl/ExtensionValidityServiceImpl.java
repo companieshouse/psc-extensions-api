@@ -9,10 +9,7 @@ public class ExtensionValidityServiceImpl implements ExtensionValidityService {
 
     @Override
     public boolean canSubmitExtensionRequest(PscExtensionsData pscExtensionsData) {
-        // TODO: Implement server-side validation that the PSC doesn't already have 2 extension requests.
-        // PSCs can submit a maximum of two extension requests, we need to validate this server side.
-        // This should check existing extension requests for the PSC and return false if they already have 2.
-        // For now, returning true to allow tests to pass until proper validation is implemented.
+        // TODO: Integrate with this PR - https://github.com/companieshouse/psc-extensions-api/pull/20.
         return true;
     }
 }
