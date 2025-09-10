@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -113,6 +115,37 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final var response = filingMapper.toApi(savedEntity);
 
         return ResponseEntity.created(savedEntity.getLinks().self()).body(response);
+    }
+
+    @Override
+    @GetMapping("/{pscNotificationId}")
+    public ResponseEntity<PscExtension> getPscExtensionCount(
+            @PathVariable("pscNotificationId") final String pscNotificationId) {
+
+        final var extensionCount = pscExtensionDetailsService.getExtensionCount(pscNotificationId);
+        if (extensionCount.isPresent()){
+            logger.info("Extension found for the given notification ID.");
+        }else{
+            throw new IllegalArgumentException("No extension found for the given notification ID.");
+        }
+
+
+        return ResponseEntity.ok(extensionCount.get());
+    }
+
+    private Transaction getTransaction(final String transId, Transaction transaction,
+                                       final Map<String, Object> logMap, final String passthroughHeader) {
+        if (transaction == null) {
+            try {
+                transaction = transactionService.getTransaction(transId, passthroughHeader);
+            } catch (Exception e) {
+                logger.errorContext(transId, "Failed to get transaction", e, logMap);
+                throw new RuntimeException("Failed to get transaction", e);
+            }
+        }
+
+        logger.infoContext(transId, "transaction found", logMap);
+        return transaction;
     }
 
     private PscExtension saveFilingWithLinks(

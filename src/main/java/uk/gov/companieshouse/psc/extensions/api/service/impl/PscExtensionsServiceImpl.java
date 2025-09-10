@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
@@ -12,6 +14,7 @@ import java.util.Optional;
 public class PscExtensionsServiceImpl implements PscExtensionsService {
     
     private final PscExtensionsRepository repository;
+    private static final Logger logger = LoggerFactory.getLogger("logger");
 
     @Autowired
     public PscExtensionsServiceImpl(PscExtensionsRepository repository) {
@@ -24,6 +27,7 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @param filing the PscExtension entity to store
      * @return the stored entity
      */
+
     @Override
     public PscExtension save(PscExtension filing) {
         return repository.save(filing);
@@ -35,8 +39,36 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @param filingId the Filing ID
      * @return the stored entity if found
      */
+
     @Override
     public Optional<PscExtension> get(String filingId) {
         return repository.findById(filingId);
+    }
+
+    /**
+     * Query the mongoDB for the number psc extension requests.
+     *
+     * @param pscNotificationId   the PSC ID
+     * @return the number of psc extension requests if found.
+     *
+     */
+
+    @Override
+    public Optional<PscExtension> getExtensionCount(String pscNotificationId) {
+        if (pscNotificationId == null || pscNotificationId.isEmpty()) {
+            logger.error("Provided notification ID is missing");
+            throw new NullPointerException("Notification ID cannot be null or empty");
+        }
+
+        long count = repository.countByDataPscNotificationId(pscNotificationId);
+        if (count > 1) {
+            logger.error("Multiple extensions found for notification ID: " + pscNotificationId);
+            throw new IllegalArgumentException();
+
+        }
+
+        logger.info("Repository contains " + count + " extensions for ID: " + pscNotificationId);
+
+        return repository.findById(pscNotificationId);
     }
 }
