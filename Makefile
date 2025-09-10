@@ -59,7 +59,7 @@ coverage:
 
 .PHONY: sonar
 sonar:
-	mvn sonar:sonar
+	mvn sonar:sonar -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
 
 .PHONY: sonar-pr-analysis
 sonar-pr-analysis:
