@@ -117,35 +117,19 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         return ResponseEntity.created(savedEntity.getLinks().self()).body(response);
     }
 
-    @Override
-    @GetMapping("/{pscNotificationId}")
-    public ResponseEntity<PscExtension> getPscExtensionCount(
-            @PathVariable("pscNotificationId") final String pscNotificationId) {
 
-        final var extensionCount = pscExtensionDetailsService.getExtensionCount(pscNotificationId);
-        if (extensionCount.isPresent()){
-            logger.info("Extension found for the given notification ID.");
-        }else{
+    @GetMapping("/{pscNotificationId}")
+    public ResponseEntity<Long> getPscExtensionCount(@PathVariable("pscNotificationId") final String pscNotificationId) {
+
+        final var extensionCount = pscExtensionsService.getExtensionCount(pscNotificationId);
+
+        if (extensionCount.isPresent()) {
+            LOGGER.info("Extension found for the given notification ID.");
+            return ResponseEntity.ok(extensionCount.get());
+
+        } else {
             throw new IllegalArgumentException("No extension found for the given notification ID.");
         }
-
-
-        return ResponseEntity.ok(extensionCount.get());
-    }
-
-    private Transaction getTransaction(final String transId, Transaction transaction,
-                                       final Map<String, Object> logMap, final String passthroughHeader) {
-        if (transaction == null) {
-            try {
-                transaction = transactionService.getTransaction(transId, passthroughHeader);
-            } catch (Exception e) {
-                logger.errorContext(transId, "Failed to get transaction", e, logMap);
-                throw new RuntimeException("Failed to get transaction", e);
-            }
-        }
-
-        logger.infoContext(transId, "transaction found", logMap);
-        return transaction;
     }
 
     private PscExtension saveFilingWithLinks(

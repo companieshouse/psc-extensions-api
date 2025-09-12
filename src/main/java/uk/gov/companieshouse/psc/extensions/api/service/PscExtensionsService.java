@@ -23,9 +23,9 @@ public interface PscExtensionsService {
     Optional<PscExtension> get(String filingId);
 
     /**
-     * Retrieves the number of PSC extension requests from our MongoDB
+     * Retrieves the number of PSC extension requests from MongoDB
      *
      * @return the number of PSC extension requests
      */
-    Optional<PscExtension> getExtensionCount(String pscNotificationId);
+    Optional<Long> getExtensionCount(String pscNotificationId);
 }
