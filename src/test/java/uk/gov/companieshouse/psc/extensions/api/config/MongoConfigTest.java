@@ -40,6 +40,6 @@ class MongoConfigTest {
         // Optional: check that the client was created with the expected settings
         MongoClientSettings settings = ((com.mongodb.client.internal.MongoClientImpl) client).getSettings();
         assertEquals(UuidRepresentation.STANDARD, settings.getUuidRepresentation());
-        assertEquals("localhost:27017", settings.getClusterSettings().getHosts().get(0).toString());
+        assertEquals("localhost:27017", settings.getClusterSettings().getHosts().getFirst().toString());
     }
 }
