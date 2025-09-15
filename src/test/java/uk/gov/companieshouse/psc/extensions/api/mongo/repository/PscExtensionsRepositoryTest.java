@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class PscExtensionsRepositoryTest extends MongoDBTest {
+class PscExtensionsRepositoryTest extends MongoDBTest {
 
     @Autowired
     private PscExtensionsRepository requestRepository;
 
     @Test
-    public void When_NewRequestSaved_Expect_IdAssigned() throws URISyntaxException {
+    void When_NewRequestSaved_Expect_IdAssigned() throws URISyntaxException {
         PscExtension pscExtensionsRequest = createTestExtensionRequest();
 
         PscExtension savedRequest = requestRepository.save(pscExtensionsRequest);
@@ -41,7 +41,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_RequestRetrieved_Expect_DataMatchedSavedValues() throws URISyntaxException {
+    void When_RequestRetrieved_Expect_DataMatchedSavedValues() throws URISyntaxException {
         PscExtension pscExtensionsRequest = createTestExtensionRequest();
 
         PscExtension savedRequest = requestRepository.save(pscExtensionsRequest);
@@ -84,7 +84,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_UsingBuilder_Expect_ObjectCreatedCorrectly() {
+    void When_UsingBuilder_Expect_ObjectCreatedCorrectly() {
         InternalData internalData = new InternalData("internal-123");
 
         PscExtension pscExtension = PscExtension.builder()
@@ -101,7 +101,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_UsingCopyConstructor_Expect_ObjectCopiedCorrectly() throws URISyntaxException {
+    void When_UsingCopyConstructor_Expect_ObjectCopiedCorrectly() throws URISyntaxException {
         PscExtension original = createTestExtensionRequest();
         InternalData originalInternalData = new InternalData("copy-test-internal");
         original.setInternalData(originalInternalData);
@@ -117,7 +117,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_UsingEqualsAndHashCode_Expect_CorrectBehavior() throws URISyntaxException {
+    void When_UsingEqualsAndHashCode_Expect_CorrectBehavior() throws URISyntaxException {
         InternalData internalData1 = new InternalData("same-id");
         InternalData internalData2 = new InternalData("same-id");
         InternalData internalData3 = new InternalData("different-id");
@@ -139,7 +139,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_TestingPseNotificationId_Expect_CorrectFieldName() throws URISyntaxException {
+    void When_TestingPseNotificationId_Expect_CorrectFieldName() throws URISyntaxException {
         PscExtension pscExtension = createTestExtensionRequest();
 
         assertEquals("345", pscExtension.getData().getPscNotificationId());
@@ -149,7 +149,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_TestingInternalDataOperations_Expect_AllFunctionalityWorks() {
+    void When_TestingInternalDataOperations_Expect_AllFunctionalityWorks() {
         InternalData builderData = new InternalData("internal-123");
         assertEquals("internal-123", builderData.getInternalId());
 
@@ -161,7 +161,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_AddingInternalDataToPscExtension_Expect_StoredAndRetrievedCorrectly() throws URISyntaxException {
+    void When_AddingInternalDataToPscExtension_Expect_StoredAndRetrievedCorrectly() throws URISyntaxException {
         InternalData internalData = new InternalData("test-internal-123");
 
         PscExtension pscExtension = createTestExtensionRequest();
@@ -179,7 +179,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
 
     @Test
-    public void When_InternalDataIsNull_Expect_HandledCorrectly() throws URISyntaxException {
+    void When_InternalDataIsNull_Expect_HandledCorrectly() throws URISyntaxException {
         PscExtension pscExtension = createTestExtensionRequest();
         // internalData should be null by default
 

@@ -30,6 +30,13 @@ public class InternalData {
     }
 
     @Override
+    public String toString() {
+        return "InternalData{" +
+                "internalId='" + internalId + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

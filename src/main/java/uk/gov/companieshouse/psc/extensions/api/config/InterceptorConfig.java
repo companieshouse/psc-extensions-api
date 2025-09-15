@@ -44,19 +44,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(tokenPermissionsInterceptor())
                 .order(3);
 
-        registry.addInterceptor(requestPermissionsInterceptor())
-                .order(4);
-
         registry.addInterceptor(transactionClosedInterceptor())
                 .addPathPatterns(filingPaths)
-                .order(5);
+                .order(4);
 
         registry.addInterceptor(requestLoggingInterceptor())
-                .order(6);
+                .order(5);
 
         registry.addInterceptor(new InternalUserInterceptor())
                 .addPathPatterns(filingPaths)
-                .order(7);
+                .order(6);
     }
 
     @Bean("chsTransactionInterceptor")
@@ -72,17 +69,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Bean("chsTokenPermissionInterceptor")
     public TokenPermissionsInterceptor tokenPermissionsInterceptor() {
         return new TokenPermissionsInterceptor();
-    }
-
-    @Bean("chsRequestPermissionInterceptor")
-    public MappablePermissionsInterceptor requestPermissionsInterceptor() {
-        return new MappablePermissionsInterceptor(
-                Permission.Key.USER_PSC_EXTENSION,
-                true,
-                PermissionsMapping.builder()
-                        .defaultRequireAnyOf(Permission.Value.CREATE)
-                        .build()
-        );
     }
 
     @Bean("chsClosedTransactionInterceptor")

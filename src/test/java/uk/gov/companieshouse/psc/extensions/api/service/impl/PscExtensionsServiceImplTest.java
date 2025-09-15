@@ -3,6 +3,7 @@ package uk.gov.companieshouse.psc.extensions.api.service.impl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.psc.extensions.api.MongoDBTest;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
@@ -11,6 +12,7 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -29,7 +31,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     private PscExtensionsService pscExtensionsService;
 
     @Test
-    void save_WhenValidPscExtension_ShouldStoreSuccessfully() throws URISyntaxException {
+    void save_WhenValidPscExtension_ShouldStoreSuccessfully() {
         PscExtension extension = createTestPscExtension();
 
         PscExtension savedExtension = pscExtensionsService.save(extension);
@@ -43,7 +45,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     }
 
     @Test
-    void save_WhenExtensionWithInternalData_ShouldPreserveInternalData() throws URISyntaxException {
+    void save_WhenExtensionWithInternalData_ShouldPreserveInternalData() {
         PscExtension extension = createTestPscExtension();
         InternalData internalData = new InternalData("internal-appointment-123");
         extension.setInternalData(internalData);
@@ -73,7 +75,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     }
 
     @Test
-    void get_WhenExtensionExists_ShouldReturnExtension() throws URISyntaxException {
+    void get_WhenExtensionExists_ShouldReturnExtension() {
         PscExtension extension = createTestPscExtension();
         PscExtension savedExtension = pscExtensionsService.save(extension);
         String filingId = savedExtension.getId();
@@ -96,7 +98,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     }
 
     @Test
-    void save_WhenUpdatingExistingExtension_ShouldUpdateSuccessfully() throws URISyntaxException {
+    void save_WhenUpdatingExistingExtension_ShouldUpdateSuccessfully() {
         PscExtension extension = createTestPscExtension();
         PscExtension savedExtension = pscExtensionsService.save(extension);
 
@@ -114,7 +116,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     }
 
     @Test
-    void save_WhenMultipleExtensions_ShouldHandleCorrectly() throws URISyntaxException {
+    void save_WhenMultipleExtensions_ShouldHandleCorrectly() {
         PscExtension extension1 = createTestPscExtension();
         extension1.getData().setCompanyNumber("11111");
 
@@ -142,7 +144,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     }
 
     @Test
-    void save_WhenExtensionWithComplexExtensionDetails_ShouldPreserveAllFields() throws URISyntaxException {
+    void save_WhenExtensionWithComplexExtensionDetails_ShouldPreserveAllFields() {
         PscExtension extension = createTestPscExtension();
         ExtensionDetails extensionDetails = extension.getData().getExtensionDetails();
         extensionDetails.setExtensionReason("serious illness");
@@ -159,7 +161,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
         assertEquals(LocalDate.of(2024, 12, 25), retrievedDetails.getExtensionRequestDate());
     }
 
-    private PscExtension createTestPscExtension() throws URISyntaxException {
+    private PscExtension createTestPscExtension() {
         PscExtension extension = new PscExtension();
         extension.setCreatedAt(Instant.now());
         extension.setUpdatedAt(Instant.now());

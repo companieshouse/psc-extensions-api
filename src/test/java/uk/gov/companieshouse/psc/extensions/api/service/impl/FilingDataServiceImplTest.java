@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,13 +33,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FilingDataServiceImplTest {
 
-    private final String TEST_FILING_ID = "test-filing-id";
-    private final String TEST_APPOINTMENT_ID = "test-appointment-id";
+    private final String FILING_ID = "test-filing-id";
+    private final String APPOINTMENT_ID = "test-appointment-id";
     @Mock
     private PscExtensionsService pscExtensionsService;
     @InjectMocks
     private FilingDataServiceImpl filingDataService;
     private PscExtension testPscExtension;
+    @Mock
     private Transaction testTransaction;
 
     @BeforeEach
@@ -49,9 +52,9 @@ class FilingDataServiceImplTest {
 
     @Test
     void generateFilingApi_WhenPscExtensionExists_ShouldReturnValidFilingApi() {
-        when(pscExtensionsService.get(TEST_FILING_ID)).thenReturn(Optional.of(testPscExtension));
+        when(pscExtensionsService.get(FILING_ID)).thenReturn(Optional.of(testPscExtension));
 
-        FilingApi result = filingDataService.generateFilingApi(TEST_FILING_ID, testTransaction);
+        FilingApi result = filingDataService.generateFilingApi(FILING_ID, testTransaction);
 
         assertNotNull(result);
         assertEquals(FilingKind.FULL_KIND, result.getKind());
@@ -60,7 +63,7 @@ class FilingDataServiceImplTest {
 
         Map<String, Object> dataMap = result.getData();
         assertTrue(dataMap.containsKey("appointment_id"));
-        assertEquals(TEST_APPOINTMENT_ID, dataMap.get("appointment_id"));
+        assertEquals(APPOINTMENT_ID, dataMap.get("appointment_id"));
 
         assertEquals("12345", dataMap.get("company_number"));
 
@@ -78,7 +81,7 @@ class FilingDataServiceImplTest {
 
         FilingResourceNotFoundException exception = assertThrows(
                 FilingResourceNotFoundException.class,
-                () -> filingDataService.generateFilingApi(TEST_FILING_ID, testTransaction)
+                () -> filingDataService.generateFilingApi(FILING_ID, testTransaction)
         );
 
         assertEquals("PSC extension not found when generating filing for test-filing-id", exception.getMessage());
@@ -87,22 +90,22 @@ class FilingDataServiceImplTest {
     @Test
     void generateFilingApi_WithNullInternalData_ShouldHandleGracefully() {
         testPscExtension.setInternalData(null);
-        when(pscExtensionsService.get(TEST_FILING_ID)).thenReturn(Optional.of(testPscExtension));
+        when(pscExtensionsService.get(FILING_ID)).thenReturn(Optional.of(testPscExtension));
 
         assertThrows(
                 RuntimeException.class,
-                () -> filingDataService.generateFilingApi(TEST_FILING_ID, testTransaction)
+                () -> filingDataService.generateFilingApi(FILING_ID, testTransaction)
         );
     }
 
     @Test
     void generateFilingApi_WithNullData_ShouldHandleGracefully() {
         testPscExtension.setData(null);
-        when(pscExtensionsService.get(TEST_FILING_ID)).thenReturn(Optional.of(testPscExtension));
+        when(pscExtensionsService.get(FILING_ID)).thenReturn(Optional.of(testPscExtension));
 
         assertThrows(
                 RuntimeException.class,
-                () -> filingDataService.generateFilingApi(TEST_FILING_ID, testTransaction)
+                () -> filingDataService.generateFilingApi(FILING_ID, testTransaction)
         );
     }
 
@@ -110,7 +113,7 @@ class FilingDataServiceImplTest {
         PscExtension extension = new PscExtension();
 
         InternalData internalData = new InternalData();
-        internalData.setInternalId(TEST_APPOINTMENT_ID);
+        internalData.setInternalId(APPOINTMENT_ID);
         extension.setInternalData(internalData);
 
         Data data = new Data();

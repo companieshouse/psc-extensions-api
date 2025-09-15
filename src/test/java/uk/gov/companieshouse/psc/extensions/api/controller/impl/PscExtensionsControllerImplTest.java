@@ -14,6 +14,7 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
+import uk.gov.companieshouse.psc.extensions.api.exception.ExtensionRequestServiceException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
 import uk.gov.companieshouse.psc.extensions.api.mapper.PscExtensionsMapper;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
@@ -24,7 +25,6 @@ import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 
 import java.time.Clock;
-import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,10 +34,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PscExtensionsControllerImplTest {
 
-    private final String TEST_TRANSACTION_ID = "test-transaction-id";
-    private final String TEST_PSC_NOTIFICATION_ID = "test-psc-notification-id";
-    private final String TEST_COMPANY_NUMBER = "12345678";
-    private final Instant TEST_TIME = Instant.parse("2024-01-15T10:00:00Z");
+    private final String TRANSACTION_ID = "test-transaction-id";
+    private final String PSC_NOTIFICATION_ID = "test-psc-notification-id";
+    private final String COMPANY_NUMBER = "12345678";
+
     @Mock
     private TransactionService transactionService;
     @Mock
@@ -55,18 +55,17 @@ class PscExtensionsControllerImplTest {
     private Transaction testTransaction;
     private PscExtensionsData testData;
     private PscExtension testEntity;
-    private PscIndividualFullRecordApi testPscRecord;
     private HttpServletRequest mockRequest;
 
     @BeforeEach
     void setUp() {
         testTransaction = new Transaction();
-        testTransaction.setId(TEST_TRANSACTION_ID);
-        testTransaction.setCompanyNumber(TEST_COMPANY_NUMBER);
+        testTransaction.setId(TRANSACTION_ID);
+        testTransaction.setCompanyNumber(COMPANY_NUMBER);
 
         testData = new PscExtensionsData();
-        testData.setCompanyNumber(TEST_COMPANY_NUMBER);
-        testData.setPscNotificationId(TEST_PSC_NOTIFICATION_ID);
+        testData.setCompanyNumber(COMPANY_NUMBER);
+        testData.setPscNotificationId(PSC_NOTIFICATION_ID);
 
         testEntity = new PscExtension();
         testEntity.setId("test-entity-id");
@@ -74,10 +73,6 @@ class PscExtensionsControllerImplTest {
         InternalData internalData = new InternalData();
         internalData.setInternalId("appointment-123");
         testEntity.setInternalData(internalData);
-
-        testPscRecord = new PscIndividualFullRecordApi();
-        testPscRecord.setInternalId(123L);
-        testPscRecord.setName("Test Person");
 
         mockRequest = mock(HttpServletRequest.class);
     }
@@ -96,8 +91,8 @@ class PscExtensionsControllerImplTest {
         when(extensionValidityService.canSubmitExtensionRequest(testData)).thenReturn(false);
 
         assertThrows(
-                RuntimeException.class,
-                () -> controller._createPscExtension(TEST_TRANSACTION_ID, testData)
+                ExtensionRequestServiceException.class,
+                () -> controller._createPscExtension(TRANSACTION_ID, testData)
         );
     }
 
@@ -113,7 +108,7 @@ class PscExtensionsControllerImplTest {
 
         assertThrows(
                 PscLookupServiceException.class,
-                () -> controller._createPscExtension(TEST_TRANSACTION_ID, testData)
+                () -> controller._createPscExtension(TRANSACTION_ID, testData)
         );
     }
 
