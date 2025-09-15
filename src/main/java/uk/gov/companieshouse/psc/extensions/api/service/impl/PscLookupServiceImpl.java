@@ -10,7 +10,7 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.FilingResourceNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
-import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 

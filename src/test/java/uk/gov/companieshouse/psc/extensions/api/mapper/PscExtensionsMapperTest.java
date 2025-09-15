@@ -9,13 +9,13 @@ import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 
 @SpringBootTest
-public class PscExtensionsMapperTest {
+class PscExtensionsMapperTest {
 
     @Autowired
     private PscExtensionsMapper mapper;
 
     @Test
-    public void testToEntity() {
+    void testToEntity() {
         PscExtensionsData input = new PscExtensionsData();
 
         PscExtension result = mapper.toEntity(input);
@@ -25,7 +25,7 @@ public class PscExtensionsMapperTest {
     }
 
     @Test
-    public void testToApi() {
+    void testToApi() {
         PscExtension extension = new PscExtension();
 
         PscExtensionResponse response = mapper.toApi(extension);

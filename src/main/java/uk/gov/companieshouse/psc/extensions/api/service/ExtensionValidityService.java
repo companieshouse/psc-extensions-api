@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.service;
 
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
+import uk.gov.companieshouse.psc.extensions.api.exception.ExtensionRequestServiceException;
 
 public interface ExtensionValidityService {
 
@@ -10,7 +11,7 @@ public interface ExtensionValidityService {
      *
      * @param pscExtensionsData the extension data containing PSC details
      * @return true if the PSC can submit another extension request, false otherwise
-     * @throws RuntimeException if validation cannot be completed
+     * @throws ExtensionRequestServiceException if validation cannot be completed
      */
     boolean canSubmitExtensionRequest(PscExtensionsData pscExtensionsData);
 }

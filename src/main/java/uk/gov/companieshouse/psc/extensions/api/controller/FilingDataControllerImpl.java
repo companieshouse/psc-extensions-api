@@ -33,7 +33,15 @@ public class FilingDataControllerImpl implements PscExtensionRequestFilingDataAp
     public ResponseEntity<List<FilingApi>> _getFilingsData(String transactionId, String filingResourceId) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
                 .currentRequestAttributes()).getRequest();
-        Transaction transaction = (Transaction) request.getAttribute("transaction");
+
+        Transaction transaction = null;
+        if (request != null) {
+            Object attr = request.getAttribute("transaction");
+            if (attr instanceof Transaction) {
+                transaction = (Transaction) attr;
+            }
+        }
+
         final var logMap = LogMapHelper.createLogMap(transactionId, filingResourceId);
 
         LOGGER.debugRequest(request,

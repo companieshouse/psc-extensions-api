@@ -8,33 +8,35 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.psc.extensions.api.service.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceImplTest {
 
-    private final String TEST_TRANSACTION_ID = "test-transaction-id";
+    private final String TRANSACTION_ID = "test-transaction-id";
     @Mock
     private ApiClientService apiClientService;
+    @Mock
+    private InternalApiClientService internalApiClientService;
     @Mock
     private Logger logger;
     @InjectMocks
     private TransactionServiceImpl transactionService;
-    private Transaction testTransaction;
 
     @BeforeEach
     void setUp() {
-        testTransaction = new Transaction();
-        testTransaction.setId(TEST_TRANSACTION_ID);
+        Transaction testTransaction = new Transaction();
+        testTransaction.setId(TRANSACTION_ID);
         testTransaction.setCompanyNumber("12345678");
         testTransaction.setDescription("Test transaction");
     }
 
     @Test
     void constructor_ShouldSetDependencies() {
-        TransactionServiceImpl service = new TransactionServiceImpl(apiClientService, logger);
+        TransactionServiceImpl service = new TransactionServiceImpl(apiClientService, internalApiClientService, logger);
         assertNotNull(service);
     }
 
