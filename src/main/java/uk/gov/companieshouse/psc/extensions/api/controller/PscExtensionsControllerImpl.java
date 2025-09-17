@@ -20,6 +20,7 @@ import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
+import uk.gov.companieshouse.psc.extensions.api.exception.ExtensionRequestServiceException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
 import uk.gov.companieshouse.psc.extensions.api.exception.TransactionServiceException;
 import uk.gov.companieshouse.psc.extensions.api.mapper.PscExtensionsMapper;
@@ -84,7 +85,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         if (!extensionValidityService.canSubmitExtensionRequest(data)) {
             LOGGER.errorContext(transactionId, "PSC already has maximum number of extension requests", null, logMap);
-            throw new RuntimeException("PSC has already submitted the maximum number of extension requests");
+            throw new ExtensionRequestServiceException("PSC has already submitted the maximum number of extension requests");
         }
 
         final PscExtension entity = filingMapper.toEntity(data);
@@ -180,12 +181,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         transaction.setResources(resourceMap);
 
-        try {
-            transactionService.updateTransaction(transaction);
-        } catch (Exception e) {
-            LOGGER.errorContext(transaction.getId(), "Failed to update transaction", e, null);
-            throw new RuntimeException("Failed to update transaction", e);
-        }
+        transactionService.updateTransaction(transaction);
     }
 
     private Map<String, Resource> buildResourceMap(final ResourceLinks links) {

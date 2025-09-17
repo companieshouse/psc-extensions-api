@@ -88,4 +88,13 @@ public class ExtensionDetails {
         public int hashCode() {
                 return Objects.hash(extensionReason, extensionStatus, extensionRequestDate);
         }
+
+        @Override
+        public String toString() {
+                return "ExtensionDetails{" +
+                        "extensionReason='" + extensionReason + '\'' +
+                        ", extensionStatus='" + extensionStatus + '\'' +
+                        ", extensionRequestDate=" + extensionRequestDate +
+                        '}';
+        }
 }
