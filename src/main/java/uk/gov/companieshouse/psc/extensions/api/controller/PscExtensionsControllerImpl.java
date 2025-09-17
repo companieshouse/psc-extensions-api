@@ -121,7 +121,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
     }
 
 
-    @GetMapping("/{pscNotificationId}")
+    @GetMapping("/{pscNotificationId}/extensionCount")
     public ResponseEntity<Long> getPscExtensionCount(@PathVariable("pscNotificationId") final String pscNotificationId) {
 
         final var pscExtensionRequestCount = pscExtensionsService.getExtensionCount(pscNotificationId);
