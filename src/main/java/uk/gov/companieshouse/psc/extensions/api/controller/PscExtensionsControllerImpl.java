@@ -122,15 +122,11 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
     @GetMapping("/{pscNotificationId}")
     public ResponseEntity<Long> getPscExtensionCount(@PathVariable("pscNotificationId") final String pscNotificationId) {
 
-        final var extensionCount = pscExtensionsService.getExtensionCount(pscNotificationId);
+        final var pscExtensionRequestCount = pscExtensionsService.getExtensionCount(pscNotificationId);
 
-        if (extensionCount.isPresent()) {
-            LOGGER.info("Extension found for the given notification ID.");
-            return ResponseEntity.ok(extensionCount.get());
+        pscExtensionRequestCount.ifPresent(extensionCount -> LOGGER.info("Extension request count is " + extensionCount + " for " + pscNotificationId));
 
-        } else {
-            throw new IllegalArgumentException("No extension found for the given notification ID.");
-        }
+        return ResponseEntity.ok(pscExtensionRequestCount.orElse(0L));
     }
 
     private PscExtension saveFilingWithLinks(

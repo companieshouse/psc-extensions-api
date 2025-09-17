@@ -63,7 +63,7 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
         long count = repository.countByDataPscNotificationId(pscNotificationId);
 
         if (count > 1) {
-            logger.error("Multiple extensions found for notification ID: " + pscNotificationId);
+            logger.error("Number extension requests exceeded for " + pscNotificationId);
             throw new IllegalArgumentException();
 
         }
