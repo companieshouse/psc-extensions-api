@@ -12,7 +12,6 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRe
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -44,23 +43,12 @@ class PscExtensionServiceMockImplTest {
         assertTrue(response.isPresent());
         assertEquals(1L, response.get());
     }
-
     @Test
-    void shouldThrowExceptionWhenNotificationIdIsNull() {
-        assertThrows(NullPointerException.class, () -> service.getExtensionCount(null));
-    }
+    void shouldReturnEmptyOptionalWhenCountIsZero() {
+        when(repository.countByDataPscNotificationId(pscNotificationId)).thenReturn(0L);
 
-    @Test
-    void shouldThrowExceptionWhenNotificationIdIsEmpty() {
-        assertThrows(NullPointerException.class, () -> service.getExtensionCount(""));
-    }
+        Optional<Long> result = service.getExtensionCount(pscNotificationId);
 
-    @Test
-    void shouldThrowExceptionWhenNumberOfExtensionsRequestsExceeded() throws IllegalArgumentException{
-        when(repository.countByDataPscNotificationId(pscNotificationId)).thenReturn(2L);
-
-        assertThrows(IllegalArgumentException.class, ()-> {
-            service.getExtensionCount(pscNotificationId);
-        });
+        assertTrue(result.isEmpty());
     }
 }

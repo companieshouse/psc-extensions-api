@@ -55,18 +55,8 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
 
     @Override
     public Optional<Long> getExtensionCount(String pscNotificationId) {
-        if (pscNotificationId == null || pscNotificationId.isEmpty()) {
-            logger.error("Provided notification ID is missing");
-            throw new NullPointerException("Notification ID cannot be null or empty");
-        }
 
         long count = repository.countByDataPscNotificationId(pscNotificationId);
-
-        if (count > 1) {
-            logger.error("Number extension requests exceeded for " + pscNotificationId);
-            throw new IllegalArgumentException();
-
-        }
 
         logger.info("Repository contains " + count + " extensions for ID: " + pscNotificationId);
 
