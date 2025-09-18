@@ -7,9 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;
-import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,12 +18,6 @@ class PscExtensionServiceMockImplTest {
 
     @Mock
     private PscExtensionsRepository repository;
-
-    @Mock
-    private PscExtensionsService pscExtensionsService;
-
-    @Mock
-    private PscExtensionsControllerImpl pscExtensionsControllerImpl;
 
     @InjectMocks
     private PscExtensionsServiceImpl service;
