@@ -8,6 +8,10 @@ import java.util.Objects;
 
 public class PathHelper {
 
+    private PathHelper(){
+
+    }
+
     public static List<String> getAllPathsFromInterfaces(Class<?>... interfaceClasses) {
         return Arrays.stream(interfaceClasses)
                 .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))

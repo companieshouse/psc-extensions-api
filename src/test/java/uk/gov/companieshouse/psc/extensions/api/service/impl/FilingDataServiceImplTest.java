@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.exception.FilingResourceNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.model.FilingKind;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
@@ -20,8 +21,6 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -33,8 +32,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FilingDataServiceImplTest {
 
-    private final String FILING_ID = "test-filing-id";
-    private final String APPOINTMENT_ID = "test-appointment-id";
+    private static final String FILING_ID = "test-filing-id";
+    private static final String APPOINTMENT_ID = "test-appointment-id";
     @Mock
     private PscExtensionsService pscExtensionsService;
     @InjectMocks
@@ -42,12 +41,15 @@ class FilingDataServiceImplTest {
     private PscExtension testPscExtension;
     @Mock
     private Transaction testTransaction;
+    @Mock
+    private Logger logger;
 
     @BeforeEach
     void setUp() {
         testPscExtension = createTestPscExtension();
         testTransaction = new Transaction();
         testTransaction.setId("test-transaction-id");
+        filingDataService = new FilingDataServiceImpl(pscExtensionsService, logger);
     }
 
     @Test

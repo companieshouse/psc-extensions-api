@@ -1,9 +1,16 @@
 package uk.gov.companieshouse.psc.extensions.api.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class LogMapHelper {
+@Component
+public final class LogMapHelper {
+
+    private LogMapHelper() {
+        // intentionally blank
+    }
     
     /**
      * Create a log map with transaction ID.
