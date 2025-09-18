@@ -33,9 +33,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PscExtensionsControllerImplTest {
 
-    private final String TRANSACTION_ID = "test-transaction-id";
-    private final String PSC_NOTIFICATION_ID = "test-psc-notification-id";
-    private final String COMPANY_NUMBER = "12345678";
+    private static final String TRANSACTION_ID = "test-transaction-id";
+    private static final String PSC_NOTIFICATION_ID = "test-psc-notification-id";
+    private static final String COMPANY_NUMBER = "12345678";
 
     @Mock
     private TransactionService transactionService;

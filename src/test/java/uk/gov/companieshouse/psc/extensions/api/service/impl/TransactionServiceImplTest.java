@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,9 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceImplTest {
 
-    private final String TRANSACTION_ID = "test-transaction-id";
-    @Mock
-    private ApiClientService apiClientService;
+    private static final String TRANSACTION_ID = "test-transaction-id";
     @Mock
     private InternalApiClientService internalApiClientService;
     @Mock
@@ -36,7 +33,7 @@ class TransactionServiceImplTest {
 
     @Test
     void constructor_ShouldSetDependencies() {
-        TransactionServiceImpl service = new TransactionServiceImpl(apiClientService, internalApiClientService, logger);
+        TransactionServiceImpl service = new TransactionServiceImpl(internalApiClientService, logger);
         assertNotNull(service);
     }
 

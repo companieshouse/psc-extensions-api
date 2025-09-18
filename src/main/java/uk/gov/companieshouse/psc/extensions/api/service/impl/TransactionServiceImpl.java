@@ -9,7 +9,6 @@ import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.exception.TransactionServiceException;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
@@ -20,16 +19,13 @@ import java.text.MessageFormat;
 public class TransactionServiceImpl implements TransactionService {
 
     private static final String UNEXPECTED_STATUS_CODE = "Unexpected Status Code received";
-    private final ApiClientService apiClientService;
     private final InternalApiClientService internalApiClientService;
     private final Logger logger;
 
     public TransactionServiceImpl(
-            final ApiClientService apiClientService,
             final InternalApiClientService internalApiClientService,
             final Logger logger
     ) {
-        this.apiClientService = apiClientService;
         this.internalApiClientService = internalApiClientService;
         this.logger = logger;
 

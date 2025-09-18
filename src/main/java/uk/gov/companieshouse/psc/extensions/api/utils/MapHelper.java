@@ -7,7 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.Map;
 
 public class MapHelper {
-    
+
+    private MapHelper(){
+
+    }
     private static final ObjectMapper SNAKE_CASE_MAPPER = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
             .registerModule(new JavaTimeModule());

@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,13 +35,13 @@ public class FilingDataControllerImpl implements PscExtensionRequestFilingDataAp
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
                 .currentRequestAttributes()).getRequest();
 
-        Transaction transaction = null;
-        Object attr = request.getAttribute("transaction");
-        if (attr instanceof Transaction) {
-            transaction = (Transaction) attr;
-        }
+      Transaction transaction = Optional.of(request)
+          .map(r -> r.getAttribute("transaction"))
+          .filter(Transaction.class::isInstance)
+          .map(Transaction.class::cast)
+          .orElse(null);
 
-        final var logMap = LogMapHelper.createLogMap(transactionId, filingResourceId);
+      final var logMap = LogMapHelper.createLogMap(transactionId, filingResourceId);
 
         LOGGER.debugRequest(request,
                 "GET /private/transactions/{transactionId}/persons-with-significant-control-extensions" +

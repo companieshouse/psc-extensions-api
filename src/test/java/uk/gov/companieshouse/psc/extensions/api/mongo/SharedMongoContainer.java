@@ -4,6 +4,9 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class SharedMongoContainer {
+    private SharedMongoContainer(){
+
+    }
     private static final DockerImageName MONGO_IMAGE = DockerImageName.parse("mongo:6.0.19");
     private static final MongoDBContainer INSTANCE = new MongoDBContainer(MONGO_IMAGE);
 
@@ -14,9 +17,5 @@ public class SharedMongoContainer {
 
     public static MongoDBContainer getInstance() {
         return INSTANCE;
-    }
-
-    private void SharedMongoDBContainer() {
-        // private constructor, to prevent instantiation
     }
 }
