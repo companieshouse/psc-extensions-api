@@ -1,5 +1,8 @@
-//package uk.gov.companieshouse.psc.extensions.api.config;
-//
+package uk.gov.companieshouse.psc.extensions.api.config;
+
+
+// TODO DEEP-548 Restore this interceptor config
+
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.ComponentScan;
 //import org.springframework.context.annotation.Configuration;
@@ -44,16 +47,19 @@
 //        registry.addInterceptor(tokenPermissionsInterceptor())
 //                .order(3);
 //
-//        registry.addInterceptor(transactionClosedInterceptor())
-//                .addPathPatterns(filingPaths)
+//        registry.addInterceptor(requestPermissionsInterceptor())
 //                .order(4);
 //
-//        registry.addInterceptor(requestLoggingInterceptor())
+//        registry.addInterceptor(transactionClosedInterceptor())
+//                .addPathPatterns(filingPaths)
 //                .order(5);
+//
+//        registry.addInterceptor(requestLoggingInterceptor())
+//                .order(6);
 //
 //        registry.addInterceptor(new InternalUserInterceptor())
 //                .addPathPatterns(filingPaths)
-//                .order(6);
+//                .order(7);
 //    }
 //
 //    @Bean("chsTransactionInterceptor")
@@ -69,6 +75,17 @@
 //    @Bean("chsTokenPermissionInterceptor")
 //    public TokenPermissionsInterceptor tokenPermissionsInterceptor() {
 //        return new TokenPermissionsInterceptor();
+//    }
+//
+//    @Bean("chsRequestPermissionInterceptor")
+//    public MappablePermissionsInterceptor requestPermissionsInterceptor() {
+//        return new MappablePermissionsInterceptor(
+//                Permission.Key.USER_PSC_EXTENSION,
+//                true,
+//                PermissionsMapping.builder()
+//                        .defaultRequireAnyOf(Permission.Value.CREATE)
+//                        .build()
+//        );
 //    }
 //
 //    @Bean("chsClosedTransactionInterceptor")
