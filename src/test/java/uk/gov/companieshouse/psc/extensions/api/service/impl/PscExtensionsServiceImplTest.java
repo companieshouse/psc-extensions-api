@@ -3,7 +3,6 @@ package uk.gov.companieshouse.psc.extensions.api.service.impl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.psc.extensions.api.MongoDBTest;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
@@ -12,7 +11,6 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;

@@ -35,11 +35,9 @@ public class FilingDataControllerImpl implements PscExtensionRequestFilingDataAp
                 .currentRequestAttributes()).getRequest();
 
         Transaction transaction = null;
-        if (request != null) {
-            Object attr = request.getAttribute("transaction");
-            if (attr instanceof Transaction) {
-                transaction = (Transaction) attr;
-            }
+        Object attr = request.getAttribute("transaction");
+        if (attr instanceof Transaction) {
+            transaction = (Transaction) attr;
         }
 
         final var logMap = LogMapHelper.createLogMap(transactionId, filingResourceId);
