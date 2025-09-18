@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Data {
 
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty("company_number")
         private String companyNumber;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String pscNotificationId;

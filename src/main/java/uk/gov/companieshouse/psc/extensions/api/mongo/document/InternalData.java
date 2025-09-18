@@ -30,6 +30,13 @@ public class InternalData {
     }
 
     @Override
+    public String toString() {
+        return "InternalData{" +
+                "internalId='" + internalId + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -42,20 +49,4 @@ public class InternalData {
         return Objects.hash(internalId);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private String internalId;
-
-        public Builder internalId(String internalId) {
-            this.internalId = internalId;
-            return this;
-        }
-
-        public InternalData build() {
-            return new InternalData(internalId);
-        }
-    }
 }

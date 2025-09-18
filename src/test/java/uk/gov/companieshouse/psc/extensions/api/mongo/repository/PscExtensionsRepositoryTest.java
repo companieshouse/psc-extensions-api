@@ -16,21 +16,20 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class PscExtensionsRepositoryTest extends MongoDBTest {
+class PscExtensionsRepositoryTest extends MongoDBTest {
 
     @Autowired
     private PscExtensionsRepository requestRepository;
 
     @Test
-    public void When_NewRequestSaved_Expect_IdAssigned() throws URISyntaxException {
+    void When_NewRequestSaved_Expect_IdAssigned() throws URISyntaxException {
         PscExtension pscExtensionsRequest = createTestExtensionRequest();
 
         PscExtension savedRequest = requestRepository.save(pscExtensionsRequest);
@@ -42,7 +41,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_RequestRetrieved_Expect_DataMatchedSavedValues() throws URISyntaxException {
+    void When_RequestRetrieved_Expect_DataMatchedSavedValues() throws URISyntaxException {
         PscExtension pscExtensionsRequest = createTestExtensionRequest();
 
         PscExtension savedRequest = requestRepository.save(pscExtensionsRequest);
@@ -66,7 +65,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
                 new URI("https://example.com")
         );
         pscExtensionsRequest.setLinks(links);
-        pscExtensionsRequest.setId("2222");
+        pscExtensionsRequest.setId("66c8a1b2c3d4e5f6a7b8c9d1");
         pscExtensionsRequest.setCreatedAt(Instant.parse("2025-08-21T10:15:30.00Z"));
         pscExtensionsRequest.setUpdatedAt(Instant.now());
 
@@ -85,24 +84,24 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_UsingBuilder_Expect_ObjectCreatedCorrectly() {
-        InternalData internalData = InternalData.builder().internalId("internal-123").build();
+    void When_UsingBuilder_Expect_ObjectCreatedCorrectly() {
+        InternalData internalData = new InternalData("internal-123");
 
         PscExtension pscExtension = PscExtension.builder()
-                .id("test-id")
+                .id("66c8a1b2c3d4e5f6a7b8c9d2")
                 .createdAt(Instant.parse("2025-08-21T10:15:30.00Z"))
                 .updatedAt(Instant.now())
                 .internalData(internalData)
                 .build();
 
-        assertEquals("test-id", pscExtension.getId());
+        assertEquals("66c8a1b2c3d4e5f6a7b8c9d2", pscExtension.getId());
         assertNotNull(pscExtension.getCreatedAt());
         assertNotNull(pscExtension.getUpdatedAt());
         assertEquals("internal-123", pscExtension.getInternalData().getInternalId());
     }
 
     @Test
-    public void When_UsingCopyConstructor_Expect_ObjectCopiedCorrectly() throws URISyntaxException {
+    void When_UsingCopyConstructor_Expect_ObjectCopiedCorrectly() throws URISyntaxException {
         PscExtension original = createTestExtensionRequest();
         InternalData originalInternalData = new InternalData("copy-test-internal");
         original.setInternalData(originalInternalData);
@@ -118,7 +117,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_UsingEqualsAndHashCode_Expect_CorrectBehavior() throws URISyntaxException {
+    void When_UsingEqualsAndHashCode_Expect_CorrectBehavior() throws URISyntaxException {
         InternalData internalData1 = new InternalData("same-id");
         InternalData internalData2 = new InternalData("same-id");
         InternalData internalData3 = new InternalData("different-id");
@@ -140,7 +139,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_TestingPseNotificationId_Expect_CorrectFieldName() throws URISyntaxException {
+    void When_TestingPseNotificationId_Expect_CorrectFieldName() throws URISyntaxException {
         PscExtension pscExtension = createTestExtensionRequest();
 
         assertEquals("345", pscExtension.getData().getPscNotificationId());
@@ -150,10 +149,8 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_TestingInternalDataOperations_Expect_AllFunctionalityWorks() {
-        InternalData builderData = InternalData.builder()
-                .internalId("internal-123")
-                .build();
+    void When_TestingInternalDataOperations_Expect_AllFunctionalityWorks() {
+        InternalData builderData = new InternalData("internal-123");
         assertEquals("internal-123", builderData.getInternalId());
 
         InternalData original = new InternalData("original-id");
@@ -164,10 +161,8 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
     }
 
     @Test
-    public void When_AddingInternalDataToPscExtension_Expect_StoredAndRetrievedCorrectly() throws URISyntaxException {
-        InternalData internalData = InternalData.builder()
-                .internalId("test-internal-123")
-                .build();
+    void When_AddingInternalDataToPscExtension_Expect_StoredAndRetrievedCorrectly() throws URISyntaxException {
+        InternalData internalData = new InternalData("test-internal-123");
 
         PscExtension pscExtension = createTestExtensionRequest();
         pscExtension.setInternalData(internalData);
@@ -184,7 +179,7 @@ public class PscExtensionsRepositoryTest extends MongoDBTest {
 
 
     @Test
-    public void When_InternalDataIsNull_Expect_HandledCorrectly() throws URISyntaxException {
+    void When_InternalDataIsNull_Expect_HandledCorrectly() throws URISyntaxException {
         PscExtension pscExtension = createTestExtensionRequest();
         // internalData should be null by default
 

@@ -14,6 +14,10 @@ public class ExtensionDetails {
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private LocalDate extensionRequestDate;
 
+        public ExtensionDetails() {
+                // Default constructor
+        }
+
         public String getExtensionReason() {
                 return extensionReason;
         }
@@ -38,6 +42,41 @@ public class ExtensionDetails {
                 this.extensionRequestDate = extensionRequestDate;
         }
 
+        private ExtensionDetails(Builder builder) {
+                this.extensionReason = builder.extensionReason;
+                this.extensionStatus = builder.extensionStatus;
+                this.extensionRequestDate = builder.extensionRequestDate;
+        }
+
+        public static Builder newBuilder() {
+                return new Builder();
+        }
+
+        public static class Builder {
+                private String extensionReason;
+                private String extensionStatus;
+                private LocalDate extensionRequestDate;
+
+                public Builder extensionReason(String extensionReason) {
+                        this.extensionReason = extensionReason;
+                        return this;
+                }
+
+                public Builder extensionStatus(String extensionStatus) {
+                        this.extensionStatus = extensionStatus;
+                        return this;
+                }
+
+                public Builder extensionRequestDate(LocalDate extensionRequestDate) {
+                        this.extensionRequestDate = extensionRequestDate;
+                        return this;
+                }
+
+                public ExtensionDetails build() {
+                        return new ExtensionDetails(this);
+                }
+        }
+
         @Override
         public boolean equals(Object o) {
                 if (o == null || getClass() != o.getClass()) return false;
@@ -48,5 +87,14 @@ public class ExtensionDetails {
         @Override
         public int hashCode() {
                 return Objects.hash(extensionReason, extensionStatus, extensionRequestDate);
+        }
+
+        @Override
+        public String toString() {
+                return "ExtensionDetails{" +
+                        "extensionReason='" + extensionReason + '\'' +
+                        ", extensionStatus='" + extensionStatus + '\'' +
+                        ", extensionRequestDate=" + extensionRequestDate +
+                        '}';
         }
 }
