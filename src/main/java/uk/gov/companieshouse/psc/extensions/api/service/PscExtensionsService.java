@@ -2,6 +2,7 @@ package uk.gov.companieshouse.psc.extensions.api.service;
 
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface PscExtensionsService {
@@ -28,4 +29,12 @@ public interface PscExtensionsService {
      * @return the number of PSC extension requests
      */
     Optional<Long> getExtensionCount(String pscNotificationId);
+
+    /*/**
+     * Retrieves the PSC extension due date from MongoDB
+     *
+     * @return the PSC extension due date
+
+    Optional<LocalDate> getExtensionDueDate(String pscNotificationId);*/
+
 }

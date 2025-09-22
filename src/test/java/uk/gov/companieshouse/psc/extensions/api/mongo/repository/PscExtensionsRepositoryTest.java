@@ -191,4 +191,22 @@ class PscExtensionsRepositoryTest extends MongoDBTest {
         assertTrue(retrievedOptional.isPresent());
         assertNull(retrievedOptional.get().getInternalData());
     }
+
+   /* @Test
+    public void testFindDueDateByPscNotificationId() {
+        PscExtension pscExtension = createTestExtensionRequest();
+        entity.setPscNotification("PSC001");
+        entity.setDueDate(LocalDate.of(2025, 9, 1));
+
+        Optional<LocalDate> result = pscExtensionsRepository.findDueDateByPscNotificationId("123");
+
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(LocalDate.of(2025, 9, 1), result.get());
+    }
+
+    @Test
+    public void testFindDueDateByPscNotificationId_NotFound() {
+        Optional<LocalDate> result = pscExtensionsRepository.findDueDateByPscNotificationId("NON_EXISTENT");
+        Assertions.assertFalse(result.isPresent());
+    }*/
 }

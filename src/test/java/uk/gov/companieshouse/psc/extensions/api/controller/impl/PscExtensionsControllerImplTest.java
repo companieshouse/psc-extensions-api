@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.controller.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +21,14 @@ import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceExcept
 import uk.gov.companieshouse.psc.extensions.api.mapper.PscExtensionsMapper;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
+import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;
 import uk.gov.companieshouse.psc.extensions.api.service.ExtensionValidityService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,6 +53,8 @@ class PscExtensionsControllerImplTest {
     private PscExtensionsMapper filingMapper;
     @Mock
     private ExtensionValidityService extensionValidityService;
+    @Mock
+    private PscExtensionsRepository pscExtensionsRepository;
     @Mock
     private Clock clock;
     @InjectMocks
@@ -136,5 +141,39 @@ class PscExtensionsControllerImplTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(0L, response.getBody());
+    }
+
+    @Test
+    public void testValidDueDate() {
+        String pscNotificationId = "123";
+        LocalDate validDate = LocalDate.now().minusDays(10);
+
+        when(pscExtensionsRepository.findDueDateByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(validDate));
+
+        Optional<LocalDate> result = pscExtensionsService.getExtensionDueDate(PSC_NOTIFICATION_ID);
+        Assertions.assertEquals(validDate, result);
+    }
+
+    @Test
+    public void testExpiredDueDateThrowsException() {
+        String pscNotificationId = "456";
+        LocalDate expiredDate = LocalDate.now().minusWeeks(3);
+
+        when(pscExtensionsRepository.findDueDateByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(expiredDate));
+
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            pscExtensionsService.getExtensionDueDate(PSC_NOTIFICATION_ID);
+        });
+    }
+
+    @Test
+    public void testMissingDueDateThrowsException() {
+        String pscNotificationId = "789";
+
+        when(pscExtensionsRepository.findDueDateByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            pscExtensionsService.getExtensionDueDate(PSC_NOTIFICATION_ID);
+        });
     }
 }

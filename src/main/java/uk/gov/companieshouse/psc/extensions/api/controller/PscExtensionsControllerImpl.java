@@ -35,10 +35,12 @@ import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
 
@@ -130,6 +132,12 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         return ResponseEntity.ok(pscExtensionRequestCount.orElse(0L));
     }
+
+    /*@GetMapping("/{pscNotificationId}/dueDate")
+    public ResponseEntity<Optional<LocalDate>> getDueDate(@PathVariable String pscNotification) {
+        Optional<LocalDate> dueDate = pscExtensionsService.getExtensionDueDate((pscNotification));
+        return ResponseEntity.*/
+
 
     private PscExtension saveFilingWithLinks(
             final PscExtension entity,
