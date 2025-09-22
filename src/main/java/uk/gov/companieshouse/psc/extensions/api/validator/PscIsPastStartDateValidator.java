@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.psc.extensions.api.validator;
+/*package uk.gov.companieshouse.psc.extensions.api.validator;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +11,7 @@ import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 
-/**
+*
  * Validator to check if a Person with Significant Control (PSC) can be verified
  * based on the appointment verification statement start date.
  * <p>

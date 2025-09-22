@@ -8,7 +8,6 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -63,8 +62,6 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
 
         return count > 0 ? Optional.of(count) : Optional.empty();
     }
-
-
 
 }
 

@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.psc.extensions.api.validator;
+/*package uk.gov.companieshouse.psc.extensions.api.validator;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-/**
+
  * Validator to check if a Person with Significant Control (PSC) can request an
  * extension providing that they apply before due date passed.
  * <p>

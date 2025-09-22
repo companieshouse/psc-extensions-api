@@ -2,7 +2,6 @@ package uk.gov.companieshouse.psc.extensions.api.service;
 
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 public interface PscExtensionsService {
