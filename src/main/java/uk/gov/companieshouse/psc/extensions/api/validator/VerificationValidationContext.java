@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 
-/**
+/*
  * Record for passing context into {@link VerificationValidationService}.
  */
 public record VerificationValidationContext(@NonNull PscVerificationData dto,
