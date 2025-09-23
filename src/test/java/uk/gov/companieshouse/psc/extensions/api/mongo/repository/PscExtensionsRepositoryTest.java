@@ -16,11 +16,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PscExtensionsRepositoryTest extends MongoDBTest {
@@ -192,21 +188,15 @@ class PscExtensionsRepositoryTest extends MongoDBTest {
         assertNull(retrievedOptional.get().getInternalData());
     }
 
-   /* @Test
-    public void testFindDueDateByPscNotificationId() {
-        PscExtension pscExtension = createTestExtensionRequest();
-        entity.setPscNotification("PSC001");
-        entity.setDueDate(LocalDate.of(2025, 9, 1));
+   @Test
+   void When_findDataByPscNotificationIdReturnsDate_Expect_HandledCorrectly() throws URISyntaxException {
+       PscExtension pscExtension = createTestExtensionRequest();
+       assertEquals("345", pscExtension.getData().getPscNotificationId());
 
-        Optional<LocalDate> result = pscExtensionsRepository.findDueDateByPscNotificationId("123");
+       LocalDate date = LocalDate.of(2025, 9, 1);
+       pscExtension.getData().getExtensionDetails().setExtensionRequestDate(date);
 
-        Assertions.assertTrue(result.isPresent());
-        Assertions.assertEquals(LocalDate.of(2025, 9, 1), result.get());
-    }
-
-    @Test
-    public void testFindDueDateByPscNotificationId_NotFound() {
-        Optional<LocalDate> result = pscExtensionsRepository.findDueDateByPscNotificationId("NON_EXISTENT");
-        Assertions.assertFalse(result.isPresent());
-    }*/
+       Data result = requestRepository.findDataByPscNotificationId("345");
+       assertEquals(result.getExtensionDetails().getExtensionRequestDate(), date);
+   }
 }

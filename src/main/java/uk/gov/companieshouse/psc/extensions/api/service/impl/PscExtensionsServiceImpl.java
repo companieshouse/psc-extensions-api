@@ -8,6 +8,7 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -27,7 +28,6 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @param filing the PscExtension entity to store
      * @return the stored entity
      */
-
     @Override
     public PscExtension save(PscExtension filing) {
         return repository.save(filing);
@@ -39,7 +39,6 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @param filingId the Filing ID
      * @return the stored entity if found
      */
-
     @Override
     public Optional<PscExtension> get(String filingId) {
         return repository.findById(filingId);
@@ -52,7 +51,6 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @return the number of psc extension requests if found.
      *
      */
-
     @Override
     public Optional<Long> getExtensionCount(String pscNotificationId) {
 
@@ -63,5 +61,11 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
         return count > 0 ? Optional.of(count) : Optional.empty();
     }
 
-}
+    @Override
+    public Optional<LocalDate> getExtensionDueDate(String pscNotificationId) {
+        LocalDate extensionRequestDate = repository.findDataByPscNotificationId(pscNotificationId)
+                .getExtensionDetails().getExtensionRequestDate();
 
+        return Optional.of(extensionRequestDate.plusDays(14));
+    }
+}

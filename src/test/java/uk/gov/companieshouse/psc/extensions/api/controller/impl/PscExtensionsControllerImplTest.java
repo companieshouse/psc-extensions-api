@@ -19,6 +19,8 @@ import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.ExtensionRequestServiceException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
 import uk.gov.companieshouse.psc.extensions.api.mapper.PscExtensionsMapper;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;
@@ -143,23 +145,29 @@ class PscExtensionsControllerImplTest {
         assertEquals(0L, response.getBody());
     }
 
-    /*@Test
+    @Test
     public void testValidDueDate() {
-        String pscNotificationId = "123";
         LocalDate validDate = LocalDate.now().minusDays(10);
+        ExtensionDetails extensionDetails = new ExtensionDetails();
+        extensionDetails.setExtensionRequestDate(validDate);
+        Data extensionData = new Data();
+        extensionData.setExtensionDetails(extensionDetails);
 
-        when(pscExtensionsRepository.findDueDateByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(validDate));
+        when(pscExtensionsRepository.findDataByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(extensionData);
 
         Optional<LocalDate> result = pscExtensionsService.getExtensionDueDate(PSC_NOTIFICATION_ID);
-        Assertions.assertEquals(validDate, result);
+        Assertions.assertEquals(Optional.of(validDate), result);
     }
 
     @Test
     public void testExpiredDueDateThrowsException() {
-        String pscNotificationId = "456";
         LocalDate expiredDate = LocalDate.now().minusWeeks(3);
+        ExtensionDetails extensionDetails = new ExtensionDetails();
+        extensionDetails.setExtensionRequestDate(expiredDate);
+        Data extensionData = new Data();
+        extensionData.setExtensionDetails(extensionDetails);
 
-        when(pscExtensionsRepository.findDueDateByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(expiredDate));
+        when(pscExtensionsRepository.findDataByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(extensionData);
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             pscExtensionsService.getExtensionDueDate(PSC_NOTIFICATION_ID);
@@ -168,12 +176,10 @@ class PscExtensionsControllerImplTest {
 
     @Test
     public void testMissingDueDateThrowsException() {
-        String pscNotificationId = "789";
-
-        when(pscExtensionsRepository.findDueDateByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(Optional.empty());
+        when(pscExtensionsRepository.findDataByPscNotificationId(PSC_NOTIFICATION_ID)).thenReturn(null);
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             pscExtensionsService.getExtensionDueDate(PSC_NOTIFICATION_ID);
         });
-    }*/
+    }
 }

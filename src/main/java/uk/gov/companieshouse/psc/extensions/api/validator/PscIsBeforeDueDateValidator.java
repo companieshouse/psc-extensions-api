@@ -1,5 +1,4 @@
-/*package uk.gov.companieshouse.psc.extensions.api.validator;
-
+package uk.gov.companieshouse.psc.extensions.api.validator;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -11,14 +10,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-
+/*
  * Validator to check if a Person with Significant Control (PSC) can request an
  * extension providing that they apply before due date passed.
  * <p>
  * If the due date passed, an error is added to the validation context.
  * </p>
  */
-/*@Component
+@Component
 public class PscIsBeforeDueDateValidator {
     private final PscLookupService pscLookupService;
     private final Logger logger;
@@ -26,10 +25,10 @@ public class PscIsBeforeDueDateValidator {
     /**
      * Constructs a new {@code PscIsPastStartDateValidator}.
      *
-     * @param validation a map of validation messages or configurations
+     * @param validation       a map of validation messages or configurations
      * @param pscLookupService the service used to retrieve PSC details
-     * @param logger the logger for logging validation events
-     *//*
+     * @param logger           the logger for logging validation events
+     */
     public PscIsBeforeDueDateValidator(Map<String, String> validation, PscLookupService pscLookupService, Logger logger) {
         super();
         this.pscLookupService = pscLookupService;
@@ -43,11 +42,14 @@ public class PscIsBeforeDueDateValidator {
      * If the due date passed, an error is added to the validation context.
      * </p>
      */
-/*
-    @Override
     public void validate(VerificationValidationContext validationContext) {
-        PscIndividualFullRecordApi pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
-                validationContext.transaction(), validationContext.dto(), validationContext.pscType());
+        PscIndividualFullRecordApi pscIndividualFullRecordApi =
+                pscLookupService.getPscIndividualFullRecord(
+                        validationContext.transaction().getId(),
+                        validationContext.dto().companyNumber(),
+                        "",
+                        validationContext.pscType()
+                );
 
         final var identityVerificationDetails = pscIndividualFullRecordApi.getIdentityVerificationDetails();
 
@@ -60,13 +62,13 @@ public class PscIsBeforeDueDateValidator {
 
             if (dueDate != null && dueDate.isAfter(LocalDate.now())) {
                 final var formattedStartDate = dueDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                final var errorResponseText = validation.get("psc-cannot-verify-yet").replace("{due-date}", formattedDueDate);
+                // final var errorResponseText = validation.get("psc-cannot-verify-yet").replace("{due-date}", formattedStartDate);
+                final var errorResponseText = "Test Error";
                 validationContext.errors().add(
-                        new FieldError("object", "psc_verification_due_date", formattedDueDate, false,
-                                new String[] { null, formattedDueDate }, null, errorResponseText));
+                        new FieldError("object", "psc_verification_due_date", formattedStartDate, false,
+                                new String[]{null, formattedStartDate}, null, errorResponseText));
             }
         }
-
-        super.validate(validationContext);
+//        super.validate(validationContext);
+    }
 }
-*/

@@ -1,4 +1,4 @@
-/*package uk.gov.companieshouse.psc.extensions.api.validator;
+package uk.gov.companieshouse.psc.extensions.api.validator;
 
 import org.springframework.lang.NonNull;
 import org.springframework.validation.FieldError;
@@ -10,15 +10,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 
-/*
+/**
  * Record for passing context into {@link VerificationValidationService}.
-
+*/
 public record VerificationValidationContext(@NonNull PscVerificationData dto,
                                             @NonNull Set<FieldError> errors,
                                             @NonNull Transaction transaction,
                                             @NonNull PscType pscType,
                                             String passthroughHeader) {
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -49,4 +48,3 @@ public record VerificationValidationContext(@NonNull PscVerificationData dto,
             .toString();
     }
 }
-*/
