@@ -44,7 +44,7 @@ class PscIsPastStartDateValidatorTest {
     @Mock
     private Logger logger;
 
-    PscIsPastStartDateValidator testValidator;
+    ExtensionIsPastStartDateValidator testValidator;
     private PscType pscType;
     private Set<FieldError> errors;
     private String passthroughHeader;
@@ -56,15 +56,17 @@ class PscIsPastStartDateValidatorTest {
         pscType = PscType.INDIVIDUAL;
         passthroughHeader = "passthroughHeader";
 
-        testValidator = new PscIsPastStartDateValidator(validation, pscLookupService, logger);
-        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(), "", pscType))
+        testValidator = new ExtensionIsPastStartDateValidator(pscLookupService, logger);
+        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(),
+                pscVerificationData.pscNotificationId(), pscType))
                 .thenReturn(pscIndividualFullRecord);
     }
 
     @Test
     void validateWhenIdentityVerificationDetailsIsNull() {
         when(pscIndividualFullRecord.getIdentityVerificationDetails()).thenReturn(null);
-        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(), "", pscType))
+        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(),
+                pscVerificationData.pscNotificationId(), pscType))
                 .thenReturn(pscIndividualFullRecord);
 
         testValidator.validate(new VerificationValidationContext(pscVerificationData, errors, transaction, pscType,
@@ -78,7 +80,8 @@ class PscIsPastStartDateValidatorTest {
         var identityVerificationDetails = new IdentityVerificationDetails(null, null, null, null);
 
         when(pscIndividualFullRecord.getIdentityVerificationDetails()).thenReturn(identityVerificationDetails);
-        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(), "", pscType))
+        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(),
+                pscVerificationData.pscNotificationId(), pscType))
                 .thenReturn(pscIndividualFullRecord);
 
         testValidator.validate(new VerificationValidationContext(pscVerificationData, errors, transaction, pscType,
@@ -93,7 +96,8 @@ class PscIsPastStartDateValidatorTest {
                 null, null, LocalDate.now(), LocalDate.now().plusDays(14));
 
         when(pscIndividualFullRecord.getIdentityVerificationDetails()).thenReturn(identityVerificationDetails);
-        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(), "", pscType))
+        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(),
+                pscVerificationData.pscNotificationId(), pscType))
                 .thenReturn(pscIndividualFullRecord);
 
         testValidator.validate( new VerificationValidationContext(pscVerificationData, errors, transaction, pscType,
@@ -120,7 +124,8 @@ class PscIsPastStartDateValidatorTest {
         var fieldError = new FieldError("object", "psc_verification_start_date", formattedStartDate,
                 false, new String[] { null, formattedStartDate }, null, errorResponseText);
 
-        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(), "", pscType))
+        when(pscLookupService.getPscIndividualFullRecord(transaction.getId(),  pscVerificationData.companyNumber(),
+                pscVerificationData.pscNotificationId(), pscType))
                 .thenReturn(pscIndividualFullRecord);
 
         testValidator.validate(
