@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @Component
 public class ExtensionIsBeforeDueDateValidator {
-    protected Map<String, String> validation;
+    public Map<String, String> validation;
     private final PscLookupService pscLookupService;
     private final Logger logger;
 
