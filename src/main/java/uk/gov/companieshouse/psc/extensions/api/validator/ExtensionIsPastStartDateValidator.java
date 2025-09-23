@@ -56,7 +56,8 @@ public class ExtensionIsPastStartDateValidator {
         } else {
             final var startDate = identityVerificationDetails.appointmentVerificationStatementDate();
 
-            if (startDate != null && startDate.isAfter(LocalDate.now())) {
+            final var requestDate = LocalDate.now();
+            if (startDate != null && requestDate.isBefore(startDate)) {
                 final var formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 // TODO: does psc-cannot-verify-yet need to be changed to an error response relevant to Extension request?
                 final var errorResponseText = validation.get("psc-cannot-verify-yet").replace("{start-date}", formattedStartDate);

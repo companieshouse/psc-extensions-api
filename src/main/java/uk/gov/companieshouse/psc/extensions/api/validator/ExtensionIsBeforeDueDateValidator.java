@@ -53,9 +53,10 @@ public class ExtensionIsBeforeDueDateValidator {
                     "Validation for Extension Request Date skipped due to null identity verification details. [Company number: %s, PSC notification ID: %s]",
                     validationContext.dto().companyNumber(), validationContext.dto().pscNotificationId()));
         } else {
-            final var dueDate = identityVerificationDetails.appointmentVerificationStatementDate();
+            final var dueDate = identityVerificationDetails.appointmentVerificationStatementDueOn();
 
-            if (dueDate != null && dueDate.isBefore(LocalDate.now())) {
+            final var requestDate = LocalDate.now();
+            if (dueDate != null && requestDate.isAfter(dueDate)) {
                 final var formattedDueDate = dueDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 // TODO: does psc-cannot-verify-yet need to be changed to an error response relevant to Extension request?
                 final var errorResponseText = validation.get("psc-cannot-verify-yet").replace("{start-date}", formattedDueDate);
