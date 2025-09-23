@@ -16,6 +16,7 @@ public interface PscLookupService {
      * @return the PSC individual full record
      * @throws PscLookupServiceException if PSC cannot be found or accessed
      */
+    // TODO: in psc-verification-api, the 'pscAppointmentId' is named 'pscNotificationId' - why has this changed here?
     PscIndividualFullRecordApi getPscIndividualFullRecord(String transactionId,
                                                           String companyNumber,
                                                           String pscAppointmentId,
