@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -12,6 +14,7 @@ import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestApi;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
@@ -114,6 +117,45 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final var response = filingMapper.toApi(savedEntity);
 
         return ResponseEntity.created(savedEntity.getLinks().self()).body(response);
+    }
+
+    @GetMapping("/isExtensionRequestValid")
+    public ValidationStatusResponse isValid(@PathVariable("transactionId") final String transId,
+                                            @PathVariable("pscNotificationId") final String pscNotificationId,
+                                            @PathVariable("companyNumber") final String companyNumber) {
+        final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        final var logMap = LogMapHelper.createLogMap(transId);
+        logMap.put("path", request.getRequestURI());
+        logMap.put("method", request.getMethod());
+        LOGGER.debugRequest(request, "GET", logMap);
+
+        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        try {
+            pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
+                    transId,
+                    companyNumber,
+                    pscNotificationId,
+                    PscType.INDIVIDUAL
+            );
+        } catch (PscLookupServiceException e) {
+            logMap.put("psc_notification_id", pscNotificationId);
+            LOGGER.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
+                    pscNotificationId, companyNumber), null, logMap);
+            throw new PscLookupServiceException(
+                    "We are currently unable to process an Extension filing for this PSC", new Exception("Internal Id"));
+        }
+
+        final var idvDetails = pscIndividualFullRecordApi.getIdentityVerificationDetails();
+
+        final var validationErrors = pscExtensionsService.validateExtensionRequest(idvDetails);
+
+        final var validationStatus = new ValidationStatusResponse();
+
+        validationStatus.setValid(validationErrors.length == 0);
+        validationStatus.setValidationStatusError(validationErrors);
+
+        return validationStatus;
     }
 
     private PscExtension saveFilingWithLinks(
