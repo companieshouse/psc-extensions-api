@@ -16,7 +16,6 @@ import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 @ExtendWith(MockitoExtension.class)
 class ExtensionRequestDateValidatorTest {
 
-
     @Test
     void validate_When_RequestDateIsBeforeStartDate_Expect_Error() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
