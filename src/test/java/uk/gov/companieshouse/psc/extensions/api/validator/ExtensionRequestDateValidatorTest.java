@@ -18,10 +18,9 @@ class ExtensionRequestDateValidatorTest {
 
 
     @Test
-    void When_RequestDateIsBeforeStartDate_Expect_Error() {
+    void validate_When_RequestDateIsBeforeStartDate_Expect_Error() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         LocalDate futureStartDate = LocalDate.now().plusDays(5);
-        LocalDate requestDate = LocalDate.now();
 
         Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(futureStartDate);
         Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(null);
@@ -30,15 +29,15 @@ class ExtensionRequestDateValidatorTest {
 
         Assertions.assertEquals(1, errors.size());
         Assertions.assertTrue(errors.stream()
-                .anyMatch(e -> e.getError().contains("A PSC cannot request an extension before the IDV Start Date")));
+                .anyMatch(e -> e.getError().contains(
+                        "A PSC cannot request an extension before the IDV Start Date")));
 
     }
 
     @Test
-    void When_RequestDateIsAfterDueDate_Expect_Error() {
+    void validate_When_RequestDateIsAfterDueDate_Expect_Error() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         LocalDate pastDueDate = LocalDate.now().minusDays(1);
-        LocalDate requestDate = LocalDate.now();
 
         Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(pastDueDate);
         Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(null);
@@ -47,14 +46,16 @@ class ExtensionRequestDateValidatorTest {
 
         Assertions.assertEquals(1, errors.size());
         Assertions.assertTrue(errors.stream()
-                .anyMatch(e -> e.getError().contains("A PSC cannot request an extension after the IDV Due Date")));
+                .anyMatch(e -> e.getError().contains(
+                        "A PSC cannot request an extension after the IDV Due Date")));
     }
 
     @Test
-    void When_RequestDateIsBeforeStartDateAndAfterDueDate_Expect_TwoErrors() {
+    void validate_When_RequestDateIsBeforeStartDateAndAfterDueDate_Expect_TwoErrors() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         LocalDate futureStartDate = LocalDate.now().plusDays(5);
         LocalDate pastDueDate = LocalDate.now().minusDays(1);
+
         Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(futureStartDate);
         Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(pastDueDate);
 
@@ -64,7 +65,7 @@ class ExtensionRequestDateValidatorTest {
     }
 
     @Test
-    void When_RequestDateIsWithinValidRange_Expect_SuccessfulRequest() {
+    void validate_When_RequestDateIsWithinValidRange_Expect_SuccessfulRequest() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         LocalDate startDate = LocalDate.now().minusDays(1);
         LocalDate dueDate = LocalDate.now().plusDays(1);
@@ -77,7 +78,7 @@ class ExtensionRequestDateValidatorTest {
     }
 
     @Test
-    void When_DatesAreNull_Expect_NoErrors() {
+    void validate_When_DatesAreNull_Expect_NoErrors() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(null);
         Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(null);
@@ -87,4 +88,3 @@ class ExtensionRequestDateValidatorTest {
         Assertions.assertTrue(errors.isEmpty());
     }
 }
-
