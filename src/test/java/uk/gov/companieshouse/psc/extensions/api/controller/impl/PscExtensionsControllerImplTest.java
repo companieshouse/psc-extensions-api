@@ -123,7 +123,7 @@ class PscExtensionsControllerImplTest {
     void shouldReturnPscExtensionRequestCount_WhenPresent(){
         when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(EXTENSION_COUNT));
 
-        ResponseEntity<Long> response = controller.getPscExtensionCount(PSC_NOTIFICATION_ID);
+        ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(EXTENSION_COUNT, response.getBody());
@@ -132,7 +132,7 @@ class PscExtensionsControllerImplTest {
     void shouldReturnPscExtensionRequestCount_WhenNoExtensionRequestExists(){
         when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.empty());
 
-        ResponseEntity<Long> response = controller.getPscExtensionCount(PSC_NOTIFICATION_ID);
+        ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(0L, response.getBody());

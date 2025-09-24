@@ -25,8 +25,8 @@ class PathHelperTest {
         List<String> paths = PathHelper.getAllPathsFromInterfaces(PscExtensionRequestApi.class);
 
         assertNotNull(paths);
-        assertEquals(1, paths.size());
-        assertEquals("/transactions/{transactionId}/persons-with-significant-control-extensions", paths.getFirst());
+        assertEquals(2, paths.size());
+        assertEquals("/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount", paths.getFirst());
     }
 
 }

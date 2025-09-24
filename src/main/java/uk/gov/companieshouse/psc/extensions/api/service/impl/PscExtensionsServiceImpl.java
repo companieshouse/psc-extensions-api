@@ -27,7 +27,6 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @param filing the PscExtension entity to store
      * @return the stored entity
      */
-
     @Override
     public PscExtension save(PscExtension filing) {
         return repository.save(filing);
@@ -39,7 +38,6 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @param filingId the Filing ID
      * @return the stored entity if found
      */
-
     @Override
     public Optional<PscExtension> get(String filingId) {
         return repository.findById(filingId);
@@ -52,7 +50,6 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @return the number of psc extension requests if found.
      *
      */
-
     @Override
     public Optional<Long> getExtensionCount(String pscNotificationId) {
 

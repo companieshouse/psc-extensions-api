@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -118,9 +117,8 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         return ResponseEntity.created(savedEntity.getLinks().self()).body(response);
     }
 
-
-    @GetMapping("/{pscNotificationId}/extensionCount")
-    public ResponseEntity<Long> getPscExtensionCount(@PathVariable("pscNotificationId") final String pscNotificationId) {
+    @Override
+    public ResponseEntity<Long> _getPscExtensionCount(@PathVariable("pscNotificationId") final String pscNotificationId) {
 
         final var pscExtensionRequestCount = pscExtensionsService.getExtensionCount(pscNotificationId);
 
