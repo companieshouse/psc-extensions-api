@@ -159,6 +159,12 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
         assertEquals(LocalDate.of(2024, 12, 25), retrievedDetails.getExtensionRequestDate());
     }
 
+    // void validateExtensionRequest_WhenValidIdentityVerificationDetailsPassed_ShouldReturnArray()
+    // Mock idvDetails
+    // when validate(idvDetails) called return empty set of errors
+    // ValidationStatusError[] errors = validateExtensionRequest(idvDetails)
+    // Assert errors is empty
+
     private PscExtension createTestPscExtension() {
         PscExtension extension = new PscExtension();
         extension.setCreatedAt(Instant.now());
