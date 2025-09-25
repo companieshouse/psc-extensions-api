@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
+import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
+import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.psc.extensions.api.MongoDBTest;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
@@ -159,11 +161,6 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
         assertEquals(LocalDate.of(2024, 12, 25), retrievedDetails.getExtensionRequestDate());
     }
 
-    // void validateExtensionRequest_WhenValidIdentityVerificationDetailsPassed_ShouldReturnArray()
-    // Mock idvDetails
-    // when validate(idvDetails) called return empty set of errors
-    // ValidationStatusError[] errors = validateExtensionRequest(idvDetails)
-    // Assert errors is empty
 
     private PscExtension createTestPscExtension() {
         PscExtension extension = new PscExtension();
@@ -184,4 +181,76 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
 
         return extension;
     }
+
+    @Test
+    void validateExtensionRequest_WhenRequestDateIsValid_ShouldReturnEmptyArray() {
+        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                LocalDate.now().minusDays(5), // startOn
+                LocalDate.now().plusDays(5),  // endOn
+                LocalDate.now().minusDays(1), // statementDate
+                LocalDate.now().plusDays(1)   // dueOn
+        );
+
+        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+
+        assertNotNull(errors);
+        assertEquals(0, errors.length, "Expected no validation errors for valid request date");
+    }
+
+    @Test
+    void validateExtensionRequest_WhenRequestDateBeforeStart_ShouldReturnStartDateError() {
+        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                LocalDate.now().plusDays(1),  // startOn
+                LocalDate.now().plusDays(10), // endOn
+                LocalDate.now().plusDays(1),  // statementDate
+                LocalDate.now().plusDays(5)   // dueOn
+        );
+
+        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+
+        assertEquals(1, errors.length, "Expected one error for request before start date");
+        assertTrue(errors[0].getLocation().contains("$.psc_verification_start_date"));
+    }
+
+    @Test
+    void validateExtensionRequest_WhenRequestDateAfterDue_ShouldReturnDueDateError() {
+        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                LocalDate.now().minusDays(10), // startOn
+                LocalDate.now().minusDays(5),  // endOn
+                LocalDate.now().minusDays(5),  // statementDate
+                LocalDate.now().minusDays(1)   // dueOn
+        );
+
+        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+
+        assertEquals(1, errors.length, "Expected one error for request after due date");
+        assertTrue(errors[0].getLocation().contains("$.psc_verification_due_date"));
+    }
+
+    @Test
+    void validateExtensionRequest_WhenRequestDateOutsideBothDates_ShouldReturnTwoErrors() {
+        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                LocalDate.now().plusDays(2),  // startOn
+                LocalDate.now().plusDays(10), // endOn
+                LocalDate.now().plusDays(2),  // statementDate
+                LocalDate.now().minusDays(2)  // dueOn
+        );
+
+        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+
+        assertEquals(2, errors.length, "Expected two errors for request outside both dates");
+    }
+
+    @Test
+    void validateExtensionRequest_WhenDatesAreNull_ShouldReturnEmptyArray() {
+        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                null, null, null, null
+        );
+
+        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+
+        assertNotNull(errors);
+        assertEquals(0, errors.length, "Expected no errors when dates are null");
+    }
+
 }
