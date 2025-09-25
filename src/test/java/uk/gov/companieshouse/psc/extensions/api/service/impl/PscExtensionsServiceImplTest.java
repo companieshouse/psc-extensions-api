@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
@@ -12,17 +13,20 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
+import uk.gov.companieshouse.psc.extensions.api.validator.ExtensionRequestDateValidator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 
 @SpringBootTest
 class PscExtensionsServiceImplTest extends MongoDBTest {
@@ -183,74 +187,38 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
     }
 
     @Test
-    void validateExtensionRequest_WhenRequestDateIsValid_ShouldReturnEmptyArray() {
-        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                LocalDate.now().minusDays(5), // startOn
-                LocalDate.now().plusDays(5),  // endOn
-                LocalDate.now().minusDays(1), // statementDate
-                LocalDate.now().plusDays(1)   // dueOn
-        );
+    void validateExtensionRequest_WhenNoErrors_ShouldReturnEmptyArray() {
+        try (MockedStatic<ExtensionRequestDateValidator> mockedStatic = mockStatic(ExtensionRequestDateValidator.class)) {
+            mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(Collections.emptySet());
 
-        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(any());
 
-        assertNotNull(errors);
-        assertEquals(0, errors.length, "Expected no validation errors for valid request date");
+            assertEquals(0, errors.length);
+        }
     }
 
     @Test
-    void validateExtensionRequest_WhenRequestDateBeforeStart_ShouldReturnStartDateError() {
-        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                LocalDate.now().plusDays(1),  // startOn
-                LocalDate.now().plusDays(10), // endOn
-                LocalDate.now().plusDays(1),  // statementDate
-                LocalDate.now().plusDays(5)   // dueOn
-        );
+    void validateExtensionRequest_WhenValidationErrorsPresent_ShouldReturnErrorArray() {
+        try (MockedStatic<ExtensionRequestDateValidator> mockedStatic = mockStatic(ExtensionRequestDateValidator.class)) {
+            ValidationStatusError error1 = new ValidationStatusError("INVALID_START_ON_DATE", "", "", "");
+            ValidationStatusError error2 = new ValidationStatusError("INVALID_DUE_ON_DATE", "", "", "");
+            Set<ValidationStatusError> mockErrors = new HashSet<>(Arrays.asList(error1, error2));
 
-        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+            mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(mockErrors);
 
-        assertEquals(1, errors.length, "Expected one error for request before start date");
-        assertTrue(errors[0].getLocation().contains("$.psc_verification_start_date"));
-    }
+            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                    LocalDate.now().plusDays(6),  //verification_start_on
+                    LocalDate.now().plusDays(5),  //verification_end_on
+                    LocalDate.now().plusDays(1),  //statement_date
+                    LocalDate.now().plusDays(2)); //statement_due_on
 
-    @Test
-    void validateExtensionRequest_WhenRequestDateAfterDue_ShouldReturnDueDateError() {
-        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                LocalDate.now().minusDays(10), // startOn
-                LocalDate.now().minusDays(5),  // endOn
-                LocalDate.now().minusDays(5),  // statementDate
-                LocalDate.now().minusDays(1)   // dueOn
-        );
+            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
 
-        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
-
-        assertEquals(1, errors.length, "Expected one error for request after due date");
-        assertTrue(errors[0].getLocation().contains("$.psc_verification_due_date"));
-    }
-
-    @Test
-    void validateExtensionRequest_WhenRequestDateOutsideBothDates_ShouldReturnTwoErrors() {
-        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                LocalDate.now().plusDays(2),  // startOn
-                LocalDate.now().plusDays(10), // endOn
-                LocalDate.now().plusDays(2),  // statementDate
-                LocalDate.now().minusDays(2)  // dueOn
-        );
-
-        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
-
-        assertEquals(2, errors.length, "Expected two errors for request outside both dates");
-    }
-
-    @Test
-    void validateExtensionRequest_WhenDatesAreNull_ShouldReturnEmptyArray() {
-        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                null, null, null, null
-        );
-
-        ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
-
-        assertNotNull(errors);
-        assertEquals(0, errors.length, "Expected no errors when dates are null");
+            assertEquals(2, errors.length);
+            List<String> errorCodes = Arrays.stream(errors).map(ValidationStatusError::getError).toList();
+            assertTrue(errorCodes.contains("INVALID_START_ON_DATE"));
+            assertTrue(errorCodes.contains("INVALID_DUE_ON_DATE"));
+        }
     }
 
 }
