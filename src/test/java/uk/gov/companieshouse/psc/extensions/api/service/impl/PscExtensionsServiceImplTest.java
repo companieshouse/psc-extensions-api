@@ -165,7 +165,6 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
         assertEquals(LocalDate.of(2024, 12, 25), retrievedDetails.getExtensionRequestDate());
     }
 
-
     private PscExtension createTestPscExtension() {
         PscExtension extension = new PscExtension();
         extension.setCreatedAt(Instant.now());
@@ -220,5 +219,4 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
             assertTrue(errorCodes.contains("INVALID_DUE_ON_DATE"));
         }
     }
-
 }
