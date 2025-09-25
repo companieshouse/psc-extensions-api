@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.service;
 
+import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
+import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 
 import java.util.Optional;
@@ -21,4 +23,12 @@ public interface PscExtensionsService {
      * @return the stored entity if found
      */
     Optional<PscExtension> get(String filingId);
+
+    /**
+     * Validate whether an extension request is valid.
+     *
+     * @param idvDetails identity verification details of PSC requesting extension
+     * @return an array of validation errors
+     */
+    ValidationStatusError[] validateExtensionRequest(IdentityVerificationDetails idvDetails);
 }
