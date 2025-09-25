@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class PscExtensionsServiceImpl implements PscExtensionsService {
     
     private final PscExtensionsRepository repository;
+    private static final Logger logger = LoggerFactory.getLogger("logger");
 
     @Autowired
     public PscExtensionsServiceImpl(PscExtensionsRepository repository) {
@@ -41,6 +44,23 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
     @Override
     public Optional<PscExtension> get(String filingId) {
         return repository.findById(filingId);
+    }
+
+    /**
+     * Query the mongoDB for the number psc extension requests.
+     *
+     * @param pscNotificationId   the PSC ID
+     * @return the number of psc extension requests if found.
+     *
+     */
+    @Override
+    public Optional<Long> getExtensionCount(String pscNotificationId) {
+
+        long count = repository.countByDataPscNotificationId(pscNotificationId);
+
+        logger.info("Repository contains " + count + " extensions for ID: " + pscNotificationId);
+
+        return count > 0 ? Optional.of(count) : Optional.empty();
     }
 
     /**

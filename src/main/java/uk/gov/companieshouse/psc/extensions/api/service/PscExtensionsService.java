@@ -25,6 +25,13 @@ public interface PscExtensionsService {
     Optional<PscExtension> get(String filingId);
 
     /**
+     * Retrieves the number of PSC extension requests from MongoDB
+     *
+     * @return the number of PSC extension requests
+     */
+    Optional<Long> getExtensionCount(String pscNotificationId);
+
+    /**
      * Validate whether an extension request is valid.
      *
      * @param idvDetails identity verification details of PSC requesting extension
