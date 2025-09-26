@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -24,18 +26,19 @@ import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 
 import java.time.Clock;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PscExtensionsControllerImplTest {
 
-    private static final String TRANSACTION_ID = "test-transaction-id";
-    private static final String PSC_NOTIFICATION_ID = "test-psc-notification-id";
-    private static final String COMPANY_NUMBER = "12345678";
+    private final String TRANSACTION_ID = "transaction-id";
+    private final String PSC_NOTIFICATION_ID = "psc-notification-id";
+    private final String COMPANY_NUMBER = "12345678";
+    private final Long EXTENSION_COUNT = 1L;
 
     @Mock
     private TransactionService transactionService;
@@ -114,5 +117,24 @@ class PscExtensionsControllerImplTest {
     @Test
     void serviceFields_ShouldNotBeNull() {
         assertNotNull(controller);
+    }
+
+    @Test
+    void shouldReturnPscExtensionRequestCount_WhenPresent(){
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(EXTENSION_COUNT));
+
+        ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(EXTENSION_COUNT, response.getBody());
+    }
+    @Test
+    void shouldReturnPscExtensionRequestCount_WhenNoExtensionRequestExists(){
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.empty());
+
+        ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(0L, response.getBody());
     }
 }

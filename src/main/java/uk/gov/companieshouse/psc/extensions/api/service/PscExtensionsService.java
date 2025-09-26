@@ -21,4 +21,11 @@ public interface PscExtensionsService {
      * @return the stored entity if found
      */
     Optional<PscExtension> get(String filingId);
+
+    /**
+     * Retrieves the number of PSC extension requests from MongoDB
+     *
+     * @return the number of PSC extension requests
+     */
+    Optional<Long> getExtensionCount(String pscNotificationId);
 }
