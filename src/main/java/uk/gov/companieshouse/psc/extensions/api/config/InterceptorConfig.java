@@ -8,18 +8,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.api.interceptor.ClosedTransactionInterceptor;
 import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
-import uk.gov.companieshouse.api.interceptor.MappablePermissionsInterceptor;
 import uk.gov.companieshouse.api.interceptor.OpenTransactionInterceptor;
-import uk.gov.companieshouse.api.interceptor.PermissionsMapping;
-import uk.gov.companieshouse.api.interceptor.TokenPermissionsInterceptor;
 import uk.gov.companieshouse.api.interceptor.TransactionInterceptor;
-import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestApi;
-import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestFilingDataApi;
-import uk.gov.companieshouse.api.util.security.Permission;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
-import uk.gov.companieshouse.psc.extensions.api.utils.PathHelper;
-
-import java.util.List;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
 
@@ -28,32 +19,36 @@ import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplicati
 @ComponentScan("uk.gov.companieshouse.api")
 public class InterceptorConfig implements WebMvcConfigurer {
 
+    public static final String COMMON_INTERCEPTOR_PATH =
+        "/transactions/{transactionId}/persons-with-significant-control-extensions";
+    public static final String EXTENSIONS_COUNT_PATH =
+        "/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount";
+    public static final String FILINGS_RESOURCE_PATH =
+        "/private/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/filings";
+
     @Override
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
-        final List<String> filingPaths = PathHelper.getAllPathsFromInterfaces(PscExtensionRequestFilingDataApi.class);
-        final List<String> pscExtensionPaths = PathHelper.getAllPathsFromInterfaces(PscExtensionRequestApi.class);
+
 
         registry.addInterceptor(transactionInterceptor())
-                .order(1);
+            .excludePathPatterns(EXTENSIONS_COUNT_PATH)
+            .order(1);
 
         registry.addInterceptor(openTransactionInterceptor())
-                .addPathPatterns(filingPaths)
-                .addPathPatterns(pscExtensionPaths)
-                .order(2);
-
-        registry.addInterceptor(tokenPermissionsInterceptor())
-                .order(3);
+            .addPathPatterns(FILINGS_RESOURCE_PATH)
+            .addPathPatterns(COMMON_INTERCEPTOR_PATH)
+            .order(2);
 
         registry.addInterceptor(transactionClosedInterceptor())
-                .addPathPatterns(filingPaths)
-                .order(4);
+                .addPathPatterns(FILINGS_RESOURCE_PATH)
+                .order(3);
 
         registry.addInterceptor(requestLoggingInterceptor())
-                .order(5);
+                .order(4);
 
         registry.addInterceptor(new InternalUserInterceptor())
-                .addPathPatterns(filingPaths)
-                .order(6);
+                .addPathPatterns(FILINGS_RESOURCE_PATH)
+                .order(5);
     }
 
     @Bean("chsTransactionInterceptor")
@@ -64,11 +59,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Bean("chsOpenTransactionInterceptor")
     public OpenTransactionInterceptor openTransactionInterceptor() {
         return new OpenTransactionInterceptor(APPLICATION_NAMESPACE);
-    }
-
-    @Bean("chsTokenPermissionInterceptor")
-    public TokenPermissionsInterceptor tokenPermissionsInterceptor() {
-        return new TokenPermissionsInterceptor();
     }
 
 
