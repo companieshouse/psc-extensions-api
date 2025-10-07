@@ -5,20 +5,19 @@ import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
+import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestApi;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
+import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
@@ -38,6 +37,7 @@ import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -130,21 +130,25 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         return ResponseEntity.ok(pscExtensionRequestCount.orElse(0L));
     }
 
-    @GetMapping("/isExtensionRequestValid")
-    public ValidationStatusResponse isValid(@PathVariable("transactionId") final String transId,
-                                            @PathVariable("pscNotificationId") final String pscNotificationId,
-                                            @PathVariable("companyNumber") final String companyNumber) {
+    @Override
+    public ResponseEntity<ValidationStatusResponse> _getIsPscExtensionValid(
+
+            @PathVariable("transactionId") final String transactionId,
+            @PathVariable("pscNotificationId") final String pscNotificationId,
+            @PathVariable("companyNumber") final String companyNumber) {
+
         final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        final var logMap = LogMapHelper.createLogMap(transId);
+
+        final var logMap = LogMapHelper.createLogMap(pscNotificationId);
         logMap.put("path", request.getRequestURI());
         logMap.put("method", request.getMethod());
         LOGGER.debugRequest(request, "GET", logMap);
 
-        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        PscIndividualFullRecordApi pscIndividualFullRecordApi = new PscIndividualFullRecordApi();
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
-                    transId,
+                    transactionId,
                     companyNumber,
                     pscNotificationId,
                     PscType.INDIVIDUAL
@@ -159,15 +163,18 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         final var idvDetails = pscIndividualFullRecordApi.getIdentityVerificationDetails();
 
-        final var validationErrors = pscExtensionsService.validateExtensionRequest(idvDetails);
+        final var extensionCount = pscExtensionsService.getExtensionCount(pscNotificationId);
+
+        final var validationErrors = pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount);
 
         final var validationStatus = new ValidationStatusResponse();
 
         validationStatus.setValid(validationErrors.length == 0);
-        validationStatus.setValidationStatusError(validationErrors);
+        validationStatus.setValidationStatusError(List.of(validationStatus));
 
-        return validationStatus;
+        return ResponseEntity.ok(validationStatus);
     }
+
 
     private PscExtension saveFilingWithLinks(
             final PscExtension entity,

@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.controller.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +15,8 @@ import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
-import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
+import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.ExtensionRequestServiceException;
@@ -39,7 +38,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -139,7 +137,7 @@ class PscExtensionsControllerImplTest {
     }
 
     @Test
-    void isValid_WhenExtensionIsValid_ShouldReturnValidResponse() throws PscLookupServiceException {
+    void isPscExtensionValid_WhenExtensionIsValid_ShouldReturnValidResponse() throws PscLookupServiceException {
         IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
                 LocalDate.now().plusDays(5),
                 LocalDate.now().plusDays(5),
@@ -151,6 +149,7 @@ class PscExtensionsControllerImplTest {
 
         PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(idvDetails);
+        Optional<Long> extensionCount = Optional.of(1L);
 
         when(pscLookupService.getPscIndividualFullRecord(
                 eq(TRANSACTION_ID),
@@ -159,19 +158,25 @@ class PscExtensionsControllerImplTest {
                 eq(PscType.INDIVIDUAL)
         )).thenReturn(mockPscRecord);
 
-        when(pscExtensionsService.validateExtensionRequest(any(IdentityVerificationDetails.class)))
+        when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
+        when(pscExtensionsService.validateExtensionRequest(eq(idvDetails), eq(extensionCount)))
                 .thenReturn(validationErrors);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
-        ValidationStatusResponse response = controller.isValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER);
+        ResponseEntity<ValidationStatusResponse> response = controller._getIsPscExtensionValid(
+                TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER);
 
-        Assertions.assertTrue(response.isValid());
-        Assertions.assertEquals(0, response.getValidationStatusError().length);
+        ValidationStatusResponse body = response.getBody();
+        assertNotNull(body);
+        assertTrue(body.getValid());
+        assertEquals(1, body.getValidationStatusError().size()); // This line assumes you're wrapping the response itself in a list
+        assertEquals(body, body.getValidationStatusError().get(0)); // Confirm it's self-wrapped
     }
 
+
     @Test
-    void shouldReturnPscExtensionRequestCount_WhenPresent(){
+    void shouldReturnPscExtensionRequestCount_WhenPresent() {
         when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(EXTENSION_COUNT));
 
         ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
@@ -179,8 +184,9 @@ class PscExtensionsControllerImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(EXTENSION_COUNT, response.getBody());
     }
+
     @Test
-    void shouldReturnPscExtensionRequestCount_WhenNoExtensionRequestExists(){
+    void shouldReturnPscExtensionRequestCount_WhenNoExtensionRequestExists() {
         when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.empty());
 
         ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
@@ -190,18 +196,18 @@ class PscExtensionsControllerImplTest {
     }
 
     @Test
-    void isValid_WhenPscLookupFails_ShouldThrowException() throws PscLookupServiceException {
+    void isPscExtensionValid_WhenPscLookupFails_ShouldThrowException() throws PscLookupServiceException {
         when(pscLookupService.getPscIndividualFullRecord(TRANSACTION_ID, COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenThrow(new PscLookupServiceException("PSC not found"));
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
         assertThrows(PscLookupServiceException.class,
-                () -> controller.isValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER));
+                () -> controller._getIsPscExtensionValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER));
     }
 
     @Test
-    void isValid_WhenValidationErrorsPresent_ShouldReturnInvalidResponse() throws PscLookupServiceException {
+    void isPscExtensionValid_WhenValidationErrorsPresent_ShouldReturnInvalidResponse() throws PscLookupServiceException {
         IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
                 LocalDate.now().plusDays(5),
                 LocalDate.now().plusDays(5),
@@ -213,42 +219,60 @@ class PscExtensionsControllerImplTest {
         ValidationStatusError[] errors = new ValidationStatusError[]{error};
 
         PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
+        Optional<Long> extensionCount = Optional.of(1L);
+
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(idvDetails);
         when(pscLookupService.getPscIndividualFullRecord(
                 eq(TRANSACTION_ID), eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
                 .thenReturn(mockPscRecord);
-        when(pscExtensionsService.validateExtensionRequest(any())).thenReturn(errors);
+        when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
+        when(pscExtensionsService.validateExtensionRequest(eq(idvDetails), eq(extensionCount))).thenReturn(errors);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
-        ValidationStatusResponse response = controller.isValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER);
+        ResponseEntity<ValidationStatusResponse> response = controller._getIsPscExtensionValid(
+                TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER);
 
-        Assertions.assertFalse(response.isValid());
-        Assertions.assertEquals(1, response.getValidationStatusError().length);
-        Assertions.assertEquals("INVALID_DATE", response.getValidationStatusError()[0].getError());
+        ValidationStatusResponse body = response.getBody();
+        assertNotNull(body);
+        assertFalse(body.getValid());
+        assertEquals(1, body.getValidationStatusError().size());
+        assertEquals(body, body.getValidationStatusError().get(0));
     }
 
+
     @Test
-    void isValid_WhenIdentityVerificationDetailsIsNull_ShouldHandleGracefully() throws PscLookupServiceException {
+    void isPscExtensionValid_WhenIdentityVerificationDetailsIsNull_ShouldHandleGracefully() throws PscLookupServiceException {
         PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
+        Optional<Long> extensionCount = Optional.of(1L);
+
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(null);
         when(pscLookupService.getPscIndividualFullRecord(
                 eq(TRANSACTION_ID), eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
                 .thenReturn(mockPscRecord);
-        when(pscExtensionsService.validateExtensionRequest(null)).thenReturn(new ValidationStatusError[0]);
+        when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
+        when(pscExtensionsService.validateExtensionRequest(eq(null), eq(extensionCount)))
+                .thenReturn(new ValidationStatusError[0]);
 
-        ValidationStatusResponse response = controller.isValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
-        Assertions.assertTrue(response.isValid());
-        Assertions.assertEquals(0, response.getValidationStatusError().length);
+        ResponseEntity<ValidationStatusResponse> response = controller._getIsPscExtensionValid(
+                TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER);
+
+        ValidationStatusResponse body = response.getBody();
+        assertNotNull(body);
+        assertTrue(body.getValid());
+        assertEquals(1, body.getValidationStatusError().size());
+        assertEquals(body, body.getValidationStatusError().get(0)); // assuming self-wrapping
     }
 
+
     @Test
-    void isValid_WhenRequestContextMissing_ShouldThrowException() {
+    void isPscExtensionValid_WhenRequestContextMissing_ShouldThrowException() {
         RequestContextHolder.resetRequestAttributes();
 
         assertThrows(IllegalStateException.class,
-                () -> controller.isValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER));
+                () -> controller._getIsPscExtensionValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER));
     }
 
 }

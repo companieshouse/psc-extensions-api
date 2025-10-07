@@ -190,9 +190,19 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
         try (MockedStatic<ExtensionRequestDateValidator> mockedStatic = mockStatic(ExtensionRequestDateValidator.class)) {
             mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(Collections.emptySet());
 
-            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(any());
+            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(1),
+                    LocalDate.now().plusDays(2)
+            );
+
+            Optional<Long> extensionCount = Optional.of(1L);
+
+            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount);
 
             assertEquals(0, errors.length);
+            mockedStatic.verify(() -> ExtensionRequestDateValidator.validate(idvDetails));
         }
     }
 
@@ -206,17 +216,22 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
             mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(mockErrors);
 
             IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                    LocalDate.now().plusDays(6),  //verification_start_on
-                    LocalDate.now().plusDays(5),  //verification_end_on
-                    LocalDate.now().plusDays(1),  //statement_date
-                    LocalDate.now().plusDays(2)); //statement_due_on
+                    LocalDate.now().plusDays(6),
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(1),
+                    LocalDate.now().plusDays(2)
+            );
 
-            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails);
+            Optional<Long> extensionCount = Optional.of(1L);
 
-            assertEquals(2, errors.length);
+            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount);
+
+            assertEquals(2, errors.length, "Expected 2 validation errors");
             List<String> errorCodes = Arrays.stream(errors).map(ValidationStatusError::getError).toList();
-            assertTrue(errorCodes.contains("INVALID_START_ON_DATE"));
-            assertTrue(errorCodes.contains("INVALID_DUE_ON_DATE"));
+            assertTrue(errorCodes.contains("INVALID_START_ON_DATE"), "Missing INVALID_START_ON_DATE");
+            assertTrue(errorCodes.contains("INVALID_DUE_ON_DATE"), "Missing INVALID_DUE_ON_DATE");
+
+            mockedStatic.verify(() -> ExtensionRequestDateValidator.validate(idvDetails));
         }
     }
 }
