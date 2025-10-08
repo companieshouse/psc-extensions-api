@@ -28,5 +28,4 @@ class PathHelperTest {
         assertEquals(3, paths.size());
         assertEquals("/persons-with-significant-control-extensions/{transactionId}/{pscNotificationId}/{companyNumber}/isExtensionRequestValid", paths.getFirst());
     }
-
 }
