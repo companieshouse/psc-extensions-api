@@ -36,10 +36,7 @@ import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
 import java.time.Clock;
 import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
 
@@ -145,7 +142,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         logMap.put("method", request.getMethod());
         LOGGER.debugRequest(request, "GET", logMap);
 
-        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        PscIndividualFullRecordApi pscIndividualFullRecordApi = new PscIndividualFullRecordApi();
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
                     transactionId,

@@ -28,6 +28,16 @@ public class ExtensionRequestDateValidator {
     public static Set<ValidationStatusError> validate(IdentityVerificationDetails idvDetails) {
         final Set<ValidationStatusError> errors = new HashSet<>();
 
+        if (idvDetails == null) {
+            errors.add(new ValidationStatusError(
+                    "Missing identity verification details for PSC",
+                    "$.identity_verification_details",
+                    "json-path",
+                    "ch:validation"
+            ));
+            return errors;
+        }
+
         final var requestDate = LocalDate.now();
         final var startDate = idvDetails.appointmentVerificationStatementDate();
         final var dueDate = idvDetails.appointmentVerificationStatementDueOn();

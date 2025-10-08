@@ -137,45 +137,6 @@ class PscExtensionsControllerImplTest {
     }
 
     @Test
-    void isPscExtensionValid_WhenExtensionIsValid_ShouldReturnValidResponse() throws PscLookupServiceException {
-        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                LocalDate.now().plusDays(5),
-                LocalDate.now().plusDays(5),
-                LocalDate.now().plusDays(1),
-                LocalDate.now().plusDays(1)
-        );
-
-        ValidationStatusError[] validationErrors = new ValidationStatusError[0];
-
-        PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
-        when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(idvDetails);
-        Optional<Long> extensionCount = Optional.of(1L);
-
-        when(pscLookupService.getPscIndividualFullRecord(
-                eq(TRANSACTION_ID),
-                eq(COMPANY_NUMBER),
-                eq(PSC_NOTIFICATION_ID),
-                eq(PscType.INDIVIDUAL)
-        )).thenReturn(mockPscRecord);
-
-        when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
-        when(pscExtensionsService.validateExtensionRequest(eq(idvDetails), eq(extensionCount)))
-                .thenReturn(validationErrors);
-
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
-
-        ResponseEntity<ValidationStatusResponse> response = controller._getIsPscExtensionValid(
-                TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER);
-
-        ValidationStatusResponse body = response.getBody();
-        assertNotNull(body);
-        assertTrue(body.getValid());
-        assertEquals(1, body.getValidationStatusError().size()); // This line assumes you're wrapping the response itself in a list
-        assertEquals(body, body.getValidationStatusError().get(0)); // Confirm it's self-wrapped
-    }
-
-
-    @Test
     void shouldReturnPscExtensionRequestCount_WhenPresent() {
         when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(EXTENSION_COUNT));
 

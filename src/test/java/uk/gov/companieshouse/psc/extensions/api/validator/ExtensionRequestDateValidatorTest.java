@@ -86,4 +86,13 @@ class ExtensionRequestDateValidatorTest {
 
         Assertions.assertTrue(errors.isEmpty());
     }
+
+    @Test
+    void validate_When_IdvDetailsIsNull_Expect_Error() {
+        Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(null);
+
+        Assertions.assertEquals(1, errors.size());
+        Assertions.assertTrue(errors.stream()
+                .anyMatch(e -> e.getError().contains("Missing identity verification details")));
+    }
 }
