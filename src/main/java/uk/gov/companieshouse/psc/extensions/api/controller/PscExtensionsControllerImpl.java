@@ -145,7 +145,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         logMap.put("method", request.getMethod());
         LOGGER.debugRequest(request, "GET", logMap);
 
-        PscIndividualFullRecordApi pscIndividualFullRecordApi = new PscIndividualFullRecordApi();
+        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
                     transactionId,
