@@ -10,13 +10,13 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
-import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestApi;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
+import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -37,6 +37,7 @@ import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
 
@@ -167,7 +168,13 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final var validationStatus = new ValidationStatusResponse();
 
         validationStatus.setValid(validationErrors.length == 0);
-        validationStatus.setValidationStatusError(List.of(validationStatus));
+        List<ValidationError> errorList = Arrays.stream(validationErrors)
+                .map(err -> new ValidationError()
+                        .field(err.getLocation())
+                        .message(err.getError()))
+                .collect(Collectors.toList());
+
+        validationStatus.setValidationStatusError(errorList);
 
         return ResponseEntity.ok(validationStatus);
     }

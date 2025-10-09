@@ -16,6 +16,7 @@ import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
+import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
@@ -31,6 +32,7 @@ import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -176,7 +178,12 @@ class PscExtensionsControllerImplTest {
                 LocalDate.now().plusDays(1)
         );
 
-        ValidationStatusError error = new ValidationStatusError("INVALID_DATE", "Statement date is too early", "", "");
+        ValidationStatusError error = new ValidationStatusError(
+                "Statement date is too early",
+                "statementDate",
+                "field",
+                "INVALID_DATE"
+        );
         ValidationStatusError[] errors = new ValidationStatusError[]{error};
 
         PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
@@ -197,8 +204,14 @@ class PscExtensionsControllerImplTest {
         ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
         assertFalse(body.getValid());
-        assertEquals(1, body.getValidationStatusError().size());
-        assertEquals(body, body.getValidationStatusError().get(0));
+
+        List<ValidationError> validationErrors = body.getValidationStatusError();
+        assertNotNull(validationErrors);
+        assertEquals(1, validationErrors.size());
+
+        ValidationError mappedError = validationErrors.getFirst();
+        assertEquals("statementDate", mappedError.getField());
+        assertEquals("Statement date is too early", mappedError.getMessage());
     }
 
 
@@ -223,8 +236,8 @@ class PscExtensionsControllerImplTest {
         ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
         assertTrue(body.getValid());
-        assertEquals(1, body.getValidationStatusError().size());
-        assertEquals(body, body.getValidationStatusError().get(0)); // assuming self-wrapping
+        assertNotNull(body.getValidationStatusError());
+        assertEquals(0, body.getValidationStatusError().size());
     }
 
 
