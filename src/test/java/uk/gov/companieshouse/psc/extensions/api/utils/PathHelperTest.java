@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.utils;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestApi;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestFilingDataApi;
@@ -26,6 +27,8 @@ class PathHelperTest {
 
         assertNotNull(paths);
         assertEquals(3, paths.size());
-        assertEquals("/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount", paths.getFirst());
+        Assertions.assertTrue(paths.contains("/transactions/{transactionId}/persons-with-significant-control-extensions"));
+        Assertions.assertTrue(paths.contains("/persons-with-significant-control-extensions/{transactionId}/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid"));
+        Assertions.assertTrue(paths.contains("/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount"));
     }
 }
