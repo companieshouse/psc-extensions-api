@@ -143,7 +143,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         logMap.put("method", request.getMethod());
         LOGGER.debugRequest(request, "GET", logMap);
 
-        PscIndividualFullRecordApi pscIndividualFullRecordApi = new PscIndividualFullRecordApi();
+        PscIndividualFullRecordApi pscIndividualFullRecordApi;
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
                     transactionId,
@@ -151,6 +151,9 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
                     pscNotificationId,
                     PscType.INDIVIDUAL
             );
+
+            // TODO: currently this lookup does not return IdentityVerificationDetails as part of object
+
         } catch (PscLookupServiceException e) {
             logMap.put("psc_notification_id", pscNotificationId);
             LOGGER.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
@@ -178,7 +181,6 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         return ResponseEntity.ok(validationStatus);
     }
-
 
     private PscExtension saveFilingWithLinks(
             final PscExtension entity,

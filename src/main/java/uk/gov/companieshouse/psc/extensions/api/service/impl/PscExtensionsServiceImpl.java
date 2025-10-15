@@ -88,16 +88,4 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
 
         return errors.toArray(new ValidationStatusError[0]);
     }
-
-    /**
-     * Validate whether an extension request is valid.
-     *
-     * @param pscNotificationId The PSC ID
-     * @param companyNumber     The company number
-     * @return whenever extension request is valid or not
-     */
-    @Override
-    public Object getIsPscExtensionValid(String transactionId, String pscNotificationId, String companyNumber) {
-        return getExtensionCount(pscNotificationId);
-    }
 }

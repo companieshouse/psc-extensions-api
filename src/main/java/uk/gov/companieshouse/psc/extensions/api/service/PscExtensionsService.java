@@ -39,11 +39,4 @@ public interface PscExtensionsService {
      * @return an array of validation errors
      */
     ValidationStatusError[] validateExtensionRequest(IdentityVerificationDetails idvDetails, Optional<Long> extensionCount);
-
-    /**
-     * Checks whether an extension request date is valid
-     *
-     * @return whether an extension request date is valid
-     */
-    Object getIsPscExtensionValid(String transactionId, String pscNotificationId, String companyNumber);
 }
