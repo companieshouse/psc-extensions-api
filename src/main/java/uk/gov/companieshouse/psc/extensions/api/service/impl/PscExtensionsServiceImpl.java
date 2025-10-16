@@ -71,7 +71,7 @@ public class PscExtensionsServiceImpl implements PscExtensionsService {
      * @param extensionCount number of PSC extension requests
      * @return an array of validation errors
      */
-    @Override//
+    @Override
     public ValidationStatusError[] validateExtensionRequest(IdentityVerificationDetails idvDetails, Optional<Long> extensionCount) {
         List<ValidationStatusError> errors = new ArrayList<>();
 
