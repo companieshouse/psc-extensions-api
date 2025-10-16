@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 
-
 @ExtendWith(MockitoExtension.class)
 class ExtensionRequestDateValidatorTest {
 

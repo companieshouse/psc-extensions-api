@@ -214,7 +214,6 @@ class PscExtensionsControllerImplTest {
         assertEquals("Statement date is too early", mappedError.getMessage());
     }
 
-
     @Test
     void isPscExtensionValid_WhenIdentityVerificationDetailsIsNull_ShouldHandleGracefully() throws PscLookupServiceException {
         PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
@@ -240,7 +239,6 @@ class PscExtensionsControllerImplTest {
         assertEquals(0, body.getValidationStatusError().size());
     }
 
-
     @Test
     void isPscExtensionValid_WhenRequestContextMissing_ShouldThrowException() {
         RequestContextHolder.resetRequestAttributes();
@@ -248,5 +246,4 @@ class PscExtensionsControllerImplTest {
         assertThrows(IllegalStateException.class,
                 () -> controller._getIsPscExtensionValid(TRANSACTION_ID, PSC_NOTIFICATION_ID, COMPANY_NUMBER));
     }
-
 }
