@@ -22,7 +22,7 @@ public class ExtensionRequestDateValidator {
      * <p>
      * If the identity verification details are null, logs the event and skips validation
      * If the request date is before the statement date, adds a validation error.
-     * If the request data is after the due date, adds a validation error.
+     * If the request date is after the due date, adds a validation error.
      * </p>
      */
     public static Set<ValidationStatusError> validate(IdentityVerificationDetails idvDetails) {
