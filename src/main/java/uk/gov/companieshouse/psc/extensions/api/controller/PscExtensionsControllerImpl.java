@@ -129,21 +129,18 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
     }
 
     @Override
-    public ResponseEntity<ValidationStatusResponse> _getIsPscExtensionValid(
-
-            @PathVariable("transactionId") final String transactionId,
-            @PathVariable("pscNotificationId") final String pscNotificationId,
-            @PathVariable("companyNumber") final String companyNumber) {
-
+    public ResponseEntity<ValidationStatusResponse> _getIsPscExtensionValid(@PathVariable("transactionId") final String transactionId,
+                                                                            @PathVariable("pscNotificationId") final String pscNotificationId,
+                                                                            @PathVariable("companyNumber") final String companyNumber)
+    {
         final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-
 
         final var logMap = LogMapHelper.createLogMap(pscNotificationId);
         logMap.put("path", request.getRequestURI());
         logMap.put("method", request.getMethod());
         LOGGER.debugRequest(request, "GET", logMap);
 
-        PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
                     transactionId,
@@ -151,9 +148,6 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
                     pscNotificationId,
                     PscType.INDIVIDUAL
             );
-
-            // TODO: currently this lookup does not return IdentityVerificationDetails as part of object
-
         } catch (PscLookupServiceException e) {
             logMap.put("psc_notification_id", pscNotificationId);
             LOGGER.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
