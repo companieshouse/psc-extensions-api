@@ -41,7 +41,7 @@
         <api-sdk-java.version>6.4.4</api-sdk-java.version>
         <sdk-manager-java.version>3.0.5</sdk-manager-java.version>
         <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
-        <private-api-sdk-java.version>4.0.380</private-api-sdk-java.version>
+        <private-api-sdk-java.version>4.0.387</private-api-sdk-java.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -104,12 +104,6 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
             <version>${structured-logging.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- CH SDKs -->
         <dependency>
@@ -154,12 +148,6 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-security-java</artifactId>
             <version>${api-security-java.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>

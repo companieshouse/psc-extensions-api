@@ -1,26 +1,37 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
+import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
+import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.psc.extensions.api.MongoDBTest;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.InternalData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
+import uk.gov.companieshouse.psc.extensions.api.validator.ExtensionRequestDateValidator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 
 @SpringBootTest
 class PscExtensionsServiceImplTest extends MongoDBTest {
@@ -177,5 +188,55 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
         extension.setData(data);
 
         return extension;
+    }
+
+    @Test
+    void validateExtensionRequest_WhenNoErrors_ShouldReturnEmptyArray() {
+        try (MockedStatic<ExtensionRequestDateValidator> mockedStatic = mockStatic(ExtensionRequestDateValidator.class)) {
+            mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(Collections.emptySet());
+
+            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(1),
+                    LocalDate.now().plusDays(2)
+            );
+
+            Optional<Long> extensionCount = Optional.of(1L);
+
+            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount);
+
+            assertEquals(0, errors.length);
+            mockedStatic.verify(() -> ExtensionRequestDateValidator.validate(idvDetails));
+        }
+    }
+
+    @Test
+    void validateExtensionRequest_WhenValidationErrorsPresent_ShouldReturnErrorArray() {
+        try (MockedStatic<ExtensionRequestDateValidator> mockedStatic = mockStatic(ExtensionRequestDateValidator.class)) {
+            ValidationStatusError error1 = new ValidationStatusError("INVALID_START_ON_DATE", "", "", "");
+            ValidationStatusError error2 = new ValidationStatusError("INVALID_DUE_ON_DATE", "", "", "");
+            Set<ValidationStatusError> mockErrors = new HashSet<>(Arrays.asList(error1, error2));
+
+            mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(mockErrors);
+
+            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
+                    LocalDate.now().plusDays(6),
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(1),
+                    LocalDate.now().plusDays(2)
+            );
+
+            Optional<Long> extensionCount = Optional.of(1L);
+
+            ValidationStatusError[] errors = pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount);
+
+            assertEquals(2, errors.length, "Expected 2 validation errors");
+            List<String> errorCodes = Arrays.stream(errors).map(ValidationStatusError::getError).toList();
+            assertTrue(errorCodes.contains("INVALID_START_ON_DATE"), "Missing INVALID_START_ON_DATE");
+            assertTrue(errorCodes.contains("INVALID_DUE_ON_DATE"), "Missing INVALID_DUE_ON_DATE");
+
+            mockedStatic.verify(() -> ExtensionRequestDateValidator.validate(idvDetails));
+        }
     }
 }

@@ -16,6 +16,8 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestApi;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
+import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
+import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
@@ -34,9 +36,12 @@ import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
 import java.time.Clock;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
 
@@ -125,6 +130,54 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         pscExtensionRequestCount.ifPresent(extensionCount -> LOGGER.info("Extension request count is " + extensionCount + " for " + pscNotificationId));
 
         return ResponseEntity.ok(pscExtensionRequestCount.orElse(0L));
+    }
+
+    @Override
+    public ResponseEntity<ValidationStatusResponse> _getIsPscExtensionValid(@PathVariable("transactionId") final String transactionId,
+                                                                            @PathVariable("pscNotificationId") final String pscNotificationId,
+                                                                            @PathVariable("companyNumber") final String companyNumber)
+    {
+        final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        final var logMap = LogMapHelper.createLogMap(pscNotificationId);
+        logMap.put("path", request.getRequestURI());
+        logMap.put("method", request.getMethod());
+        LOGGER.debugRequest(request, "GET", logMap);
+
+        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        try {
+            pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
+                    transactionId,
+                    companyNumber,
+                    pscNotificationId,
+                    PscType.INDIVIDUAL
+            );
+        } catch (PscLookupServiceException e) {
+            logMap.put("psc_notification_id", pscNotificationId);
+            LOGGER.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
+                    pscNotificationId, companyNumber), null, logMap);
+            throw new PscLookupServiceException(
+                    "We are currently unable to process an Extension filing for this PSC", new Exception("Internal Id"));
+        }
+
+        final var idvDetails = pscIndividualFullRecordApi.getIdentityVerificationDetails();
+
+        final var extensionCount = pscExtensionsService.getExtensionCount(pscNotificationId);
+
+        final var validationErrors = pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount);
+
+        final var validationStatus = new ValidationStatusResponse();
+
+        validationStatus.setValid(validationErrors.length == 0);
+        List<ValidationError> errorList = Arrays.stream(validationErrors)
+                .map(err -> new ValidationError()
+                        .field(err.getLocation())
+                        .message(err.getError()))
+                .collect(Collectors.toList());
+
+        validationStatus.setValidationStatusError(errorList);
+
+        return ResponseEntity.ok(validationStatus);
     }
 
     private PscExtension saveFilingWithLinks(
