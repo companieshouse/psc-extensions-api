@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,7 +8,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionValidationStatusApi;
-import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -18,7 +16,6 @@ import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceExcept
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
-import java.util.List;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
 
