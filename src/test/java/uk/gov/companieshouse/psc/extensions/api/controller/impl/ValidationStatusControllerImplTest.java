@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ValidationStatusControllerImplTest {
-    private final String TRANSACTION_ID = "transaction-id";
     private final String PSC_NOTIFICATION_ID = "psc-notification-id";
     private final String COMPANY_NUMBER = "12345678";
 
@@ -36,13 +35,12 @@ class ValidationStatusControllerImplTest {
     private PscLookupService pscLookupService;
 
     private ValidationStatusControllerImpl controller;
-    private HttpServletRequest mockRequest;
 
     @BeforeEach
     void setUp() {
         controller = new ValidationStatusControllerImpl(pscExtensionsController, pscLookupService);
 
-        mockRequest = mock(HttpServletRequest.class);
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
     }
 
@@ -56,9 +54,8 @@ class ValidationStatusControllerImplTest {
     @Test
     void _validate_WhenValidationErrorsPresent_ShouldReturnInvalidResponse() {
         final PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
-        // TODO - companyNumber and pscNotificationId
         when(pscLookupService.getPscIndividualFullRecord(
-                TRANSACTION_ID, "", "", PscType.INDIVIDUAL))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
 
         final ValidationError error = new ValidationError();
@@ -68,12 +65,10 @@ class ValidationStatusControllerImplTest {
         validationStatusResponse.setValid(false);
         validationStatusResponse.setValidationStatusError(errors);
 
-        // TODO - pscNotificationId
-        when(pscExtensionsController.getValidationStatus("", mockPscRecord))
+        when(pscExtensionsController.getValidationStatus(PSC_NOTIFICATION_ID, mockPscRecord))
                 .thenReturn(validationStatusResponse);
 
-        // TODO
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, "");
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(PSC_NOTIFICATION_ID, COMPANY_NUMBER);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -84,9 +79,8 @@ class ValidationStatusControllerImplTest {
     @Test
     void _validate_WhenValidationErrorsAbsent_ShouldReturnValidResponse() {
         final PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
-        // TODO - companyNumber and pscNotificationId
         when(pscLookupService.getPscIndividualFullRecord(
-                TRANSACTION_ID, "", "", PscType.INDIVIDUAL))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
 
         final List<ValidationError> errors = Collections.emptyList();
@@ -95,12 +89,10 @@ class ValidationStatusControllerImplTest {
         validationStatusResponse.setValid(true);
         validationStatusResponse.setValidationStatusError(errors);
 
-        // TODO - pscNotificationId
-        when(pscExtensionsController.getValidationStatus("", mockPscRecord))
+        when(pscExtensionsController.getValidationStatus(PSC_NOTIFICATION_ID, mockPscRecord))
                 .thenReturn(validationStatusResponse);
 
-        // TODO
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, "");
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(PSC_NOTIFICATION_ID, COMPANY_NUMBER);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);

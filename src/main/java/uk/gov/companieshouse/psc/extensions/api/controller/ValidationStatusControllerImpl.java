@@ -35,16 +35,12 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
     }
 
     @Override
-    public ResponseEntity<ValidationStatusResponse> _validate(@PathVariable("transactionId") String transactionId,
-                                                              @PathVariable("filingResourceId")String filingResourceId)
+    public ResponseEntity<ValidationStatusResponse> _validate(@PathVariable("pscNotificationId") final String pscNotificationId,
+                                                              @PathVariable("companyNumber") final String companyNumber)
     {
-        // TODO
-        final var pscNotificationId  = "";
-        final var companyNumber = "";
-
         final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        final var logMap = LogMapHelper.createLogMap(transactionId, filingResourceId);
+        final var logMap = LogMapHelper.createLogMap(pscNotificationId);
         logMap.put("path", request.getRequestURI());
         logMap.put("method", request.getMethod());
         LOGGER.debugRequest(request, "GET validation request", logMap);
@@ -52,7 +48,6 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
         final PscIndividualFullRecordApi pscIndividualFullRecordApi;
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
-                    transactionId,
                     companyNumber,
                     pscNotificationId,
                     PscType.INDIVIDUAL
