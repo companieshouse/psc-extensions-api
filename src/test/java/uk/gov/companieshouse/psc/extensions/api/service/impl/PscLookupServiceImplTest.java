@@ -58,7 +58,6 @@ class PscLookupServiceImplTest {
                 .thenThrow(new RuntimeException("Environment error"));
 
         Executable action = () -> pscLookupService.getPscIndividualFullRecord(
-                testTransaction.getId(),
                 testData.getCompanyNumber(),
                 testData.getPscNotificationId(),
                 PscType.INDIVIDUAL
@@ -73,7 +72,6 @@ class PscLookupServiceImplTest {
         when(apiClientService.getApiClient(anyString())).thenThrow(new RuntimeException("Expected test error"));
 
         Executable action = () -> pscLookupService.getPscIndividualFullRecord(
-                testTransaction.getId(),
                 testData.getCompanyNumber(),
                 testData.getPscNotificationId(),
                 PscType.INDIVIDUAL

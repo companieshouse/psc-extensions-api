@@ -97,7 +97,6 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final PscIndividualFullRecordApi pscIndividualFullRecordApi;
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
-                    transactionId,
                     data.getCompanyNumber(),
                     data.getPscNotificationId(),
                     PscType.INDIVIDUAL
@@ -133,8 +132,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
     }
 
     @Override
-    public ResponseEntity<ValidationStatusResponse> _getIsPscExtensionValid(@PathVariable("transactionId") final String transactionId,
-                                                                            @PathVariable("pscNotificationId") final String pscNotificationId,
+    public ResponseEntity<ValidationStatusResponse> _getIsPscExtensionValid(@PathVariable("pscNotificationId") final String pscNotificationId,
                                                                             @PathVariable("companyNumber") final String companyNumber)
     {
         final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -147,7 +145,6 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final PscIndividualFullRecordApi pscIndividualFullRecordApi;
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
-                    transactionId,
                     companyNumber,
                     pscNotificationId,
                     PscType.INDIVIDUAL

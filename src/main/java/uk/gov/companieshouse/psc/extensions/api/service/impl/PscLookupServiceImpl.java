@@ -33,7 +33,6 @@ public class PscLookupServiceImpl implements PscLookupService {
     /**
      * Retrieve a PSC by PscExtensionsData.
      *
-     * @param transactionId         the Transaction id
      * @param companyNumber         the company number
      * @param pscAppointmentId      the PSC appointment id
      * @param pscType               the PSC Type
@@ -41,13 +40,12 @@ public class PscLookupServiceImpl implements PscLookupService {
      * @throws PscLookupServiceException if the PSC was not found or an error occurred
      */
     @Override
-    public PscIndividualFullRecordApi getPscIndividualFullRecord(final String transactionId,
-                                                                 final String companyNumber,
+    public PscIndividualFullRecordApi getPscIndividualFullRecord(final String companyNumber,
                                                                  final String pscAppointmentId,
                                                                  final PscType pscType)
             throws PscLookupServiceException {
 
-        final var logMap = LogMapHelper.createLogMap(transactionId);
+        final var logMap = LogMapHelper.createLogMap(pscAppointmentId);
         String chsInternalApiKey = environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY");
 
         try {
@@ -67,7 +65,7 @@ public class PscLookupServiceImpl implements PscLookupService {
 
         } catch (final ApiErrorResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
-                logger.errorContext(transactionId, UNEXPECTED_STATUS_CODE, e, logMap);
+                logger.errorContext(pscAppointmentId, UNEXPECTED_STATUS_CODE, e, logMap);
                 throw new FilingResourceNotFoundException(
                         MessageFormat.format("PSC Details not found for {0}: {1} {2}", pscAppointmentId,
                                 e.getStatusCode(), e.getStatusMessage()), e);
@@ -77,7 +75,7 @@ public class PscLookupServiceImpl implements PscLookupService {
                             e.getStatusCode(), e.getStatusMessage()), e);
 
         } catch (URIValidationException e) {
-            logger.errorContext(transactionId, UNEXPECTED_STATUS_CODE, e, logMap);
+            logger.errorContext(pscAppointmentId, UNEXPECTED_STATUS_CODE, e, logMap);
             throw new PscLookupServiceException(
                     MessageFormat.format("Error Retrieving PSC details for {0}: {1}", pscAppointmentId,
                             e.getMessage()), e);

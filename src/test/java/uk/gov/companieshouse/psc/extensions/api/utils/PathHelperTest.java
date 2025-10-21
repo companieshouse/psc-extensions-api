@@ -28,7 +28,7 @@ class PathHelperTest {
         assertNotNull(paths);
         assertEquals(3, paths.size());
         Assertions.assertTrue(paths.contains("/transactions/{transactionId}/persons-with-significant-control-extensions"));
-        Assertions.assertTrue(paths.contains("/persons-with-significant-control-extensions/{transactionId}/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid"));
+        Assertions.assertTrue(paths.contains("/persons-with-significant-control-extensions/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid"));
         Assertions.assertTrue(paths.contains("/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount"));
     }
 }
