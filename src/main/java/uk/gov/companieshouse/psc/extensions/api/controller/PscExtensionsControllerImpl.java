@@ -160,6 +160,13 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
                     "We are currently unable to process an Extension filing for this PSC", new Exception("Internal Id"));
         }
 
+        final var validationStatus = getValidationStatus(pscNotificationId, pscIndividualFullRecordApi);
+
+        return ResponseEntity.ok(validationStatus);
+    }
+
+    public ValidationStatusResponse getValidationStatus(final String pscNotificationId, final PscIndividualFullRecordApi pscIndividualFullRecordApi)
+    {
         final var idvDetails = pscIndividualFullRecordApi.getIdentityVerificationDetails();
 
         final var extensionCount = pscExtensionsService.getExtensionCount(pscNotificationId);
@@ -177,7 +184,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         validationStatus.setValidationStatusError(errorList);
 
-        return ResponseEntity.ok(validationStatus);
+        return validationStatus;
     }
 
     private PscExtension saveFilingWithLinks(
