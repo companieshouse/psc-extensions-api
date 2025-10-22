@@ -27,8 +27,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
         "/persons-with-significant-control-extensions/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid";
     public static final String FILINGS_RESOURCE_PATH =
         "/private/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/filings";
-    public static final String VALIDATION_STATUS_PATH =
-        "/persons-with-significant-control-extensions/{pscNotificationId}/{companyNumber}/validation_status";
 
     @Override
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
@@ -36,7 +34,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(transactionInterceptor())
             .excludePathPatterns(EXTENSIONS_COUNT_PATH)
-            .excludePathPatterns(VALIDATION_STATUS_PATH)
             .excludePathPatterns(VALIDATION_PATH)
             .order(1);
 
