@@ -119,16 +119,79 @@ class ValidationStatusControllerImplTest {
     }
 
     @Test
-    void _validate_WhenPscExtensionNotFound_ShouldThrowException() {
+    void _validate_WhenPscExtensionNotFound_ShouldReturnInvalidResponse() {
+        final var expectedErrorMessage = String.format("PSC extension not found when validating filing for %s", FILING_RESOURCE_ID);
+
         when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
-        });
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
-        String expectedMessage = "PSC extension not found when generating filing for " + FILING_RESOURCE_ID;
-        String actualMessage = exception.getMessage();
+        final ValidationStatusResponse body = response.getBody();
+        assertNotNull(body);
+        assertFalse(body.getValid());
+        assertEquals(body.getValidationStatusError().getFirst().getMessage(), expectedErrorMessage);
+    }
 
-        assertTrue(actualMessage.contains(expectedMessage));
+    @Test
+    void _validate_WhenPscExtensionCompanyNameIsNull_ShouldReturnInvalidResponse() {
+        final var expectedErrorMessage = String.format("Missing fields when validating filing for %s: %s",
+                FILING_RESOURCE_ID, "companyNumber");
+
+        final PscExtension pscExtension = mock(PscExtension.class);
+        final Data data = mock(Data.class);
+        when(pscExtension.getData()).thenReturn(data);
+        when(data.getCompanyNumber()).thenReturn(null);
+        when(data.getPscNotificationId()).thenReturn(PSC_NOTIFICATION_ID);
+
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
+
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
+
+        final ValidationStatusResponse body = response.getBody();
+        assertNotNull(body);
+        assertFalse(body.getValid());
+        assertEquals(body.getValidationStatusError().getFirst().getMessage(), expectedErrorMessage);
+    }
+
+    @Test
+    void _validate_WhenPscExtensionPscNotificationIdIsNull_ShouldReturnInvalidResponse() {
+        final var expectedErrorMessage = String.format("Missing fields when validating filing for %s: %s",
+                FILING_RESOURCE_ID, "pscNotificationId");
+
+        final PscExtension pscExtension = mock(PscExtension.class);
+        final Data data = mock(Data.class);
+        when(pscExtension.getData()).thenReturn(data);
+        when(data.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
+        when(data.getPscNotificationId()).thenReturn(null);
+
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
+
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
+
+        final ValidationStatusResponse body = response.getBody();
+        assertNotNull(body);
+        assertFalse(body.getValid());
+        assertEquals(body.getValidationStatusError().getFirst().getMessage(), expectedErrorMessage);
+    }
+
+    @Test
+    void _validate_WhenCompanyNumberAndPscExtensionPscNotificationIdIsNull_ShouldReturnInvalidResponse() {
+        final var expectedErrorMessage = String.format("Missing fields when validating filing for %s: %s",
+                FILING_RESOURCE_ID, String.join(", ","companyNumber", "pscNotificationId"));
+
+        final PscExtension pscExtension = mock(PscExtension.class);
+        final Data data = mock(Data.class);
+        when(pscExtension.getData()).thenReturn(data);
+        when(data.getCompanyNumber()).thenReturn(null);
+        when(data.getPscNotificationId()).thenReturn(null);
+
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
+
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
+
+        final ValidationStatusResponse body = response.getBody();
+        assertNotNull(body);
+        assertFalse(body.getValid());
+        assertEquals(body.getValidationStatusError().getFirst().getMessage(), expectedErrorMessage);
     }
 }
