@@ -33,6 +33,8 @@ class ValidationStatusControllerImplTest {
     private PscExtensionsControllerImpl pscExtensionsController;
     @Mock
     private PscLookupService pscLookupService;
+    @Mock
+    private HttpServletRequest httpServletRequest;
 
     private ValidationStatusControllerImpl controller;
 
@@ -40,15 +42,7 @@ class ValidationStatusControllerImplTest {
     void setUp() {
         controller = new ValidationStatusControllerImpl(pscExtensionsController, pscLookupService);
 
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
-    }
-
-    @Test
-    void constructor_ShouldSetDependencies() {
-        ValidationStatusControllerImpl testController = new ValidationStatusControllerImpl(
-                pscExtensionsController, pscLookupService);
-        assertNotNull(testController);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
     }
 
     @Test
@@ -74,6 +68,7 @@ class ValidationStatusControllerImplTest {
         assertNotNull(body);
         assertFalse(body.getValid());
         assertFalse(body.getValidationStatusError().isEmpty());
+        assertEquals(body.getValidationStatusError(), List.of(error));
     }
 
     @Test
