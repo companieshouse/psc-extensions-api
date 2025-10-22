@@ -67,7 +67,6 @@ class ValidationStatusControllerImplTest {
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
         assertFalse(body.getValid());
-        assertFalse(body.getValidationStatusError().isEmpty());
         assertEquals(body.getValidationStatusError(), List.of(error));
     }
 
