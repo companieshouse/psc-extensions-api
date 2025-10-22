@@ -23,6 +23,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
         "/transactions/{transactionId}/persons-with-significant-control-extensions";
     public static final String EXTENSIONS_COUNT_PATH =
         "/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount";
+    public static final String VALIDATION_PATH =
+        "/persons-with-significant-control-extensions/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid";
     public static final String FILINGS_RESOURCE_PATH =
         "/private/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/filings";
     public static final String VALIDATION_STATUS_PATH =
@@ -35,6 +37,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(transactionInterceptor())
             .excludePathPatterns(EXTENSIONS_COUNT_PATH)
             .excludePathPatterns(VALIDATION_STATUS_PATH)
+            .excludePathPatterns(VALIDATION_PATH)
             .order(1);
 
         registry.addInterceptor(openTransactionInterceptor())
@@ -75,4 +78,3 @@ public class InterceptorConfig implements WebMvcConfigurer {
         return new LoggingInterceptor();
    }
 }
-
