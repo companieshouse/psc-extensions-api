@@ -15,10 +15,14 @@ import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.controller.ValidationStatusControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
+import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -26,6 +30,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ValidationStatusControllerImplTest {
+    private final String TRANSACTION_ID = "transaction-id";
+    private final String FILING_RESOURCE_ID = "filing-resource-id";
     private final String PSC_NOTIFICATION_ID = "psc-notification-id";
     private final String COMPANY_NUMBER = "12345678";
 
@@ -34,19 +40,29 @@ class ValidationStatusControllerImplTest {
     @Mock
     private PscLookupService pscLookupService;
     @Mock
+    private PscExtensionsService pscExtensionsService;
+    @Mock
     private HttpServletRequest httpServletRequest;
 
     private ValidationStatusControllerImpl controller;
 
     @BeforeEach
     void setUp() {
-        controller = new ValidationStatusControllerImpl(pscExtensionsController, pscLookupService);
+        controller = new ValidationStatusControllerImpl(pscExtensionsController, pscLookupService, pscExtensionsService);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
     }
 
     @Test
     void _validate_WhenValidationErrorsPresent_ShouldReturnInvalidResponse() {
+        final PscExtension pscExtension = mock(PscExtension.class);
+        final Data data = mock(Data.class);
+        when(pscExtension.getData()).thenReturn(data);
+        when(data.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
+        when(data.getPscNotificationId()).thenReturn(PSC_NOTIFICATION_ID);
+
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
+
         final PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
         when(pscLookupService.getPscIndividualFullRecord(
                 COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
@@ -62,7 +78,7 @@ class ValidationStatusControllerImplTest {
         when(pscExtensionsController.getValidationStatus(PSC_NOTIFICATION_ID, mockPscRecord))
                 .thenReturn(validationStatusResponse);
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(PSC_NOTIFICATION_ID, COMPANY_NUMBER);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -72,6 +88,14 @@ class ValidationStatusControllerImplTest {
 
     @Test
     void _validate_WhenValidationErrorsAbsent_ShouldReturnValidResponse() {
+        final PscExtension pscExtension = mock(PscExtension.class);
+        final Data data = mock(Data.class);
+        when(pscExtension.getData()).thenReturn(data);
+        when(data.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
+        when(data.getPscNotificationId()).thenReturn(PSC_NOTIFICATION_ID);
+
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
+
         final PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
         when(pscLookupService.getPscIndividualFullRecord(
                 COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
@@ -86,11 +110,25 @@ class ValidationStatusControllerImplTest {
         when(pscExtensionsController.getValidationStatus(PSC_NOTIFICATION_ID, mockPscRecord))
                 .thenReturn(validationStatusResponse);
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(PSC_NOTIFICATION_ID, COMPANY_NUMBER);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
         assertTrue(body.getValid());
         assertTrue(body.getValidationStatusError().isEmpty());
+    }
+
+    @Test
+    void _validate_WhenPscExtensionNotFound_ShouldThrowException() {
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
+        });
+
+        String expectedMessage = "PSC extension not found when generating filing for " + FILING_RESOURCE_ID;
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 }
