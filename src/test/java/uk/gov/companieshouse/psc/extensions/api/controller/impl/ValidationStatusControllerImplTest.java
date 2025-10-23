@@ -64,7 +64,7 @@ class ValidationStatusControllerImplTest {
         when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
         final IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
-        when(pscLookupService.getIndividualFullRecord(
+        when(pscLookupService.getPscIndividualFullRecord(
                 COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
 
@@ -97,7 +97,7 @@ class ValidationStatusControllerImplTest {
         when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
         final IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
-        when(pscLookupService.getIndividualFullRecord(
+        when(pscLookupService.getPscIndividualFullRecord(
                 COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
 

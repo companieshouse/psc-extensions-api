@@ -31,7 +31,6 @@ import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.service.TransactionService;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -160,7 +159,7 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void isPscExtensionValid_WhenPscLookupFails_ShouldThrowException() throws PscLookupServiceException {
-        when(pscLookupService.getIndividualFullRecord(COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
+        when(pscLookupService.getPscIndividualFullRecord(COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenThrow(new PscLookupServiceException("PSC not found"));
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
@@ -185,7 +184,7 @@ class PscExtensionsControllerImplTest {
         Optional<Long> extensionCount = Optional.of(1L);
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(idvDetails);
-        when(pscLookupService.getIndividualFullRecord(
+        when(pscLookupService.getPscIndividualFullRecord(
                  eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
                 .thenReturn(mockPscRecord);
         when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
@@ -215,7 +214,7 @@ class PscExtensionsControllerImplTest {
         Optional<Long> extensionCount = Optional.of(1L);
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(null);
-        when(pscLookupService.getIndividualFullRecord(
+        when(pscLookupService.getPscIndividualFullRecord(
                 eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
                 .thenReturn(mockPscRecord);
         when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);

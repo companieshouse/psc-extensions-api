@@ -78,7 +78,7 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
 
         final IndividualFullRecord pscIndividualFullRecordApi;
         try {
-            pscIndividualFullRecordApi = pscLookupService.getIndividualFullRecord(
+            pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
                     companyNumber,
                     pscNotificationId,
                     PscType.INDIVIDUAL

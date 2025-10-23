@@ -95,7 +95,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         final PscExtension entity = filingMapper.toEntity(data);
 
-        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        final IndividualFullRecord pscIndividualFullRecordApi;
         try {
             pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
                     data.getCompanyNumber(),
@@ -145,7 +145,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         final IndividualFullRecord pscIndividualFullRecordApi;
         try {
-            pscIndividualFullRecordApi = pscLookupService.getIndividualFullRecord(
+            pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
                     companyNumber,
                     pscNotificationId,
                     PscType.INDIVIDUAL
