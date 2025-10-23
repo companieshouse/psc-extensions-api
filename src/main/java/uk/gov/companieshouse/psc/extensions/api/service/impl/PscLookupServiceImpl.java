@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
+import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.FilingResourceNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
 import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
@@ -21,11 +23,14 @@ public class PscLookupServiceImpl implements PscLookupService {
     private static final String UNEXPECTED_STATUS_CODE = "Unexpected Status Code received";
 
     private final ApiClientService apiClientService;
+    private final InternalApiClientService internalApiClientService;
     private final Logger logger;
     private final EnvironmentReader environmentReader;
 
-    public PscLookupServiceImpl(ApiClientService apiClientService, Logger logger, EnvironmentReader environmentReader) {
+    public PscLookupServiceImpl(ApiClientService apiClientService, InternalApiClientService internalApiClientService,
+                                Logger logger, EnvironmentReader environmentReader) {
         this.apiClientService = apiClientService;
+        this.internalApiClientService = internalApiClientService;
         this.logger = logger;
         this.environmentReader = environmentReader;
     }
@@ -62,6 +67,48 @@ public class PscLookupServiceImpl implements PscLookupService {
                 .getIndividualFullRecord(uri)
                 .execute()
                 .getData();
+
+        } catch (final ApiErrorResponseException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
+                logger.errorContext(pscAppointmentId, UNEXPECTED_STATUS_CODE, e, logMap);
+                throw new FilingResourceNotFoundException(
+                        MessageFormat.format("PSC Details not found for {0}: {1} {2}", pscAppointmentId,
+                                e.getStatusCode(), e.getStatusMessage()), e);
+            }
+            throw new PscLookupServiceException(
+                    MessageFormat.format("Error Retrieving PSC details for {0}: {1} {2}", pscAppointmentId,
+                            e.getStatusCode(), e.getStatusMessage()), e);
+
+        } catch (URIValidationException e) {
+            logger.errorContext(pscAppointmentId, UNEXPECTED_STATUS_CODE, e, logMap);
+            throw new PscLookupServiceException(
+                    MessageFormat.format("Error Retrieving PSC details for {0}: {1}", pscAppointmentId,
+                            e.getMessage()), e);
+        }
+    }
+
+    @Override
+    public IndividualFullRecord getIndividualFullRecord(final String companyNumber,
+                                                           final String pscAppointmentId,
+                                                           final PscType pscType)
+            throws PscLookupServiceException {
+
+        final var logMap = LogMapHelper.createLogMap(pscAppointmentId);
+
+        try {
+            final var uri = "/company/"
+                    + companyNumber
+                    + "/persons-with-significant-control/"
+                    + pscType.getValue()
+                    + "/"
+                    + pscAppointmentId
+                    + "/full_record";
+
+            return internalApiClientService.getInternalApiClient()
+                    .privatePscFullRecordResourceHandler()
+                    .getPscFullRecord(uri)
+                    .execute()
+                    .getData();
 
         } catch (final ApiErrorResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {

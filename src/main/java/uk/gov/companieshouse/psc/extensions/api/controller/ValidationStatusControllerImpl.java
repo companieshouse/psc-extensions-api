@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
+import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionValidationStatusApi;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
@@ -76,9 +76,9 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
         final var companyNumber = pscExtension.getData().getCompanyNumber();
         final var pscNotificationId = pscExtension.getData().getPscNotificationId();
 
-        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        final IndividualFullRecord pscIndividualFullRecordApi;
         try {
-            pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
+            pscIndividualFullRecordApi = pscLookupService.getIndividualFullRecord(
                     companyNumber,
                     pscNotificationId,
                     PscType.INDIVIDUAL

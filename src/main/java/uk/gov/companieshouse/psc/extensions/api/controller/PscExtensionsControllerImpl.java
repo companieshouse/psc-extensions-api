@@ -13,6 +13,7 @@ import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestApi;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
@@ -142,9 +143,9 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         logMap.put("method", request.getMethod());
         LOGGER.debugRequest(request, "GET", logMap);
 
-        final PscIndividualFullRecordApi pscIndividualFullRecordApi;
+        final IndividualFullRecord pscIndividualFullRecordApi;
         try {
-            pscIndividualFullRecordApi = pscLookupService.getPscIndividualFullRecord(
+            pscIndividualFullRecordApi = pscLookupService.getIndividualFullRecord(
                     companyNumber,
                     pscNotificationId,
                     PscType.INDIVIDUAL
@@ -162,7 +163,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         return ResponseEntity.ok(validationStatus);
     }
 
-    public ValidationStatusResponse getValidationStatus(final String pscNotificationId, final PscIndividualFullRecordApi pscIndividualFullRecordApi)
+    public ValidationStatusResponse getValidationStatus(final String pscNotificationId, final IndividualFullRecord pscIndividualFullRecordApi)
     {
         final var idvDetails = pscIndividualFullRecordApi.getIdentityVerificationDetails();
 

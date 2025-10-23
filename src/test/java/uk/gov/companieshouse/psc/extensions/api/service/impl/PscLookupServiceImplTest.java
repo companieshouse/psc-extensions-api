@@ -13,6 +13,7 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import org.junit.jupiter.api.function.Executable;
 import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -27,6 +28,8 @@ class PscLookupServiceImplTest {
     private static final String API_KEY = "test-api-key";
     @Mock
     private ApiClientService apiClientService;
+    @Mock
+    private InternalApiClientService internalApiClientService;
     @Mock
     private Logger logger;
     @Mock
@@ -48,7 +51,8 @@ class PscLookupServiceImplTest {
 
     @Test
     void constructor_ShouldSetDependencies() {
-        PscLookupServiceImpl service = new PscLookupServiceImpl(apiClientService, logger, environmentReader);
+        PscLookupServiceImpl service = new PscLookupServiceImpl(apiClientService, internalApiClientService,
+                logger, environmentReader);
         assertNotNull(service);
     }
 

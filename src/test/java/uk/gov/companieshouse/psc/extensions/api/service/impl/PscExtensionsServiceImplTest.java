@@ -5,8 +5,8 @@ import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.api.model.common.ResourceLinks;
-import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
+import uk.gov.companieshouse.api.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.psc.extensions.api.MongoDBTest;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
@@ -195,12 +195,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
         try (MockedStatic<ExtensionRequestDateValidator> mockedStatic = mockStatic(ExtensionRequestDateValidator.class)) {
             mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(Collections.emptySet());
 
-            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                    LocalDate.now().plusDays(5),
-                    LocalDate.now().plusDays(5),
-                    LocalDate.now().plusDays(1),
-                    LocalDate.now().plusDays(2)
-            );
+            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails();
 
             Optional<Long> extensionCount = Optional.of(1L);
 
@@ -220,12 +215,7 @@ class PscExtensionsServiceImplTest extends MongoDBTest {
 
             mockedStatic.when(() -> ExtensionRequestDateValidator.validate(any())).thenReturn(mockErrors);
 
-            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                    LocalDate.now().plusDays(6),
-                    LocalDate.now().plusDays(5),
-                    LocalDate.now().plusDays(1),
-                    LocalDate.now().plusDays(2)
-            );
+            IdentityVerificationDetails idvDetails = new IdentityVerificationDetails();
 
             Optional<Long> extensionCount = Optional.of(1L);
 

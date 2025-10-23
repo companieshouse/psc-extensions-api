@@ -11,10 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
-import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
+import uk.gov.companieshouse.api.psc.IdentityVerificationDetails;
+import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
@@ -160,7 +160,7 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void isPscExtensionValid_WhenPscLookupFails_ShouldThrowException() throws PscLookupServiceException {
-        when(pscLookupService.getPscIndividualFullRecord(COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
+        when(pscLookupService.getIndividualFullRecord(COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenThrow(new PscLookupServiceException("PSC not found"));
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
@@ -171,12 +171,7 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void isPscExtensionValid_WhenValidationErrorsPresent_ShouldReturnInvalidResponse() throws PscLookupServiceException {
-        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails(
-                LocalDate.now().plusDays(5),
-                LocalDate.now().plusDays(5),
-                LocalDate.now().plusDays(1),
-                LocalDate.now().plusDays(1)
-        );
+        IdentityVerificationDetails idvDetails = new IdentityVerificationDetails();
 
         ValidationStatusError error = new ValidationStatusError(
                 "Statement date is too early",
@@ -186,11 +181,11 @@ class PscExtensionsControllerImplTest {
         );
         ValidationStatusError[] errors = new ValidationStatusError[]{error};
 
-        PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
+        IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
         Optional<Long> extensionCount = Optional.of(1L);
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(idvDetails);
-        when(pscLookupService.getPscIndividualFullRecord(
+        when(pscLookupService.getIndividualFullRecord(
                  eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
                 .thenReturn(mockPscRecord);
         when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
@@ -216,11 +211,11 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void isPscExtensionValid_WhenIdentityVerificationDetailsIsNull_ShouldHandleGracefully() throws PscLookupServiceException {
-        PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
+        IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
         Optional<Long> extensionCount = Optional.of(1L);
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(null);
-        when(pscLookupService.getPscIndividualFullRecord(
+        when(pscLookupService.getIndividualFullRecord(
                 eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
                 .thenReturn(mockPscRecord);
         when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
