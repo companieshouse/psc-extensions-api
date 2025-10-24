@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.service;
 
-import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
+import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
 
@@ -15,7 +15,7 @@ public interface PscLookupService {
      * @return the PSC individual full record
      * @throws PscLookupServiceException if PSC cannot be found or accessed
      */
-    PscIndividualFullRecordApi getPscIndividualFullRecord(String companyNumber,
+    IndividualFullRecord getPscIndividualFullRecord(String companyNumber,
                                                           String pscAppointmentId,
                                                           PscType pscType) throws PscLookupServiceException;
 }

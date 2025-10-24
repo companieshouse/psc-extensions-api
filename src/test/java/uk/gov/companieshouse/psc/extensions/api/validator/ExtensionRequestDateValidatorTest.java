@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
+import uk.gov.companieshouse.api.psc.IdentityVerificationDetails;
 
 @ExtendWith(MockitoExtension.class)
 class ExtensionRequestDateValidatorTest {
@@ -20,8 +20,8 @@ class ExtensionRequestDateValidatorTest {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         LocalDate futureStartDate = LocalDate.now().plusDays(5);
 
-        Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(futureStartDate);
-        Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(null);
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(futureStartDate);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(null);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
 
@@ -37,8 +37,8 @@ class ExtensionRequestDateValidatorTest {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         LocalDate pastDueDate = LocalDate.now().minusDays(1);
 
-        Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(pastDueDate);
-        Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(null);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(pastDueDate);
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(null);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
 
@@ -54,8 +54,8 @@ class ExtensionRequestDateValidatorTest {
         LocalDate futureStartDate = LocalDate.now().plusDays(5);
         LocalDate pastDueDate = LocalDate.now().minusDays(1);
 
-        Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(futureStartDate);
-        Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(pastDueDate);
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(futureStartDate);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(pastDueDate);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
 
@@ -67,8 +67,8 @@ class ExtensionRequestDateValidatorTest {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
         LocalDate startDate = LocalDate.now().minusDays(1);
         LocalDate dueDate = LocalDate.now().plusDays(1);
-        Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(startDate);
-        Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(dueDate);
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(startDate);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(dueDate);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
 
@@ -78,8 +78,8 @@ class ExtensionRequestDateValidatorTest {
     @Test
     void validate_When_DatesAreNull_Expect_NoErrors() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
-        Mockito.when(details.appointmentVerificationStatementDate()).thenReturn(null);
-        Mockito.when(details.appointmentVerificationStatementDueOn()).thenReturn(null);
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(null);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(null);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
 

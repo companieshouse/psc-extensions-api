@@ -8,15 +8,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
-import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
-import org.junit.jupiter.api.function.Executable;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PscLookupServiceImplTest {
@@ -24,13 +19,10 @@ class PscLookupServiceImplTest {
     private static final String TRANSACTION_ID = "test-transaction-id";
     private static final String COMPANY_NUMBER = "12345678";
     private static final String PSC_NOTIFICATION_ID = "test-psc-notification-id";
-    private static final String API_KEY = "test-api-key";
     @Mock
-    private ApiClientService apiClientService;
+    private InternalApiClientService internalApiClientService;
     @Mock
     private Logger logger;
-    @Mock
-    private EnvironmentReader environmentReader;
     @InjectMocks
     private PscLookupServiceImpl pscLookupService;
     private Transaction testTransaction;
@@ -48,36 +40,8 @@ class PscLookupServiceImplTest {
 
     @Test
     void constructor_ShouldSetDependencies() {
-        PscLookupServiceImpl service = new PscLookupServiceImpl(apiClientService, logger, environmentReader);
+        PscLookupServiceImpl service = new PscLookupServiceImpl(internalApiClientService, logger);
         assertNotNull(service);
-    }
-
-    @Test
-    void getPscIndividualFullRecord_WhenEnvironmentReaderFails_ShouldThrowRuntimeException() {
-        when(environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY"))
-                .thenThrow(new RuntimeException("Environment error"));
-
-        Executable action = () -> pscLookupService.getPscIndividualFullRecord(
-                testData.getCompanyNumber(),
-                testData.getPscNotificationId(),
-                PscType.INDIVIDUAL
-        );
-
-        assertThrows(RuntimeException.class, action);
-    }
-
-    @Test
-    void getPscIndividualFullRecord_ShouldCallEnvironmentReader() {
-        when(environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY")).thenReturn(API_KEY);
-        when(apiClientService.getApiClient(anyString())).thenThrow(new RuntimeException("Expected test error"));
-
-        Executable action = () -> pscLookupService.getPscIndividualFullRecord(
-                testData.getCompanyNumber(),
-                testData.getPscNotificationId(),
-                PscType.INDIVIDUAL
-        );
-
-        assertThrows(RuntimeException.class, action);
     }
 
     @Test

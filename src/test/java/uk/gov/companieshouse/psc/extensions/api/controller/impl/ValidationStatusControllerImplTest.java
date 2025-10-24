@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
+import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
@@ -63,7 +63,7 @@ class ValidationStatusControllerImplTest {
 
         when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
-        final PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
+        final IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
         when(pscLookupService.getPscIndividualFullRecord(
                 COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
@@ -96,7 +96,7 @@ class ValidationStatusControllerImplTest {
 
         when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
-        final PscIndividualFullRecordApi mockPscRecord = mock(PscIndividualFullRecordApi.class);
+        final IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
         when(pscLookupService.getPscIndividualFullRecord(
                 COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);

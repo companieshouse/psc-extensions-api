@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
+import uk.gov.companieshouse.api.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
 import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;

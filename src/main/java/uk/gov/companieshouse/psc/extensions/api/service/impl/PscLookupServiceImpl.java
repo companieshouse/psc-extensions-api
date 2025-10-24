@@ -4,13 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.api.model.psc.PscIndividualFullRecordApi;
-import uk.gov.companieshouse.environment.EnvironmentReader;
+import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.FilingResourceNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
-import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.ApiClientService;
+import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 import uk.gov.companieshouse.psc.extensions.api.service.PscLookupService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
@@ -20,14 +19,13 @@ import java.text.MessageFormat;
 public class PscLookupServiceImpl implements PscLookupService {
     private static final String UNEXPECTED_STATUS_CODE = "Unexpected Status Code received";
 
-    private final ApiClientService apiClientService;
+    private final InternalApiClientService internalApiClientService;
     private final Logger logger;
-    private final EnvironmentReader environmentReader;
 
-    public PscLookupServiceImpl(ApiClientService apiClientService, Logger logger, EnvironmentReader environmentReader) {
-        this.apiClientService = apiClientService;
+    public PscLookupServiceImpl(InternalApiClientService internalApiClientService,
+                                Logger logger) {
+        this.internalApiClientService = internalApiClientService;
         this.logger = logger;
-        this.environmentReader = environmentReader;
     }
 
     /**
@@ -40,13 +38,12 @@ public class PscLookupServiceImpl implements PscLookupService {
      * @throws PscLookupServiceException if the PSC was not found or an error occurred
      */
     @Override
-    public PscIndividualFullRecordApi getPscIndividualFullRecord(final String companyNumber,
-                                                                 final String pscAppointmentId,
-                                                                 final PscType pscType)
+    public IndividualFullRecord getPscIndividualFullRecord(final String companyNumber,
+                                                           final String pscAppointmentId,
+                                                           final PscType pscType)
             throws PscLookupServiceException {
 
         final var logMap = LogMapHelper.createLogMap(pscAppointmentId);
-        String chsInternalApiKey = environmentReader.getMandatoryString("CHS_INTERNAL_API_KEY");
 
         try {
             final var uri = "/company/"
@@ -57,11 +54,11 @@ public class PscLookupServiceImpl implements PscLookupService {
                     + pscAppointmentId
                     + "/full_record";
 
-            return apiClientService.getApiClient(chsInternalApiKey)
-                .pscs()
-                .getIndividualFullRecord(uri)
-                .execute()
-                .getData();
+            return internalApiClientService.getInternalApiClient()
+                    .privatePscFullRecordResourceHandler()
+                    .getPscFullRecord(uri)
+                    .execute()
+                    .getData();
 
         } catch (final ApiErrorResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {

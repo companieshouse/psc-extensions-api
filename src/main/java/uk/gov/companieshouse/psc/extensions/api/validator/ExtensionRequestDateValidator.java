@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.psc.extensions.api.validator;
 
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.api.model.psc.IdentityVerificationDetails;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
+import uk.gov.companieshouse.api.psc.IdentityVerificationDetails;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -39,8 +39,8 @@ public class ExtensionRequestDateValidator {
         }
 
         final var requestDate = LocalDate.now();
-        final var startDate = idvDetails.appointmentVerificationStatementDate();
-        final var dueDate = idvDetails.appointmentVerificationStatementDueOn();
+        final var startDate = idvDetails.getAppointmentVerificationStatementDate();
+        final var dueDate = idvDetails.getAppointmentVerificationStatementDueOn();
 
         if (startDate != null && requestDate.isBefore(startDate)) {
             final var formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
