@@ -6,7 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import uk.gov.companieshouse.api.interceptor.*;
+import uk.gov.companieshouse.api.interceptor.ClosedTransactionInterceptor;
+import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
+import uk.gov.companieshouse.api.interceptor.MappablePermissionsInterceptor;
+import uk.gov.companieshouse.api.interceptor.OpenTransactionInterceptor;
+import uk.gov.companieshouse.api.interceptor.PermissionsMapping;
+import uk.gov.companieshouse.api.interceptor.TokenPermissionsInterceptor;
+import uk.gov.companieshouse.api.interceptor.TransactionInterceptor;
 import uk.gov.companieshouse.api.util.security.Permission;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
 
@@ -55,6 +61,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new InternalUserInterceptor())
                 .addPathPatterns(FILINGS_RESOURCE_PATH)
+                .addPathPatterns(COMMON_INTERCEPTOR_PATH)
                 .order(7);
     }
 
@@ -76,7 +83,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Bean("chsRequestPermissionInterceptor")
     public MappablePermissionsInterceptor requestPermissionsInterceptor(
             final PermissionsMapping permissionMapping) {
-        return new MappablePermissionsInterceptor(Permission.Key.USER_PSC_VERIFICATION, true,
+        return new MappablePermissionsInterceptor(Permission.Key.USER_PSC_EXTENSION, true,
                 permissionMapping);
     }
 
