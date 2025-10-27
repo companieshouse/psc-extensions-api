@@ -11,13 +11,11 @@ import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.interceptor.MappablePermissionsInterceptor;
 import uk.gov.companieshouse.api.interceptor.OpenTransactionInterceptor;
 import uk.gov.companieshouse.api.interceptor.PermissionsMapping;
-import uk.gov.companieshouse.api.interceptor.TokenPermissionsInterceptor;
 import uk.gov.companieshouse.api.interceptor.TransactionInterceptor;
 import uk.gov.companieshouse.api.util.security.Permission;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
-
 
 @Configuration
 @ComponentScan("uk.gov.companieshouse.api")
@@ -35,7 +33,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
 
-
         registry.addInterceptor(transactionInterceptor())
                 .excludePathPatterns(EXTENSIONS_COUNT_PATH)
                 .excludePathPatterns(VALIDATION_PATH)
@@ -46,23 +43,19 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns(COMMON_INTERCEPTOR_PATH)
                 .order(2);
 
-        registry.addInterceptor(tokenPermissionsInterceptor())
-                .order(3);
-
         registry.addInterceptor(requestPermissionsInterceptor(pscPermissionsMapping()))
-                .order(4);
+                .order(3);
 
         registry.addInterceptor(transactionClosedInterceptor())
                 .addPathPatterns(FILINGS_RESOURCE_PATH)
-                .order(5);
+                .order(4);
 
         registry.addInterceptor(requestLoggingInterceptor())
-                .order(6);
+                .order(5);
 
         registry.addInterceptor(new InternalUserInterceptor())
                 .addPathPatterns(FILINGS_RESOURCE_PATH)
-                .addPathPatterns(COMMON_INTERCEPTOR_PATH)
-                .order(7);
+                .order(6);
     }
 
     @Bean("chsTransactionInterceptor")
@@ -75,15 +68,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
         return new OpenTransactionInterceptor(APPLICATION_NAMESPACE);
     }
 
-    @Bean("chsTokenPermissionInterceptor")
-    public TokenPermissionsInterceptor tokenPermissionsInterceptor() {
-        return new TokenPermissionsInterceptor();
-    }
-
     @Bean("chsRequestPermissionInterceptor")
     public MappablePermissionsInterceptor requestPermissionsInterceptor(
             final PermissionsMapping permissionMapping) {
-        return new MappablePermissionsInterceptor(Permission.Key.USER_PSC_EXTENSION, true,
+        return new MappablePermissionsInterceptor(Permission.Key.USER_PSC_VERIFICATION, true,
                 permissionMapping);
     }
 
