@@ -17,7 +17,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class InterceptorConfigTest {
+class InterceptorConfigTest {
     private InterceptorConfig testConfig;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
