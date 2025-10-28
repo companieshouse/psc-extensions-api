@@ -7,7 +7,7 @@ locals {
   container_port             = "8080" # default Java port to match start script
   docker_repo                = "psc-extensions-api"
   lb_listener_rule_priority  = 26
-  lb_listener_paths          = ["/persons-with-significant-control-extensions*"]
+  lb_listener_paths         = ["/persons-with-significant-control-extensions*", "/transactions/*/persons-with-significant-control-extensions*", "/private/transactions/*/persons-with-significant-control-extensions*"]
   healthcheck_path           = "/persons-with-significant-control-extensions/healthcheck" #healthcheck path for psc-extensions-api service
   healthcheck_matcher        = "200"
   application_subnet_ids     = data.aws_subnets.application.ids
