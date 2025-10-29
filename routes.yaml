@@ -1,6 +1,7 @@
 app_name: psc-extensions-api
 group: api
-
-weight: 100
+weight: 900
 routes:
-  1: ^/persons-with-significant-control-extensions/*
+  1: ^/persons-with-significant-control-extensions
+  2: ^/transactions/.*/persons-with-significant-control-extensions
+  3: ^/private/transactions/.*/persons-with-significant-control-extensions
