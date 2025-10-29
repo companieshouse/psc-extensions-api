@@ -31,7 +31,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
 
-
         registry.addInterceptor(transactionInterceptor())
             .excludePathPatterns(EXTENSIONS_COUNT_PATH)
             .excludePathPatterns(VALIDATION_PATH)

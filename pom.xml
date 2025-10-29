@@ -36,6 +36,8 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <!--- CH -->
         <structured-logging.version>3.0.39</structured-logging.version>
+        <logback-classic.version>1.5.20</logback-classic.version>
+        <rest-service-common-library-version>2.0.4</rest-service-common-library-version>
         <api-security-java.version>2.0.14</api-security-java.version>
         <api-helper-java.version>3.0.2</api-helper-java.version>
         <api-sdk-java.version>6.4.4</api-sdk-java.version>
@@ -53,8 +55,6 @@
         <sonar.projectName>psc-extensions-api</sonar.projectName>
         <!-- CVE-2024-11407 -->
         <grpc-context.version>1.73.0</grpc-context.version>
-        <!-- CVE-2025-48924 -->
-        <commons-lang3.version>3.18.0</commons-lang3.version>
         <!-- CVE-2025-41234 -->
         <spring-web.version>6.2.8</spring-web.version>
         <!-->CVE-2025-49125, CVE-2025-48988, CVE-2025-49124, CVE-2025-52520, CVE-2025-53506<-->
@@ -68,11 +68,6 @@
                 <version>${spring-boot-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -89,6 +84,10 @@
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
             </exclusion>
+            <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+            </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -104,18 +103,18 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
             <version>${structured-logging.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- CH SDKs -->
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-java</artifactId>
             <version>${api-sdk-java.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -137,12 +136,6 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>${api-sdk-manager-java-library.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -157,6 +150,36 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>rest-service-common-library</artifactId>
+            <version>${rest-service-common-library-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-websocket</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
         </dependency>
 
         <!-- test -->
