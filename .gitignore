@@ -18,6 +18,7 @@
 *.zip
 *.tar.gz
 *.rar
+*local.properties
 
 # Build artifacts
 target/
