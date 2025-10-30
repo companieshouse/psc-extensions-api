@@ -1,0 +1,455 @@
+{
+	"info": {
+		"_postman_id": "4f7a534d-7dc5-4815-9f9a-e2b075f2d6ea",
+		"name": "psc-extensions-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47954753"
+	},
+	"item": [
+		{
+			"name": "healthcheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody)",
+							"var status = jsonData.status;",
+							"if(jsonData.status = \"UP\") {",
+							"    console.log(\"Healthcheck ran successfully\");",
+							"} else {",
+							"    console.log(\"Healthcheck failed\")",
+							"}",
+							"",
+							"",
+							"console.log(\"...........................\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/persons-with-significant-control-extensions/healthcheck",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"persons-with-significant-control-extensions",
+						"healthcheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create the transaction",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var transaction_id = jsonData.id;",
+							"pm.environment.set(\"transaction_id\", jsonData.id);",
+							"console.log(\"A new transaction has been created \" + transaction_id);",
+							"",
+							"console.log(\"...........................\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"reference\":\"Woodstock\",\n    \"description\":\"PSC Extensions filing description\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/transactions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a PSC extension",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Create a psc extension\");",
+							"console.log(\"...........................\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"company_number\": \"{{company_number}}\",\n    \"psc_notification_id\": \"{{psc_notification_id}}\",\n    \"extension_details\": {}\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/transactions/{{transaction_id}}/persons-with-significant-control-extensions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transactions",
+						"{{transaction_id}}",
+						"persons-with-significant-control-extensions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate the PSC Extension",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var httpStatus = pm.response.status;",
+							"if(httpStatus == \"OK\") {",
+							"    console.log(\"The validation status was successful\");",
+							"} else {",
+							"    console.log(\"The validation status failed\");",
+							"}",
+							"",
+							"console.log(\"...........................\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/transactions/{{transaction_id}}/persons-with-significant-control-extensions/{{filing_resource_id}}/validation_status",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transactions",
+						"{{transaction_id}}",
+						"persons-with-significant-control-extensions",
+						"{{filing_resource_id}}",
+						"validation_status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Close the transaction",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var httpStatus = pm.response.status;",
+							"if(httpStatus == \"No Content\") {",
+							"    console.log(\"The close transaction was successful\");",
+							"} else {",
+							"    console.log(\"The close transaction failed\");",
+							"}",
+							"",
+							"console.log(\"...........................\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"closed\",\n    \"reference\": \"Snoopy\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/transactions/{{transaction_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transactions",
+						"{{transaction_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Return the submitted psc extension filing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var httpStatus = pm.response.status;",
+							"if(httpStatus == \"OK\") {",
+							"    console.log(\"The private filing resource call was successful\");",
+							"} else {",
+							"    console.log(\"The private filing resource call failed\");",
+							"}",
+							"",
+							"console.log(\"...........................\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "g9yZIA81Zo9J46Kzp3JPbfld6kOqxR47EAYqXbRV",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/private/transactions/{{transaction_id}}/persons-with-significant-control-extensions/{{filing_resource_id}}/filings",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"private",
+						"transactions",
+						"{{transaction_id}}",
+						"persons-with-significant-control-extensions",
+						"{{filing_resource_id}}",
+						"filings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "isPscExtensionValid",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/persons-with-significant-control-extensions/{{psc_notification_id}}/{{company_number}}/isPscExtensionRequestValid",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"persons-with-significant-control-extensions",
+						"{{psc_notification_id}}",
+						"{{company_number}}",
+						"isPscExtensionRequestValid"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PSC Extension Count",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/persons-with-significant-control-extensions/{{psc_notification_id}}/extensionCount",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"persons-with-significant-control-extensions",
+						"{{psc_notification_id}}",
+						"extensionCount"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "state",
+				"value": "State",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "{{access_token_url}}",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "{{auth_url}}",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "{{callback_url}}",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "{{user_scope}}",
+				"type": "string"
+			},
+			{
+				"key": "refreshRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "tokenRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "authRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{client_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{client_id}}",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
