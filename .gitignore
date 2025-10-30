@@ -18,7 +18,6 @@
 *.zip
 *.tar.gz
 *.rar
-*application-local.properties
 
 # Build artifacts
 target/
