@@ -17,11 +17,13 @@ class PscExtensionsMapperTest {
     @Test
     void testToEntity() {
         PscExtensionsData input = new PscExtensionsData();
+        input.setRequesterEmail("example@example.com");
 
         PscExtension result = mapper.toEntity(input);
 
         Assertions.assertNotNull(result);
         Assertions.assertNotNull(result.getData());
+        Assertions.assertEquals("example@example.com", result.getData().getSensitiveData().getRequesterEmail());
     }
 
     @Test

@@ -11,6 +11,8 @@ public class Data {
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String pscNotificationId;
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        private SensitiveData sensitiveData;
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private ExtensionDetails extensionDetails;
 
         public String getCompanyNumber() {
@@ -27,6 +29,14 @@ public class Data {
 
         public void setPscNotificationId(String pscNotificationId) {
                 this.pscNotificationId = pscNotificationId;
+        }
+
+        public SensitiveData getSensitiveData() {
+            return sensitiveData;
+        }
+    
+        public void setSensitiveData(SensitiveData sensitiveData) {
+            this.sensitiveData = sensitiveData;
         }
 
         public ExtensionDetails getExtensionDetails() {
@@ -48,4 +58,5 @@ public class Data {
         public int hashCode() {
                 return Objects.hash(companyNumber, pscNotificationId, extensionDetails);
         }
+
 }
