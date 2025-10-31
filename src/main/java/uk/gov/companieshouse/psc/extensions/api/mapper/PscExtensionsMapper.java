@@ -6,13 +6,16 @@ import uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension;
+import uk.gov.companieshouse.psc.extensions.api.mongo.document.SensitiveData;
 
 @Mapper(componentModel = "spring")
 public interface PscExtensionsMapper {
 
     default PscExtension toEntity(final PscExtensionsData data) {
         PscExtension entity = new PscExtension();
-        entity.setData(toData(data));
+        Data mappedData = toData(data);
+        mappedData.setSensitiveData(new SensitiveData(data.getRequesterEmail()));
+        entity.setData(mappedData);
         return entity;
     }
     
