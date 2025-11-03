@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import uk.gov.companieshouse.api.interceptor.*;
+import uk.gov.companieshouse.psc.extensions.api.interceptor.AuthenticationInterceptor;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
 
 import static org.hamcrest.CoreMatchers.isA;
@@ -37,7 +38,7 @@ class InterceptorConfigTest {
         verify(interceptorRegistry, times(1)).addInterceptor(any(MappablePermissionsInterceptor.class));
         verify(interceptorRegistry, times(1)).addInterceptor(any(ClosedTransactionInterceptor.class));
         verify(interceptorRegistry, times(1)).addInterceptor(any(LoggingInterceptor.class));
-        verify(interceptorRegistry, times(1)).addInterceptor(any(InternalUserInterceptor.class));
+        verify(interceptorRegistry, times(1)).addInterceptor(any(AuthenticationInterceptor.class));
     }
 
     @Test

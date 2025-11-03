@@ -7,12 +7,12 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.api.interceptor.ClosedTransactionInterceptor;
-import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.interceptor.MappablePermissionsInterceptor;
 import uk.gov.companieshouse.api.interceptor.OpenTransactionInterceptor;
 import uk.gov.companieshouse.api.interceptor.PermissionsMapping;
 import uk.gov.companieshouse.api.interceptor.TransactionInterceptor;
 import uk.gov.companieshouse.api.util.security.Permission;
+import uk.gov.companieshouse.psc.extensions.api.interceptor.AuthenticationInterceptor;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
@@ -53,8 +53,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(requestLoggingInterceptor())
                 .order(5);
 
-        registry.addInterceptor(new InternalUserInterceptor())
-                .addPathPatterns(FILINGS_RESOURCE_PATH)
+        registry.addInterceptor(authenticationInterceptor())
                 .order(6);
     }
 
@@ -90,5 +89,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
    @Bean("chsLoggingInterceptor")
     public LoggingInterceptor requestLoggingInterceptor() {
         return new LoggingInterceptor();
+   }
+
+   public AuthenticationInterceptor authenticationInterceptor() {
+        return new AuthenticationInterceptor();
    }
 }
