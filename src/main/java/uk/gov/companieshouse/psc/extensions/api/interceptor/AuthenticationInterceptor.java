@@ -23,7 +23,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) {
         final var hasEricIdentity = Objects.nonNull( request.getHeader( "Eric-Identity" ) );
-        final var hasEricIdentityType = Objects.nonNull( request.getHeader( "Eric-Identity-Type" ) );
+        final var identityType = request.getHeader( "Eric-Identity-Type" );
+        final var hasEricIdentityType = Objects.nonNull( identityType);
 
         if (!hasEricIdentityType || !hasEricIdentity){
             LOG.debugRequest(request, "AuthenticationInterceptor error: no authorised identity or identity type", null);
@@ -31,7 +32,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        if (isOauth2User(request) || isApiKeyUser(request)) {
+        if (identityType.contains("oauth2")) {
+            LOG.debugRequest(request, "authorised as Oauth2 user ", null);
+            return true;
+        }else if (identityType.contains("key") && AuthorisationUtil.hasInternalUserRole(request)) {
+            LOG.debugRequest(request, "authorised as api key (internal user)", null);
             return true;
         }
 
@@ -40,10 +45,4 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         return false;
     }
 
-    private boolean isOauth2User(HttpServletRequest request) {
-        return AuthorisationUtil.isOauth2User(request);
-    }
-    private boolean isApiKeyUser(HttpServletRequest request) {
-        return request.getHeader("Eric-Identity-Type").equals("key");
-    }
 }

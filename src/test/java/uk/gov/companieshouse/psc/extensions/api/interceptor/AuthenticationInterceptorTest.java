@@ -71,6 +71,7 @@ class AuthenticationInterceptorTest {
         final var request = new MockHttpServletRequest();
         request.addHeader("Eric-identity", "111");
         request.addHeader("Eric-identity-type", "key");
+        request.addHeader("ERIC-Authorised-Key-Roles", "*");
 
         final var response = new MockHttpServletResponse();
         assertTrue( authenticationInterceptor.preHandle(request, response, null ) );
