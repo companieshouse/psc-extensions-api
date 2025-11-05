@@ -67,4 +67,3 @@ Application specific attributes | Value                                | Descrip
 - [ECS service uk.gov.companieshouse.psc.extensions.config dev repository](https://github.com/companieshouse/ecs-service-configs-dev)
 - [ECS service uk.gov.companieshouse.psc.extensions.config production repository](https://github.com/companieshouse/ecs-service-configs-production)
 
-
