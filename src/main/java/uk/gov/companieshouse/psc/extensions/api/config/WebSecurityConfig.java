@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.csrf.CsrfFilter;
 import uk.gov.companieshouse.api.filter.CustomCorsFilter;
@@ -22,6 +23,10 @@ public class WebSecurityConfig implements WebMvcConfigurer  {
 
   private static final Supplier<List<String>> externalMethods = () -> List.of( GET.name() );
 
+  @Bean
+  public WebSecurityCustomizer webSecurityCustomizer() {
+    return web -> web.ignoring().requestMatchers("/persons-with-significant-control-extensions/healthcheck");
+  }
 
   @Bean
   public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
@@ -31,8 +36,6 @@ public class WebSecurityConfig implements WebMvcConfigurer  {
         .addFilterBefore(new CustomCorsFilter(externalMethods.get() ), CsrfFilter.class )
         .authorizeHttpRequests(request -> request
             .requestMatchers(POST, "/transactions/*/persons-with-significant-control-extensions")
-            .permitAll()
-            .requestMatchers(GET, "/persons-with-significant-control-extensions/healthcheck")
             .permitAll()
             .requestMatchers(GET, "/persons-with-significant-control-extensions/*/extensionCount")
             .permitAll()
