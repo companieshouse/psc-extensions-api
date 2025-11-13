@@ -42,16 +42,23 @@ public class ExtensionRequestDateValidator {
         final var startDate = idvDetails.getAppointmentVerificationStatementDate();
         final var dueDate = idvDetails.getAppointmentVerificationStatementDueOn();
 
-        if (startDate != null && requestDate.isBefore(startDate)) {
-            final var formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            final var errorResponseText = String.format("A PSC cannot request an extension before the IDV Start Date %s", formattedStartDate);
-            errors.add(new ValidationStatusError(errorResponseText, "$.psc_verification_start_date", "json-path", "ch:validation"));
-        }
+        if (startDate == null || dueDate == null) {
+            errors.add(new ValidationStatusError("Missing IDV start date or due date",
+                    "$.identity_verification_details",
+                    "json-path",
+                    "ch:validation"));
+        } else {
+            if (requestDate.isBefore(startDate)) {
+                final var formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                final var errorResponseText = String.format("A PSC cannot request an extension before the IDV Start Date %s", formattedStartDate);
+                errors.add(new ValidationStatusError(errorResponseText, "$.psc_verification_start_date", "json-path", "ch:validation"));
+            }
 
-        if (dueDate != null && requestDate.isAfter(dueDate)) {
-            final var formattedDueDate = dueDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            final var errorResponseText = String.format("A PSC cannot request an extension after the IDV Due Date %s", formattedDueDate);
-            errors.add(new ValidationStatusError(errorResponseText, "$.psc_verification_due_date", "json-path", "ch:validation"));
+            if (requestDate.isAfter(dueDate)) {
+                final var formattedDueDate = dueDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                final var errorResponseText = String.format("A PSC cannot request an extension after the IDV Due Date %s", formattedDueDate);
+                errors.add(new ValidationStatusError(errorResponseText, "$.psc_verification_due_date", "json-path", "ch:validation"));
+            }
         }
 
         return errors;
