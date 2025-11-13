@@ -7,12 +7,12 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.api.interceptor.ClosedTransactionInterceptor;
-import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.interceptor.MappablePermissionsInterceptor;
 import uk.gov.companieshouse.api.interceptor.OpenTransactionInterceptor;
 import uk.gov.companieshouse.api.interceptor.PermissionsMapping;
 import uk.gov.companieshouse.api.interceptor.TransactionInterceptor;
 import uk.gov.companieshouse.api.util.security.Permission;
+import uk.gov.companieshouse.psc.extensions.api.interceptor.AuthenticationInterceptor;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
@@ -21,40 +21,55 @@ import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplicati
 @ComponentScan("uk.gov.companieshouse.api")
 public class InterceptorConfig implements WebMvcConfigurer {
 
-    public static final String COMMON_INTERCEPTOR_PATH =
-        "/transactions/{transactionId}/persons-with-significant-control-extensions";
+    public static final String PSC_EXTENSIONS_INTERCEPTOR_PATH =
+            "/transactions/{transactionId}/persons-with-significant-control-extensions";
     public static final String EXTENSIONS_COUNT_PATH =
-        "/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount";
+            "/persons-with-significant-control-extensions/{pscNotificationId}/extensionCount";
+    public static final String VALIDATION_STATUS_PATH =
+            "/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/validation_status";
     public static final String VALIDATION_PATH =
-        "/persons-with-significant-control-extensions/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid";
+            "/persons-with-significant-control-extensions/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid";
     public static final String FILINGS_RESOURCE_PATH =
-        "/private/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/filings";
+            "/private/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/filings";
 
     @Override
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
 
-        registry.addInterceptor(transactionInterceptor())
-                .excludePathPatterns(EXTENSIONS_COUNT_PATH)
-                .excludePathPatterns(VALIDATION_PATH)
+        //check for Oauth2 or internal user api key
+        registry.addInterceptor(new AuthenticationInterceptor())
+                .addPathPatterns(PSC_EXTENSIONS_INTERCEPTOR_PATH)
+                .addPathPatterns(VALIDATION_STATUS_PATH)
+                .addPathPatterns(FILINGS_RESOURCE_PATH)
+                .addPathPatterns(EXTENSIONS_COUNT_PATH)
+                .addPathPatterns(VALIDATION_PATH)
                 .order(1);
+
+        registry.addInterceptor(transactionInterceptor())
+                .addPathPatterns(PSC_EXTENSIONS_INTERCEPTOR_PATH)
+                .addPathPatterns(VALIDATION_STATUS_PATH)
+                .addPathPatterns(FILINGS_RESOURCE_PATH)
+                .order(2);
 
         registry.addInterceptor(openTransactionInterceptor())
                 .addPathPatterns(FILINGS_RESOURCE_PATH)
-                .addPathPatterns(COMMON_INTERCEPTOR_PATH)
-                .order(2);
-
-        registry.addInterceptor(requestPermissionsInterceptor(pscPermissionsMapping()))
+                .addPathPatterns(VALIDATION_STATUS_PATH)
+                .addPathPatterns(PSC_EXTENSIONS_INTERCEPTOR_PATH)
                 .order(3);
+
+        // this will ignore api key requests
+        registry.addInterceptor(requestPermissionsInterceptor(pscPermissionsMapping()))
+                .addPathPatterns(PSC_EXTENSIONS_INTERCEPTOR_PATH)
+                .addPathPatterns(VALIDATION_STATUS_PATH)
+                .addPathPatterns(FILINGS_RESOURCE_PATH)
+                .addPathPatterns(EXTENSIONS_COUNT_PATH)
+                .addPathPatterns(VALIDATION_PATH)
+                .order(4);
 
         registry.addInterceptor(transactionClosedInterceptor())
                 .addPathPatterns(FILINGS_RESOURCE_PATH)
-                .order(4);
-
-        registry.addInterceptor(requestLoggingInterceptor())
                 .order(5);
 
-        registry.addInterceptor(new InternalUserInterceptor())
-                .addPathPatterns(FILINGS_RESOURCE_PATH)
+        registry.addInterceptor(requestLoggingInterceptor())
                 .order(6);
     }
 
@@ -87,8 +102,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
         return new ClosedTransactionInterceptor(APPLICATION_NAMESPACE);
     }
 
-   @Bean("chsLoggingInterceptor")
+    @Bean("chsLoggingInterceptor")
     public LoggingInterceptor requestLoggingInterceptor() {
         return new LoggingInterceptor();
-   }
+    }
 }

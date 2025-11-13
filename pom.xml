@@ -35,7 +35,7 @@
         <equalsverifier.version>3.15.1</equalsverifier.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <!--- CH -->
-        <structured-logging.version>3.0.39</structured-logging.version>
+        <structured-logging.version>3.0.43</structured-logging.version>
         <api-security-java.version>2.0.14</api-security-java.version>
         <api-helper-java.version>3.0.2</api-helper-java.version>
         <api-sdk-java.version>6.4.4</api-sdk-java.version>
@@ -73,6 +73,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.18.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
