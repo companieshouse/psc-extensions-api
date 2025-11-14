@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class ExtensionDetails {
 
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "extension_reason", access = JsonProperty.Access.READ_ONLY)
         private String extensionReason;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "extension_status", access = JsonProperty.Access.READ_ONLY)
         private String extensionStatus;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "extension_request_date", access = JsonProperty.Access.READ_ONLY)
         private LocalDate extensionRequestDate;
 
         public ExtensionDetails() {

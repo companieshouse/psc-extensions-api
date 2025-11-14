@@ -8,11 +8,11 @@ public class Data {
 
         @JsonProperty("company_number")
         private String companyNumber;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "psc_notification_id", access = JsonProperty.Access.READ_ONLY)
         private String pscNotificationId;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "sensitive_data", access = JsonProperty.Access.READ_ONLY)
         private SensitiveData sensitiveData;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "extension_details", access = JsonProperty.Access.READ_ONLY)
         private ExtensionDetails extensionDetails;
 
         public String getCompanyNumber() {
