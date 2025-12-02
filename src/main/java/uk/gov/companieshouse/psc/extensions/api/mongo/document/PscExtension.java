@@ -19,9 +19,9 @@ public class PscExtension {
         @Id
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String id;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "created_at",access = JsonProperty.Access.READ_ONLY)
         private Instant createdAt;
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        @JsonProperty(value = "updated_at",access = JsonProperty.Access.READ_ONLY)
         private Instant updatedAt;
         @JsonMerge
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
