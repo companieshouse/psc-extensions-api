@@ -177,7 +177,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
                 .map(err -> new ValidationError()
                         .field(err.getLocation())
                         .message(err.getError()))
-                .collect(Collectors.toList());
+                        .toList();
 
         validationStatus.setValidationStatusError(errorList);
 
