@@ -21,7 +21,7 @@ public class ExtensionRequestDateValidator {
     private static final String CH_VALIDATION = "ch:validation";
 
 
-    public ExtensionRequestDateValidator() {
+    private ExtensionRequestDateValidator() {
     }
 
     /**
