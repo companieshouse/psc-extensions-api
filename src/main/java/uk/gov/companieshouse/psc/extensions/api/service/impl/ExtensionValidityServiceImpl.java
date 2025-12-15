@@ -9,7 +9,6 @@ public class ExtensionValidityServiceImpl implements ExtensionValidityService {
 
     @Override
     public boolean canSubmitExtensionRequest(PscExtensionsData pscExtensionsData) {
-        // TODO: Integrate with this PR - https://github.com/companieshouse/psc-extensions-api/pull/20.
         return true;
     }
 }
