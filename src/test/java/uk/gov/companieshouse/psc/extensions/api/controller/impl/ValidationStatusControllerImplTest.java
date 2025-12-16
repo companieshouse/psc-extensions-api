@@ -30,10 +30,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ValidationStatusControllerImplTest {
-    private final String transactionId = "transaction-id";
-    private final String filingResourceId = "filing-resource-id";
-    private final String pscNotificationId = "psc-notification-id";
-    private final String companyNumber = "12345678";
+    private static final String TRANSACTION_ID = "transaction-id";
+    private static final String FILING_RESOURCE_ID = "filing-resource-id";
+    private static final String PSC_NOTIFICATION_ID = "psc-notification-id";
+    private static final String COMPANY_NUMBER = "12345678";
 
     @Mock
     private PscExtensionsControllerImpl pscExtensionsController;
@@ -58,14 +58,14 @@ class ValidationStatusControllerImplTest {
         final PscExtension pscExtension = mock(PscExtension.class);
         final Data data = mock(Data.class);
         when(pscExtension.getData()).thenReturn(data);
-        when(data.getCompanyNumber()).thenReturn(companyNumber);
-        when(data.getPscNotificationId()).thenReturn(pscNotificationId);
+        when(data.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
+        when(data.getPscNotificationId()).thenReturn(PSC_NOTIFICATION_ID);
 
-        when(pscExtensionsService.get(filingResourceId)).thenReturn(Optional.of(pscExtension));
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
         final IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
         when(pscLookupService.getPscIndividualFullRecord(
-                companyNumber, pscNotificationId, PscType.INDIVIDUAL))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
 
         final ValidationError error = new ValidationError();
@@ -75,10 +75,10 @@ class ValidationStatusControllerImplTest {
         validationStatusResponse.setValid(false);
         validationStatusResponse.setValidationStatusError(errors);
 
-        when(pscExtensionsController.getValidationStatus(pscNotificationId, mockPscRecord))
+        when(pscExtensionsController.getValidationStatus(PSC_NOTIFICATION_ID, mockPscRecord))
                 .thenReturn(validationStatusResponse);
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(transactionId, filingResourceId);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -91,14 +91,14 @@ class ValidationStatusControllerImplTest {
         final PscExtension pscExtension = mock(PscExtension.class);
         final Data data = mock(Data.class);
         when(pscExtension.getData()).thenReturn(data);
-        when(data.getCompanyNumber()).thenReturn(companyNumber);
-        when(data.getPscNotificationId()).thenReturn(pscNotificationId);
+        when(data.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
+        when(data.getPscNotificationId()).thenReturn(PSC_NOTIFICATION_ID);
 
-        when(pscExtensionsService.get(filingResourceId)).thenReturn(Optional.of(pscExtension));
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
         final IndividualFullRecord mockPscRecord = mock(IndividualFullRecord.class);
         when(pscLookupService.getPscIndividualFullRecord(
-                companyNumber, pscNotificationId, PscType.INDIVIDUAL))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
 
         final List<ValidationError> errors = Collections.emptyList();
@@ -107,10 +107,10 @@ class ValidationStatusControllerImplTest {
         validationStatusResponse.setValid(true);
         validationStatusResponse.setValidationStatusError(errors);
 
-        when(pscExtensionsController.getValidationStatus(pscNotificationId, mockPscRecord))
+        when(pscExtensionsController.getValidationStatus(PSC_NOTIFICATION_ID, mockPscRecord))
                 .thenReturn(validationStatusResponse);
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(transactionId, filingResourceId);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -120,11 +120,11 @@ class ValidationStatusControllerImplTest {
 
     @Test
     void _validate_WhenPscExtensionNotFound_ShouldReturnInvalidResponse() {
-        final var expectedErrorMessage = String.format("PSC extension not found when validating filing for %s", filingResourceId);
+        final var expectedErrorMessage = String.format("PSC extension not found when validating filing for %s", FILING_RESOURCE_ID);
 
-        when(pscExtensionsService.get(filingResourceId)).thenReturn(Optional.empty());
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.empty());
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(transactionId, filingResourceId);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -135,17 +135,17 @@ class ValidationStatusControllerImplTest {
     @Test
     void _validate_WhenPscExtensionCompanyNameIsNull_ShouldReturnInvalidResponse() {
         final var expectedErrorMessage = String.format("Missing fields when validating filing for %s: %s",
-                filingResourceId, "companyNumber");
+                FILING_RESOURCE_ID, "companyNumber");
 
         final PscExtension pscExtension = mock(PscExtension.class);
         final Data data = mock(Data.class);
         when(pscExtension.getData()).thenReturn(data);
         when(data.getCompanyNumber()).thenReturn(null);
-        when(data.getPscNotificationId()).thenReturn(pscNotificationId);
+        when(data.getPscNotificationId()).thenReturn(PSC_NOTIFICATION_ID);
 
-        when(pscExtensionsService.get(filingResourceId)).thenReturn(Optional.of(pscExtension));
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(transactionId, filingResourceId);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -156,17 +156,17 @@ class ValidationStatusControllerImplTest {
     @Test
     void _validate_WhenPscExtensionPscNotificationIdIsNull_ShouldReturnInvalidResponse() {
         final var expectedErrorMessage = String.format("Missing fields when validating filing for %s: %s",
-                filingResourceId, "pscNotificationId");
+                FILING_RESOURCE_ID, "pscNotificationId");
 
         final PscExtension pscExtension = mock(PscExtension.class);
         final Data data = mock(Data.class);
         when(pscExtension.getData()).thenReturn(data);
-        when(data.getCompanyNumber()).thenReturn(companyNumber);
+        when(data.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
         when(data.getPscNotificationId()).thenReturn(null);
 
-        when(pscExtensionsService.get(filingResourceId)).thenReturn(Optional.of(pscExtension));
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(transactionId, filingResourceId);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -177,7 +177,7 @@ class ValidationStatusControllerImplTest {
     @Test
     void _validate_WhenCompanyNumberAndPscExtensionPscNotificationIdIsNull_ShouldReturnInvalidResponse() {
         final var expectedErrorMessage = String.format("Missing fields when validating filing for %s: %s",
-                filingResourceId, String.join(", ","companyNumber", "pscNotificationId"));
+                FILING_RESOURCE_ID, String.join(", ","companyNumber", "pscNotificationId"));
 
         final PscExtension pscExtension = mock(PscExtension.class);
         final Data data = mock(Data.class);
@@ -185,9 +185,9 @@ class ValidationStatusControllerImplTest {
         when(data.getCompanyNumber()).thenReturn(null);
         when(data.getPscNotificationId()).thenReturn(null);
 
-        when(pscExtensionsService.get(filingResourceId)).thenReturn(Optional.of(pscExtension));
+        when(pscExtensionsService.get(FILING_RESOURCE_ID)).thenReturn(Optional.of(pscExtension));
 
-        final ResponseEntity<ValidationStatusResponse> response = controller._validate(transactionId, filingResourceId);
+        final ResponseEntity<ValidationStatusResponse> response = controller._validate(TRANSACTION_ID, FILING_RESOURCE_ID);
 
         final ValidationStatusResponse body = response.getBody();
         assertNotNull(body);

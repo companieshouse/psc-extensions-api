@@ -39,16 +39,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class PscExtensionsControllerImplTest {
 
-    private final String transactionId = "transaction-id";
-    private final String pscNotificationId = "psc-notification-id";
-    private final String companyNumber = "12345678";
-    private final Long extensionCount = 1L;
+    private static final String TRANSACTION_ID = "transaction-id";
+    private static final String PSC_NOTIFICATION_ID = "psc-notification-id";
+    private static final String COMPANY_NUMBER = "12345678";
+
 
     @Mock
     private TransactionService transactionService;
@@ -79,12 +78,12 @@ class PscExtensionsControllerImplTest {
     @BeforeEach
     void setUp() {
         testTransaction = new Transaction();
-        testTransaction.setId(transactionId);
-        testTransaction.setCompanyNumber(companyNumber);
+        testTransaction.setId(TRANSACTION_ID);
+        testTransaction.setCompanyNumber(COMPANY_NUMBER);
 
         testData = new PscExtensionsData();
-        testData.setCompanyNumber(companyNumber);
-        testData.setPscNotificationId(pscNotificationId);
+        testData.setCompanyNumber(COMPANY_NUMBER);
+        testData.setPscNotificationId(PSC_NOTIFICATION_ID);
 
         testEntity = new PscExtension();
         testEntity.setId("test-entity-id");
@@ -111,7 +110,7 @@ class PscExtensionsControllerImplTest {
 
         assertThrows(
                 ExtensionRequestServiceException.class,
-                () -> controller._createPscExtension(transactionId, testData)
+                () -> controller._createPscExtension(TRANSACTION_ID, testData)
         );
     }
 
@@ -127,7 +126,7 @@ class PscExtensionsControllerImplTest {
 
         assertThrows(
                 PscLookupServiceException.class,
-                () -> controller._createPscExtension(transactionId, testData)
+                () -> controller._createPscExtension(TRANSACTION_ID, testData)
         );
     }
 
@@ -139,9 +138,10 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void shouldReturnPscExtensionRequestCount_WhenPresent() {
-        when(pscExtensionsService.getExtensionCount(pscNotificationId)).thenReturn(Optional.of(extensionCount));
+        final Long extensionCount = 1L;
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(extensionCount));
 
-        ResponseEntity<Long> response = controller._getPscExtensionCount(pscNotificationId);
+        ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(extensionCount, response.getBody());
@@ -149,9 +149,9 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void shouldReturnPscExtensionRequestCount_WhenNoExtensionRequestExists() {
-        when(pscExtensionsService.getExtensionCount(pscNotificationId)).thenReturn(Optional.empty());
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.empty());
 
-        ResponseEntity<Long> response = controller._getPscExtensionCount(pscNotificationId);
+        ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(0L, response.getBody());
@@ -159,13 +159,13 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void isPscExtensionValid_WhenPscLookupFails_ShouldThrowException() throws PscLookupServiceException {
-        when(pscLookupService.getPscIndividualFullRecord(companyNumber, pscNotificationId, PscType.INDIVIDUAL))
+        when(pscLookupService.getPscIndividualFullRecord(COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenThrow(new PscLookupServiceException("PSC not found"));
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
         assertThrows(PscLookupServiceException.class,
-                () -> controller._getIsPscExtensionValid(pscNotificationId, companyNumber));
+                () -> controller._getIsPscExtensionValid(PSC_NOTIFICATION_ID, COMPANY_NUMBER));
     }
 
     @Test
@@ -185,15 +185,15 @@ class PscExtensionsControllerImplTest {
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(idvDetails);
         when(pscLookupService.getPscIndividualFullRecord(
-                 companyNumber, pscNotificationId, PscType.INDIVIDUAL))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
-        when(pscExtensionsService.getExtensionCount(pscNotificationId)).thenReturn(extensionCount);
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(extensionCount);
         when(pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount)).thenReturn(errors);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
         ResponseEntity<ValidationStatusResponse> response = controller._getIsPscExtensionValid(
-                pscNotificationId, companyNumber);
+                PSC_NOTIFICATION_ID, COMPANY_NUMBER);
 
         ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -215,16 +215,16 @@ class PscExtensionsControllerImplTest {
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(null);
         when(pscLookupService.getPscIndividualFullRecord(
-                companyNumber, pscNotificationId, PscType.INDIVIDUAL))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
-        when(pscExtensionsService.getExtensionCount(pscNotificationId)).thenReturn(extensionCount);
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(extensionCount);
         when(pscExtensionsService.validateExtensionRequest(null, extensionCount))
                 .thenReturn(new ValidationStatusError[0]);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
         ResponseEntity<ValidationStatusResponse> response = controller._getIsPscExtensionValid(
-                pscNotificationId, companyNumber);
+                PSC_NOTIFICATION_ID, COMPANY_NUMBER);
 
         ValidationStatusResponse body = response.getBody();
         assertNotNull(body);
@@ -238,6 +238,6 @@ class PscExtensionsControllerImplTest {
         RequestContextHolder.resetRequestAttributes();
 
         assertThrows(IllegalStateException.class,
-                () -> controller._getIsPscExtensionValid(pscNotificationId, companyNumber));
+                () -> controller._getIsPscExtensionValid(PSC_NOTIFICATION_ID, COMPANY_NUMBER));
     }
 }
