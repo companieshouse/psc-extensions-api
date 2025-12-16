@@ -39,16 +39,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class PscExtensionsControllerImplTest {
 
-    private final String TRANSACTION_ID = "transaction-id";
-    private final String PSC_NOTIFICATION_ID = "psc-notification-id";
-    private final String COMPANY_NUMBER = "12345678";
-    private final Long EXTENSION_COUNT = 1L;
+    private static final String TRANSACTION_ID = "transaction-id";
+    private static final String PSC_NOTIFICATION_ID = "psc-notification-id";
+    private static final String COMPANY_NUMBER = "12345678";
+
 
     @Mock
     private TransactionService transactionService;
@@ -139,12 +138,13 @@ class PscExtensionsControllerImplTest {
 
     @Test
     void shouldReturnPscExtensionRequestCount_WhenPresent() {
-        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(EXTENSION_COUNT));
+        final Long extensionCount = 1L;
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(Optional.of(extensionCount));
 
         ResponseEntity<Long> response = controller._getPscExtensionCount(PSC_NOTIFICATION_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(EXTENSION_COUNT, response.getBody());
+        assertEquals(extensionCount, response.getBody());
     }
 
     @Test
@@ -185,10 +185,10 @@ class PscExtensionsControllerImplTest {
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(idvDetails);
         when(pscLookupService.getPscIndividualFullRecord(
-                 eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
-        when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
-        when(pscExtensionsService.validateExtensionRequest(eq(idvDetails), eq(extensionCount))).thenReturn(errors);
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(extensionCount);
+        when(pscExtensionsService.validateExtensionRequest(idvDetails, extensionCount)).thenReturn(errors);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
 
@@ -215,10 +215,10 @@ class PscExtensionsControllerImplTest {
 
         when(mockPscRecord.getIdentityVerificationDetails()).thenReturn(null);
         when(pscLookupService.getPscIndividualFullRecord(
-                eq(COMPANY_NUMBER), eq(PSC_NOTIFICATION_ID), eq(PscType.INDIVIDUAL)))
+                COMPANY_NUMBER, PSC_NOTIFICATION_ID, PscType.INDIVIDUAL))
                 .thenReturn(mockPscRecord);
-        when(pscExtensionsService.getExtensionCount(eq(PSC_NOTIFICATION_ID))).thenReturn(extensionCount);
-        when(pscExtensionsService.validateExtensionRequest(eq(null), eq(extensionCount)))
+        when(pscExtensionsService.getExtensionCount(PSC_NOTIFICATION_ID)).thenReturn(extensionCount);
+        when(pscExtensionsService.validateExtensionRequest(null, extensionCount))
                 .thenReturn(new ValidationStatusError[0]);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));

@@ -21,7 +21,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      * Ensure requests are authenticated for a user
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         final var hasEricIdentity = Objects.nonNull( request.getHeader( "Eric-Identity" ) );
         final var identityType = request.getHeader( "Eric-Identity-Type" );
         final var hasEricIdentityType = Objects.nonNull( identityType);
