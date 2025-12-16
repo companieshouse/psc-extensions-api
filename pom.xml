@@ -57,7 +57,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <!-- CVE-2025-41234 -->
         <spring-web.version>6.2.8</spring-web.version>
-        <!-->CVE-2025-49125, CVE-2025-48988, CVE-2025-49124, CVE-2025-52520, CVE-2025-53506<-->
+        <!-->CVE-2025-52520, CVE-2025-53506<-->
         <tomcat-embed.version>10.1.50</tomcat-embed.version>
     </properties>
     <dependencyManagement>
