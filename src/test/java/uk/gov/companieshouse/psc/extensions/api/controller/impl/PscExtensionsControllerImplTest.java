@@ -263,7 +263,7 @@ class PscExtensionsControllerImplTest {
                 TransactionServiceException.class,
                 () -> controller._createPscExtension("tx-123", data)
         );
-    } // [1](https://companieshouse-my.sharepoint.com/personal/ppeasegood_companieshouse_gov_uk/_layouts/15/Doc.aspx?sourcedoc=%7BE20B65B8-55C4-4062-8644-512DC1773E44%7D&file=psc.rtf&action=default)
+    }
 
     @Test
     void createPscExtension_success_returns201AndBody_andUpdatesTransaction() throws uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException {
@@ -329,7 +329,7 @@ class PscExtensionsControllerImplTest {
 
         // Verify transaction was updated with new resources
         org.mockito.Mockito.verify(transactionService).updateTransaction(org.mockito.ArgumentMatchers.any(uk.gov.companieshouse.api.model.transaction.Transaction.class));
-    } // [1](https://companieshouse-my.sharepoint.com/personal/ppeasegood_companieshouse_gov_uk/_layouts/15/Doc.aspx?sourcedoc=%7BE20B65B8-55C4-4062-8644-512DC1773E44%7D&file=psc.rtf&action=default)
+    }
 
     @Test
     void createPscExtension_setsInternalDataFromFullRecordInternalId() throws uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException {
@@ -404,7 +404,7 @@ class PscExtensionsControllerImplTest {
         assertTrue(body.getValid());
         assertNotNull(body.getValidationStatusError());
         assertEquals(0, body.getValidationStatusError().size());
-    } // [1](https://companieshouse-my.sharepoint.com/personal/ppeasegood_companieshouse_gov_uk/_layouts/15/Doc.aspx?sourcedoc=%7BE20B65B8-55C4-4062-8644-512DC1773E44%7D&file=psc.rtf&action=default)
+    }
 
     @Test
     void createPscExtension_whenExtensionValidityServiceReturnsTrue_butSaveFailsGracefullyStillReturnsCreated() throws uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException {
@@ -452,6 +452,6 @@ class PscExtensionsControllerImplTest {
         // Assert: Created status and a non-null body even with minimal response
         assertEquals(org.springframework.http.HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-    } // [1](https://companieshouse-my.sharepoint.com/personal/ppeasegood_companieshouse_gov_uk/_layouts/15/Doc.aspx?sourcedoc=%7BE20B65B8-55C4-4062-8644-512DC1773E44%7D&file=psc.rtf&action=default)
+    }
 
 }
