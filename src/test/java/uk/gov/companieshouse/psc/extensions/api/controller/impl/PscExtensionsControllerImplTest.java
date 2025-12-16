@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import uk.gov.companieshouse.api.model.common.ResourceLinks;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.validationstatus.ValidationStatusError;
 import uk.gov.companieshouse.api.psc.IdentityVerificationDetails;
@@ -37,12 +38,11 @@ import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Instant.parse;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PscExtensionsControllerImplTest {
@@ -295,16 +295,15 @@ class PscExtensionsControllerImplTest {
         )).thenReturn(fullRecord);
 
         // Clock provides instant values used by saveFilingWithLinks
-        java.time.Instant now = java.time.Instant.parse("2025-01-01T00:00:00Z");
+        java.time.Instant now = parse("2025-01-01T00:00:00Z");
         when(clock.instant()).thenReturn(now);
 
         // First save returns a PscExtension with id (needed to build links)
-        uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension saved1 = new uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension();
+        PscExtension saved1 = new uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension();
         saved1.setId("657a0f0b6f1c2a3b4d5e6f70");
-        when(pscExtensionsService.save(entity)).thenReturn(saved1);
 
         // After links are set, second save returns final entity with links
-        uk.gov.companieshouse.api.model.common.ResourceLinks links = uk.gov.companieshouse.api.model.common.ResourceLinks
+        ResourceLinks links = uk.gov.companieshouse.api.model.common.ResourceLinks
                 .newBuilder()
                 .self(java.net.URI.create("/transactions/tx-201/persons-with-significant-control-extensions/" + "657a0f0b6f1c2a3b4d5e6f70"))
                 .validationStatus(java.net.URI.create("/transactions/tx-201/persons-with-significant-control-extensions/" + "657a0f0b6f1c2a3b4d5e6f70" + "/validation_status"))
@@ -316,54 +315,54 @@ class PscExtensionsControllerImplTest {
 
         // Mapper returns API response
         PscExtensionResponse apiResponse =
-                new uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse();
+                new PscExtensionResponse();
         when(filingMapper.toApi(saved2)).thenReturn(apiResponse);
+        when(extensionValidityService.canSubmitExtensionRequest(any())).thenReturn(true);
 
         // Act
-        ResponseEntity<uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse> response =
+        ResponseEntity<PscExtensionResponse> response =
                 controller._createPscExtension("tx-201", data);
 
         // Assert: 201 Created and body present
-        assertEquals(org.springframework.http.HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
 
         // Verify transaction was updated with new resources
-        org.mockito.Mockito.verify(transactionService).updateTransaction(org.mockito.ArgumentMatchers.any(uk.gov.companieshouse.api.model.transaction.Transaction.class));
+        verify(transactionService).updateTransaction(org.mockito.ArgumentMatchers.any(uk.gov.companieshouse.api.model.transaction.Transaction.class));
     }
 
     @Test
     void createPscExtension_setsInternalDataFromFullRecordInternalId() throws uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException {
         // Arrange
-        HttpServletRequest req = org.mockito.Mockito.mock(jakarta.servlet.http.HttpServletRequest.class);
-        Transaction tx = new uk.gov.companieshouse.api.model.transaction.Transaction();
+        HttpServletRequest req = mock(jakarta.servlet.http.HttpServletRequest.class);
+        Transaction tx = new Transaction();
         tx.setId("tx-999");
         when(req.getAttribute("transaction")).thenReturn(tx);
         when(req.getRequestURI()).thenReturn("/transactions/tx-999/persons-with-significant-control-extensions");
         when(req.getMethod()).thenReturn("POST");
-        RequestContextHolder.setRequestAttributes(new org.springframework.web.context.request.ServletRequestAttributes(req));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(req));
 
-        PscExtensionsData data = new uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData();
+        PscExtensionsData data = new PscExtensionsData();
         data.setCompanyNumber("CN");
         data.setPscNotificationId("PN");
 
-        uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension entity = new uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension();
+        PscExtension entity = new PscExtension();
         when(filingMapper.toEntity(data)).thenReturn(entity);
 
-        uk.gov.companieshouse.api.psc.IndividualFullRecord fullRecord = org.mockito.Mockito.mock(uk.gov.companieshouse.api.psc.IndividualFullRecord.class);
+        IndividualFullRecord fullRecord = mock(IndividualFullRecord.class);
         when(fullRecord.getInternalId()).thenReturn(123456789L);
         when(pscLookupService.getPscIndividualFullRecord("CN", "PN",
                 uk.gov.companieshouse.psc.extensions.api.enumerations.PscType.INDIVIDUAL)).thenReturn(fullRecord);
 
         // Minimal stubs to let saveFilingWithLinks proceed
-        when(clock.instant()).thenReturn(java.time.Instant.parse("2025-01-01T00:00:00Z"));
+        when(clock.instant()).thenReturn(parse("2025-01-01T00:00:00Z"));
         uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension saved1 = new uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension();
         saved1.setId("657a0f0b6f1c2a3b4d5e6f71");
-        when(pscExtensionsService.save(entity)).thenReturn(saved1);
         when(pscExtensionsService.save(org.mockito.Mockito.any(uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension.class)))
                 .thenReturn(saved1);
         when(filingMapper.toApi(org.mockito.Mockito.any(uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension.class)))
                 .thenReturn(new uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse());
-
+        when(extensionValidityService.canSubmitExtensionRequest(any())).thenReturn(true);
         // Act
         controller._createPscExtension("tx-999", data);
 
@@ -425,25 +424,24 @@ class PscExtensionsControllerImplTest {
         when(extensionValidityService.canSubmitExtensionRequest(data)).thenReturn(true);
 
         // Map to entity
-        uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension entity = new uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension();
+        PscExtension entity = new PscExtension();
         when(filingMapper.toEntity(data)).thenReturn(entity);
 
         // Lookup returns a record
-        uk.gov.companieshouse.api.psc.IndividualFullRecord fullRecord = org.mockito.Mockito.mock(uk.gov.companieshouse.api.psc.IndividualFullRecord.class);
+        IndividualFullRecord fullRecord = mock(IndividualFullRecord.class);
         when(fullRecord.getInternalId()).thenReturn(1L);
         when(pscLookupService.getPscIndividualFullRecord("C", "P",
-                uk.gov.companieshouse.psc.extensions.api.enumerations.PscType.INDIVIDUAL)).thenReturn(fullRecord);
+                PscType.INDIVIDUAL)).thenReturn(fullRecord);
 
         // Clock instant & save/links
-        when(clock.instant()).thenReturn(java.time.Instant.parse("2025-01-01T00:00:00Z"));
-        uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension saved1 = new uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension();
+        when(clock.instant()).thenReturn(parse("2025-01-01T00:00:00Z"));
+        PscExtension saved1 = new PscExtension();
         saved1.setId("657a0f0b6f1c2a3b4d5e6f72");
-        when(pscExtensionsService.save(entity)).thenReturn(saved1);
 
         // Final save returns same entity; mapper returns minimal response
-        when(pscExtensionsService.save(org.mockito.Mockito.any(uk.gov.companieshouse.psc.extensions.api.mongo.document.PscExtension.class)))
+        when(pscExtensionsService.save(any(PscExtension.class)))
                 .thenReturn(saved1);
-        when(filingMapper.toApi(saved1)).thenReturn(new uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse());
+        when(filingMapper.toApi(saved1)).thenReturn(new PscExtensionResponse());
 
         // Act
         org.springframework.http.ResponseEntity<uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse> response =
