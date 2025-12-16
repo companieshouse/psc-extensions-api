@@ -23,6 +23,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
 
 
+    @SuppressWarnings("java:S1075")
     public static final String BASE_PATH = "/persons-with-significant-control-extensions";
     public static final String TRANSACTION_PATH = "/transactions/{transactionId}" + BASE_PATH;
 
