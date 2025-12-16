@@ -22,25 +22,16 @@ import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplicati
 public class InterceptorConfig implements WebMvcConfigurer {
 
 
-    public static final String PSC_EXTENSIONS_INTERCEPTOR_PATH =
-            "/transactions/{transactionId}/persons-with-significant-control-extensions";
 
-    public static final String PSC_EXTENSIONS_BASE_PATH =
-            "/persons-with-significant-control-extensions";
+    public static final String BASE_PATH = "/persons-with-significant-control-extensions";
+    public static final String TRANSACTION_PATH = "/transactions/{transactionId}" + BASE_PATH;
 
-    public static final String VALIDATION_STATUS_PATH =
-            PSC_EXTENSIONS_INTERCEPTOR_PATH + "/{filingResourceId}/validation_status";
+    public static final String PSC_EXTENSIONS_INTERCEPTOR_PATH = TRANSACTION_PATH;
 
-    public static final String FILINGS_RESOURCE_PATH =
-            "/private" + PSC_EXTENSIONS_INTERCEPTOR_PATH + "/{filingResourceId}/filings";
-
-    public static final String EXTENSIONS_COUNT_PATH =
-            PSC_EXTENSIONS_BASE_PATH + "/{pscNotificationId}/extensionCount";
-
-    public static final String VALIDATION_PATH =
-            PSC_EXTENSIONS_BASE_PATH + "/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid";
-
-
+    public static final String VALIDATION_STATUS_PATH = TRANSACTION_PATH + "/{filingResourceId}/validation_status";
+    public static final String FILINGS_RESOURCE_PATH = "/private" + TRANSACTION_PATH + "/{filingResourceId}/filings";
+    public static final String EXTENSIONS_COUNT_PATH = BASE_PATH + "/{pscNotificationId}/extensionCount";
+    public static final String VALIDATION_PATH = BASE_PATH + "/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid";
     @Override
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
 
