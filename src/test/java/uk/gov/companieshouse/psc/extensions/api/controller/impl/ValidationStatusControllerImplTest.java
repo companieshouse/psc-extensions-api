@@ -30,10 +30,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ValidationStatusControllerImplTest {
-    private final String TRANSACTION_ID = "transaction-id";
-    private final String FILING_RESOURCE_ID = "filing-resource-id";
-    private final String PSC_NOTIFICATION_ID = "psc-notification-id";
-    private final String COMPANY_NUMBER = "12345678";
+    private static final String TRANSACTION_ID = "transaction-id";
+    private static final String FILING_RESOURCE_ID = "filing-resource-id";
+    private static final String PSC_NOTIFICATION_ID = "psc-notification-id";
+    private static final String COMPANY_NUMBER = "12345678";
 
     @Mock
     private PscExtensionsControllerImpl pscExtensionsController;

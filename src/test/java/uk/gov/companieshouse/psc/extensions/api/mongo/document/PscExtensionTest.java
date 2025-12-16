@@ -104,4 +104,69 @@ class PscExtensionTest {
         ext.setUpdatedAt(Instant.parse("2025-09-10T14:44:28.477Z"));
         return ext;
     }
+
+
+    @Test
+    void testBuilder_buildsObjectWithAllFields() throws URISyntaxException {
+        String id = "builder-id";
+        Instant now = Instant.now();
+        ResourceLinks links = new ResourceLinks(new URI("https://example.com/links"),
+                new URI("https://example.com/self"));
+        Data data = new Data();
+        InternalData internalData = new InternalData();
+
+        PscExtension built = PscExtension.builder()
+                .id(id)
+                .createdAt(now)
+                .updatedAt(now)
+                .links(links)
+                .data(data)
+                .internalData(internalData)
+                .build();
+
+        assertThat(built).isNotNull();
+        assertThat(built.getId()).isEqualTo(id);
+        assertThat(built.getCreatedAt()).isEqualTo(now);
+        assertThat(built.getUpdatedAt()).isEqualTo(now);
+        assertThat(built.getLinks()).isEqualTo(links);
+        assertThat(built.getData()).isEqualTo(data);
+        assertThat(built.getInternalData()).isEqualTo(internalData);
+    }
+
+    @Test
+    void testCopyConstructor_copiesAllFields() throws URISyntaxException {
+        PscExtension original = new PscExtension();
+        original.setId("orig-id");
+        Instant created = Instant.parse("2025-01-01T00:00:00Z");
+        Instant updated = Instant.parse("2025-01-02T00:00:00Z");
+        original.setCreatedAt(created);
+        original.setUpdatedAt(updated);
+        ResourceLinks links = new ResourceLinks(new URI("https://example.com/links"),
+                new URI("https://example.com/self"));
+        original.setLinks(links);
+        Data data = new Data();
+        original.setData(data);
+        InternalData internal = new InternalData();
+        original.setInternalData(internal);
+
+        PscExtension copy = new PscExtension(original);
+
+        assertThat(copy).isNotNull();
+        assertThat(copy.getId()).isEqualTo(original.getId());
+        assertThat(copy.getCreatedAt()).isEqualTo(original.getCreatedAt());
+        assertThat(copy.getUpdatedAt()).isEqualTo(original.getUpdatedAt());
+        assertThat(copy.getLinks()).isEqualTo(original.getLinks());
+        assertThat(copy.getData()).isEqualTo(original.getData());
+        assertThat(copy.getInternalData()).isEqualTo(original.getInternalData());
+        // equals/hashCode contract for identical field values
+        assertEquals(original, copy);
+        assertEquals(original.hashCode(), copy.hashCode());
+    }
+
+    @Test
+    void testEquals_nullExplicit_shouldReturnFalse() {
+        PscExtension ext = createSamplePscExtension();
+        // equals(null) must be false
+        assertNotEquals(null, ext);
+    }
 }

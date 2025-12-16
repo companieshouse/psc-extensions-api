@@ -16,11 +16,27 @@ import uk.gov.companieshouse.api.psc.IdentityVerificationDetails;
 class ExtensionRequestDateValidatorTest {
 
     @Test
-    void validate_When_RequestDateIsBeforeStartDate_Expect_Error() {
+    void validate_When_PscStatementDateIsNull_Expect_Error() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
-        LocalDate futureStartDate = LocalDate.now().plusDays(5);
+        LocalDate futureDueDate = LocalDate.now().plusDays(10);
 
-        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(futureStartDate);
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(null);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(futureDueDate);
+
+        Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
+
+        Assertions.assertEquals(1, errors.size());
+        Assertions.assertTrue(errors.stream()
+                .anyMatch(e -> e.getError().contains(
+                        "Missing IDV start date or due date")));
+    }
+
+    @Test
+    void validate_When_PscDueDateIsNull_Expect_Error() {
+        IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
+        LocalDate pastStartDate = LocalDate.now().minusDays(3);
+
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(pastStartDate);
         Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(null);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
@@ -28,17 +44,34 @@ class ExtensionRequestDateValidatorTest {
         Assertions.assertEquals(1, errors.size());
         Assertions.assertTrue(errors.stream()
                 .anyMatch(e -> e.getError().contains(
-                        "A PSC cannot request an extension before the IDV Start Date")));
+                        "Missing IDV start date or due date")));
+    }
 
+    @Test
+    void validate_When_RequestDateIsBeforeStartDate_Expect_Error() {
+        IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
+        LocalDate futureStartDate = LocalDate.now().plusDays(5);
+        LocalDate futureDueDate = LocalDate.now().plusDays(10);
+
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(futureStartDate);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(futureDueDate);
+
+        Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
+
+        Assertions.assertEquals(1, errors.size());
+        Assertions.assertTrue(errors.stream()
+                .anyMatch(e -> e.getError().contains(
+                        "A PSC cannot request an extension before the IDV Start Date")));
     }
 
     @Test
     void validate_When_RequestDateIsAfterDueDate_Expect_Error() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
+        LocalDate pastStartDate = LocalDate.now().minusDays(3);
         LocalDate pastDueDate = LocalDate.now().minusDays(1);
 
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(pastStartDate);
         Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(pastDueDate);
-        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(null);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
 
@@ -78,8 +111,11 @@ class ExtensionRequestDateValidatorTest {
     @Test
     void validate_When_DatesAreNull_Expect_NoErrors() {
         IdentityVerificationDetails details = Mockito.mock(IdentityVerificationDetails.class);
-        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(null);
-        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(null);
+        LocalDate pastStartDate = LocalDate.now().minusDays(3);
+        LocalDate futureDueDate = LocalDate.now().plusDays(10);
+
+        Mockito.when(details.getAppointmentVerificationStatementDate()).thenReturn(pastStartDate);
+        Mockito.when(details.getAppointmentVerificationStatementDueOn()).thenReturn(futureDueDate);
 
         Set<ValidationStatusError> errors = ExtensionRequestDateValidator.validate(details);
 

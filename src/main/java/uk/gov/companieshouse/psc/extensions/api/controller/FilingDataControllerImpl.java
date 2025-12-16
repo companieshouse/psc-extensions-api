@@ -12,6 +12,7 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestFilingDataApi;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.psc.extensions.api.exception.TransactionNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.service.FilingDataService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
@@ -39,7 +40,7 @@ public class FilingDataControllerImpl implements PscExtensionRequestFilingDataAp
           .map(r -> r.getAttribute("transaction"))
           .filter(Transaction.class::isInstance)
           .map(Transaction.class::cast)
-          .orElse(null);
+          .orElseThrow(() -> new TransactionNotFoundException("Transaction not found in request attributes"));
 
       final var logMap = LogMapHelper.createLogMap(transactionId, filingResourceId);
 

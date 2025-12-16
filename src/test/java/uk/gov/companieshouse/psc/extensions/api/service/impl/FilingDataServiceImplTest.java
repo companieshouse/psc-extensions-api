@@ -73,6 +73,7 @@ class FilingDataServiceImplTest {
         assertNotNull(extensionDetails);
         assertEquals("individual", extensionDetails.get("extension_status"));
         assertEquals("illness", extensionDetails.get("extension_reason"));
+        assertEquals("2024-01-15", extensionDetails.get("extension_request_date").toString());
 
         assertNull(dataMap.get("psc_notification_id"));
     }

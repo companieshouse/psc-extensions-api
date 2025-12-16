@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import uk.gov.companieshouse.api.interceptor.*;
+import uk.gov.companieshouse.psc.extensions.api.interceptor.AuthenticationInterceptor;
 import uk.gov.companieshouse.psc.extensions.api.interceptor.LoggingInterceptor;
 
 import static org.hamcrest.CoreMatchers.isA;
@@ -32,18 +33,21 @@ class InterceptorConfigTest {
 
     @Test
     void addInterceptorsInvocations() {
+        verify(interceptorRegistry, times(1)).addInterceptor(any(AuthenticationInterceptor.class));
         verify(interceptorRegistry, times(1)).addInterceptor(any(TransactionInterceptor.class));
         verify(interceptorRegistry, times(1)).addInterceptor(any(OpenTransactionInterceptor.class));
         verify(interceptorRegistry, times(1)).addInterceptor(any(MappablePermissionsInterceptor.class));
         verify(interceptorRegistry, times(1)).addInterceptor(any(ClosedTransactionInterceptor.class));
         verify(interceptorRegistry, times(1)).addInterceptor(any(LoggingInterceptor.class));
-        verify(interceptorRegistry, times(1)).addInterceptor(any(InternalUserInterceptor.class));
     }
 
     @Test
     void addInterceptors() {
-        verify(interceptorRegistry.addInterceptor(any(MappablePermissionsInterceptor.class))).order(3);
-        verify(interceptorRegistry.addInterceptor(any(LoggingInterceptor.class))).order(5);
+        verify(interceptorRegistry.addInterceptor(any(ClosedTransactionInterceptor.class))
+                .addPathPatterns("/private/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/filings"))
+                .order(5);
+        verify(interceptorRegistry.addInterceptor(any(LoggingInterceptor.class)))
+                .order(6);
     }
 
     @Test

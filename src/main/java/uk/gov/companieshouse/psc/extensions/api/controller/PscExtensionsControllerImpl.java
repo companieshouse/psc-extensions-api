@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
 
@@ -177,7 +176,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
                 .map(err -> new ValidationError()
                         .field(err.getLocation())
                         .message(err.getError()))
-                .collect(Collectors.toList());
+                        .toList();
 
         validationStatus.setValidationStatusError(errorList);
 

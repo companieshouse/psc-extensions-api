@@ -20,7 +20,6 @@ import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
@@ -64,7 +63,7 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
             final List<String> missingFields = Stream.of(
                     pscExtension.getData().getCompanyNumber() == null ? "companyNumber" : null,
                     pscExtension.getData().getPscNotificationId() == null ? "pscNotificationId" : null
-            ).filter(Objects::nonNull).collect(Collectors.toList());
+            ).filter(Objects::nonNull).toList();
 
             final var errorMessage = String.format("Missing fields when validating filing for %s: %s",
                     filingResourceId, String.join(", ", missingFields));
