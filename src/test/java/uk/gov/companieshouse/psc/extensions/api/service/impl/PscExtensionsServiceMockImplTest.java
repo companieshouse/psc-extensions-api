@@ -1,4 +1,3 @@
-
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
 import java.util.Optional;
@@ -7,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +18,8 @@ class PscExtensionServiceMockImplTest {
 
     @Mock
     private PscExtensionsRepository repository;
+    @Mock
+    private Logger logger;
 
     @InjectMocks
     private PscExtensionsServiceImpl service;

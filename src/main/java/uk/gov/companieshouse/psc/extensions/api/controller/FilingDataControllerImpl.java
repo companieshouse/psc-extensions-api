@@ -11,24 +11,21 @@ import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.pscextensions.api.PscExtensionRequestFilingDataApi;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.psc.extensions.api.exception.TransactionNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.service.FilingDataService;
 import uk.gov.companieshouse.psc.extensions.api.utils.LogMapHelper;
 
 import java.util.List;
 
-import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
-
 @RestController
 public class FilingDataControllerImpl implements PscExtensionRequestFilingDataApi {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
-
     private final FilingDataService filingDataService;
+    private final Logger logger;
 
-    public FilingDataControllerImpl(final FilingDataService filingDataService) {
+    public FilingDataControllerImpl(final FilingDataService filingDataService, final Logger logger) {
         this.filingDataService = filingDataService;
+        this.logger = logger;
     }
 
     @Override
@@ -44,14 +41,14 @@ public class FilingDataControllerImpl implements PscExtensionRequestFilingDataAp
 
       final var logMap = LogMapHelper.createLogMap(transactionId, filingResourceId);
 
-        LOGGER.debugRequest(request,
+        logger.debugRequest(request,
                 "GET /private/transactions/{transactionId}/persons-with-significant-control-extensions" +
                         "/{filingId}/filings", logMap);
 
         final var filingApi = filingDataService.generateFilingApi(filingResourceId, transaction);
 
         logMap.put("psc extension:", filingApi);
-        LOGGER.infoContext(transactionId, "psc extension data", logMap);
+        logger.infoContext(transactionId, "psc extension data", logMap);
 
         return new ResponseEntity<>(List.of(filingApi), HttpStatus.OK);
     }

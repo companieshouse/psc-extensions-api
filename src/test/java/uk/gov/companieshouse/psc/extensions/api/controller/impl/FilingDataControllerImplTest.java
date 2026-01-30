@@ -11,6 +11,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.controller.FilingDataControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.exception.TransactionNotFoundException;
 import uk.gov.companieshouse.psc.extensions.api.service.*;
@@ -26,12 +27,13 @@ class FilingDataControllerImplTest {
 
     @Mock
     private FilingDataService filingDataService;
-
+    @Mock
+    private Logger logger;
 
     @Test
     void constructor_ShouldSetDependencies() {
         FilingDataControllerImpl testController = new FilingDataControllerImpl(
-                filingDataService);
+                filingDataService, logger);
         assertNotNull(testController);
     }
 
@@ -47,7 +49,7 @@ class FilingDataControllerImplTest {
                 .setRequestAttributes(new ServletRequestAttributes(req));
 
         FilingDataControllerImpl controller =
-                new FilingDataControllerImpl(filingDataService);
+                new FilingDataControllerImpl(filingDataService, logger);
 
         // Act + Assert
         Assertions.assertThrows(
@@ -76,7 +78,7 @@ class FilingDataControllerImplTest {
         when(filingDataService.generateFilingApi("filing-200", tx)).thenReturn(filing);
 
         FilingDataControllerImpl controller =
-                new FilingDataControllerImpl(filingDataService);
+                new FilingDataControllerImpl(filingDataService, logger);
 
         // Act
         ResponseEntity<List<FilingApi>> response =

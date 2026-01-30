@@ -19,7 +19,6 @@ import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.ExtensionRequestServiceException;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
@@ -42,12 +41,8 @@ import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
-
 @RestController
 public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     private static final String VALIDATION_STATUS = "validation_status";
 
@@ -57,19 +52,21 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
     private final PscExtensionsMapper filingMapper;
     private final ExtensionValidityService extensionValidityService;
     private final Clock clock;
+    private final Logger logger;
 
     public PscExtensionsControllerImpl(final TransactionService transactionService,
                                        final PscExtensionsService pscExtensionsService,
                                        final PscLookupService pscLookupService,
                                        final PscExtensionsMapper filingMapper,
                                        final ExtensionValidityService extensionValidityService,
-                                       final Clock clock) {
+                                       final Clock clock, final Logger logger) {
         this.transactionService = transactionService;
         this.pscExtensionsService = pscExtensionsService;
         this.pscLookupService = pscLookupService;
         this.filingMapper = filingMapper;
         this.extensionValidityService = extensionValidityService;
         this.clock = clock;
+        this.logger = logger;
     }
 
     @Override
@@ -84,10 +81,10 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final var logMap = LogMapHelper.createLogMap(transactionId);
         logMap.put("path", request.getRequestURI());
         logMap.put("method", request.getMethod());
-        LOGGER.debugRequest(request, "POST", logMap);
+        logger.debugRequest(request, "POST", logMap);
 
         if (!extensionValidityService.canSubmitExtensionRequest(data)) {
-            LOGGER.errorContext(transactionId, "PSC already has maximum number of extension requests", null, logMap);
+            logger.errorContext(transactionId, "PSC already has maximum number of extension requests", null, logMap);
             throw new ExtensionRequestServiceException("PSC has already submitted the maximum number of extension requests");
         }
 
@@ -102,7 +99,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
             );
         } catch (PscLookupServiceException e) {
             logMap.put("psc_notification_id", data.getPscNotificationId());
-            LOGGER.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
+            logger.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
                     data.getPscNotificationId(), data.getCompanyNumber()), null, logMap);
             throw new PscLookupServiceException(
                     "We are currently unable to process an Extension filing for this PSC", new Exception("Internal Id"));
@@ -125,7 +122,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
 
         final var pscExtensionRequestCount = pscExtensionsService.getExtensionCount(pscNotificationId);
 
-        pscExtensionRequestCount.ifPresent(extensionCount -> LOGGER.info("Extension request count is " + extensionCount + " for " + pscNotificationId));
+        pscExtensionRequestCount.ifPresent(extensionCount -> logger.info("Extension request count is " + extensionCount + " for " + pscNotificationId));
 
         return ResponseEntity.ok(pscExtensionRequestCount.orElse(0L));
     }
@@ -139,7 +136,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final var logMap = LogMapHelper.createLogMap(pscNotificationId);
         logMap.put("path", request.getRequestURI());
         logMap.put("method", request.getMethod());
-        LOGGER.debugRequest(request, "GET", logMap);
+        logger.debugRequest(request, "GET", logMap);
 
         final IndividualFullRecord pscIndividualFullRecordApi;
         try {
@@ -150,7 +147,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
             );
         } catch (PscLookupServiceException e) {
             logMap.put("psc_notification_id", pscNotificationId);
-            LOGGER.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
+            logger.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
                     pscNotificationId, companyNumber), null, logMap);
             throw new PscLookupServiceException(
                     "We are currently unable to process an Extension filing for this PSC", new Exception("Internal Id"));
@@ -189,7 +186,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
             final HttpServletRequest request,
             final Map<String, Object> logMap
     ) {
-        LOGGER.debugContext(transId, "saving PSC Extension", logMap);
+        logger.debugContext(transId, "saving PSC Extension", logMap);
 
         final var now = clock.instant();
         entity.setCreatedAt(now);
@@ -201,7 +198,7 @@ public class PscExtensionsControllerImpl implements PscExtensionRequestApi {
         final var resaved = pscExtensionsService.save(saved);
 
         logMap.put("filing_id", resaved.getId());
-        LOGGER.infoContext(transId, "Filing saved", logMap);
+        logger.infoContext(transId, "Filing saved", logMap);
 
         return resaved;
     }

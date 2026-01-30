@@ -15,7 +15,7 @@ import uk.gov.companieshouse.logging.util.RequestLogger;
 @Component
 public class LoggingInterceptor implements HandlerInterceptor, RequestLogger {
 
-  private static final Logger LOG = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
+  private static final Logger logger = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
   @Override
   public boolean preHandle(
@@ -23,7 +23,7 @@ public class LoggingInterceptor implements HandlerInterceptor, RequestLogger {
       @NonNull final HttpServletResponse response,
       @NonNull final Object handler
   ) {
-    logStartRequestProcessing(request, LOG);
+    logStartRequestProcessing(request, logger);
     return true;
   }
 
@@ -34,6 +34,6 @@ public class LoggingInterceptor implements HandlerInterceptor, RequestLogger {
       @NonNull final Object handler,
       final ModelAndView modelAndView
   ) {
-    logEndRequestProcessing(request, response, LOG);
+    logEndRequestProcessing(request, response, logger);
   }
 }
