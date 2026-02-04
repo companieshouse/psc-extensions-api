@@ -21,8 +21,6 @@ import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplicati
 @ComponentScan("uk.gov.companieshouse.api")
 public class InterceptorConfig implements WebMvcConfigurer {
 
-
-
     @SuppressWarnings("java:S1075")
     public static final String BASE_PATH = "/persons-with-significant-control-extensions";
     public static final String TRANSACTION_PATH = "/transactions/{transactionId}" + BASE_PATH;
@@ -33,6 +31,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public static final String FILINGS_RESOURCE_PATH = "/private" + TRANSACTION_PATH + "/{filingResourceId}/filings";
     public static final String EXTENSIONS_COUNT_PATH = BASE_PATH + "/{pscNotificationId}/extensionCount";
     public static final String VALIDATION_PATH = BASE_PATH + "/{pscNotificationId}/{companyNumber}/isPscExtensionRequestValid";
+    public static final String HEALTHCHECK_PATH = BASE_PATH + "/healthcheck";
+
     @Override
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
 
@@ -71,6 +71,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .order(5);
 
         registry.addInterceptor(requestLoggingInterceptor())
+                .excludePathPatterns(HEALTHCHECK_PATH)
                 .order(6);
     }
 

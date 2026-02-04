@@ -46,7 +46,8 @@ class InterceptorConfigTest {
         verify(interceptorRegistry.addInterceptor(any(ClosedTransactionInterceptor.class))
                 .addPathPatterns("/private/transactions/{transactionId}/persons-with-significant-control-extensions/{filingResourceId}/filings"))
                 .order(5);
-        verify(interceptorRegistry.addInterceptor(any(LoggingInterceptor.class)))
+        verify(interceptorRegistry.addInterceptor(any(LoggingInterceptor.class))
+                .excludePathPatterns("/persons-with-significant-control-extensions/healthcheck"))
                 .order(6);
     }
 
