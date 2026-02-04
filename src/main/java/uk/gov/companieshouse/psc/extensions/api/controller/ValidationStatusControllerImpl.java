@@ -11,7 +11,6 @@ import uk.gov.companieshouse.api.pscextensions.api.PscExtensionValidationStatusA
 import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.PscLookupServiceException;
 import uk.gov.companieshouse.psc.extensions.api.service.PscExtensionsService;
@@ -22,21 +21,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static uk.gov.companieshouse.psc.extensions.api.PscExtensionsApiApplication.APPLICATION_NAMESPACE;
-
 @RestController
 public class ValidationStatusControllerImpl implements PscExtensionValidationStatusApi {
-    private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
     private final PscExtensionsControllerImpl pscExtensionsController;
     private final PscLookupService pscLookupService;
     private final PscExtensionsService pscExtensionsService;
+    private final Logger logger;
 
     public ValidationStatusControllerImpl(final PscExtensionsControllerImpl pscExtensionsController,
                                           final PscLookupService pscLookupService,
-                                          final PscExtensionsService pscExtensionsService) {
+                                          final PscExtensionsService pscExtensionsService,
+                                          final Logger logger) {
         this.pscExtensionsController = pscExtensionsController;
         this.pscLookupService = pscLookupService;
         this.pscExtensionsService = pscExtensionsService;
+        this.logger = logger;
     }
 
     @Override
@@ -48,12 +47,12 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
         final var logMap = LogMapHelper.createLogMap(transactionId);
         logMap.put("path", request.getRequestURI());
         logMap.put("method", request.getMethod());
-        LOGGER.debugRequest(request, "GET validation request", logMap);
+        logger.debugRequest(request, "GET validation request", logMap);
 
         final var pscExtensionOpt = pscExtensionsService.get(filingResourceId);
         if (pscExtensionOpt.isEmpty()) {
             final var errorMessage = String.format("PSC extension not found when validating filing for %s", filingResourceId);
-            LOGGER.errorContext(errorMessage, null, logMap);
+            logger.errorContext(errorMessage, null, logMap);
 
             return ResponseEntity.ok(createInvalidStatusResponse(errorMessage));
         }
@@ -68,7 +67,7 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
             final var errorMessage = String.format("Missing fields when validating filing for %s: %s",
                     filingResourceId, String.join(", ", missingFields));
 
-            LOGGER.errorContext((errorMessage), null, logMap);
+            logger.errorContext((errorMessage), null, logMap);
 
             return ResponseEntity.ok(createInvalidStatusResponse(errorMessage));
         }
@@ -84,7 +83,7 @@ public class ValidationStatusControllerImpl implements PscExtensionValidationSta
             );
         } catch (PscLookupServiceException e) {
             logMap.put("psc_notification_id", pscNotificationId);
-            LOGGER.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
+            logger.errorContext(String.format("PSC Id %s does not have an Internal ID in PSC Data API for company number %s",
                     pscNotificationId, companyNumber), null, logMap);
             throw new PscLookupServiceException(
                     "We are currently unable to process an Extension filing for this PSC", new Exception("Internal Id"));

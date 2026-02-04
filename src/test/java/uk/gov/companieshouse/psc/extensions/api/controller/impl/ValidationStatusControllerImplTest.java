@@ -12,6 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.api.psc.IndividualFullRecord;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.controller.ValidationStatusControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
@@ -43,12 +44,14 @@ class ValidationStatusControllerImplTest {
     private PscExtensionsService pscExtensionsService;
     @Mock
     private HttpServletRequest httpServletRequest;
+    @Mock
+    private Logger logger;
 
     private ValidationStatusControllerImpl controller;
 
     @BeforeEach
     void setUp() {
-        controller = new ValidationStatusControllerImpl(pscExtensionsController, pscLookupService, pscExtensionsService);
+        controller = new ValidationStatusControllerImpl(pscExtensionsController, pscLookupService, pscExtensionsService, logger);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
     }

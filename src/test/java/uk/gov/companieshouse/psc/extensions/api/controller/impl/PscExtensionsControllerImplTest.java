@@ -21,6 +21,7 @@ import uk.gov.companieshouse.api.pscextensions.model.PscExtensionResponse;
 import uk.gov.companieshouse.api.pscextensions.model.PscExtensionsData;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationError;
 import uk.gov.companieshouse.api.pscextensions.model.ValidationStatusResponse;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.controller.PscExtensionsControllerImpl;
 import uk.gov.companieshouse.psc.extensions.api.enumerations.PscType;
 import uk.gov.companieshouse.psc.extensions.api.exception.ExtensionRequestServiceException;
@@ -64,6 +65,9 @@ class PscExtensionsControllerImplTest {
     private ExtensionValidityService extensionValidityService;
     @Mock
     private Clock clock;
+    @Mock
+    private Logger logger;
+
     @InjectMocks
     private PscExtensionsControllerImpl controller;
     private Transaction testTransaction;
@@ -101,7 +105,7 @@ class PscExtensionsControllerImplTest {
     @Test
     void constructor_ShouldSetDependencies() {
         PscExtensionsControllerImpl testController = new PscExtensionsControllerImpl(
-                transactionService, pscExtensionsService, pscLookupService, filingMapper, extensionValidityService, clock);
+                transactionService, pscExtensionsService, pscLookupService, filingMapper, extensionValidityService, clock, logger);
         assertNotNull(testController);
     }
 
