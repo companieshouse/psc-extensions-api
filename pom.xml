@@ -41,7 +41,7 @@
         <api-sdk-java.version>6.6.3</api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <api-sdk-manager-java-library.version>3.0.15</api-sdk-manager-java-library.version>
-        <private-api-sdk-java.version>4.0.447</private-api-sdk-java.version>
+        <private-api-sdk-java.version>4.0.450</private-api-sdk-java.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -115,6 +115,12 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
             <version>${structured-logging.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- CH SDKs -->
         <dependency>
