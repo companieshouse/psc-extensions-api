@@ -17,7 +17,7 @@
         <java.version>21</java.version>
         <skip.integration.tests>false</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
-        <commons-compress.version>1.27.1</commons-compress.version>
+        <commons-compress.version>1.28.0</commons-compress.version>
         <!-- Spring -->
         <spring-boot-dependencies.version>3.5.11</spring-boot-dependencies.version>
         <spring-boot-testcontainers-version>3.5.11</spring-boot-testcontainers-version>
@@ -183,6 +183,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <!-- Pinning version to address CVE-2024-25710 and CVE-2024-26308 in commons-compress:jar:1.24.0
+             pulled transitively by spring-boot-testcontainers:jar:3.5.11 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>${commons-compress.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
