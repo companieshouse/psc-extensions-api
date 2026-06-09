@@ -22,26 +22,8 @@ import java.util.Optional;
 @EnableMongoAuditing(dateTimeProviderRef = "mongodbDatetimeProvider")
 public class MongoConfig {
 
-    private final String databaseUri;
-
-    public MongoConfig(@Value("${spring.data.mongodb.uri}") String databaseUri) {
-        this.databaseUri = databaseUri;
-    }
-
     @Bean(name = "mongodbDatetimeProvider")
     public DateTimeProvider dateTimeProvider() {
         return () -> Optional.of(LocalDateTime.now());
     }
-
-    @Bean
-    public MongoClient mongoClient() {
-        final ConnectionString connectionString =
-                new ConnectionString(databaseUri);
-        final MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
-                .applyConnectionString(connectionString)
-                .uuidRepresentation(UuidRepresentation.STANDARD)
-                .build();
-        return MongoClients.create(mongoClientSettings);
-    }
-
 }
