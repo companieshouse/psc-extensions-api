@@ -14,8 +14,8 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.psc.extensions.api.exception.TransactionServiceException;
 import uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse.InternalApiClientService;
 
-import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

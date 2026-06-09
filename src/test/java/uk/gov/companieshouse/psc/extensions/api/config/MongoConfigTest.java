@@ -22,7 +22,7 @@ class MongoConfigTest {
     @BeforeEach
     void setUp() {
         String testUri = "mongodb://localhost:27017/testdb";
-        mongoConfig = new MongoConfig(testUri);
+        mongoConfig = new MongoConfig();
     }
 
     @Test
@@ -31,15 +31,5 @@ class MongoConfigTest {
         Optional<TemporalAccessor> dateTime = provider.getNow();
         assertTrue(dateTime.isPresent());
         assertInstanceOf(LocalDateTime.class, dateTime.get());
-    }
-
-    @Test
-    void testMongoClientCreation() {
-        MongoClient client = mongoConfig.mongoClient();
-        assertNotNull(client);
-        // Optional: check that the client was created with the expected settings
-        MongoClientSettings settings = ((com.mongodb.client.internal.MongoClientImpl) client).getSettings();
-        assertEquals(UuidRepresentation.STANDARD, settings.getUuidRepresentation());
-        assertEquals("localhost:27017", settings.getClusterSettings().getHosts().getFirst().toString());
     }
 }
