@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.psc.extensions.api.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -19,7 +18,6 @@ public class FilingDataServiceImpl implements FilingDataService {
 
     private final Logger logger;
 
-    @Autowired
     public FilingDataServiceImpl(PscExtensionsService pscExtensionsService, Logger logger) {
         this.pscExtensionsService = pscExtensionsService;
         this.logger = logger;

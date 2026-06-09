@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.psc.extensions.api.sdk.companieshouse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.InternalApiClient;
@@ -11,7 +10,6 @@ public class InternalApiClientService {
 
     private String internalApiUrl;
 
-    @Autowired
     public InternalApiClientService(@Value("${internal.api.url}") String internalApiUrl) {
         this.internalApiUrl = internalApiUrl;
     }

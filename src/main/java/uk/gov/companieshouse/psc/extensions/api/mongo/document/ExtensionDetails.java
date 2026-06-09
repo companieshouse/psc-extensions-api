@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.psc.extensions.api.mongo.document;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
@@ -42,7 +43,8 @@ public class ExtensionDetails {
                 this.extensionRequestDate = extensionRequestDate;
         }
 
-        private ExtensionDetails(Builder builder) {
+    @JsonCreator
+    private ExtensionDetails(Builder builder) {
                 this.extensionReason = builder.extensionReason;
                 this.extensionStatus = builder.extensionStatus;
                 this.extensionRequestDate = builder.extensionRequestDate;
