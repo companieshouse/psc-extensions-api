@@ -1,23 +1,17 @@
 package uk.gov.companieshouse.psc.extensions.api.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.core.util.ObjectMapperFactory;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.PropertyNamingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.SerializationFeature;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.environment.impl.EnvironmentReaderImpl;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
 
