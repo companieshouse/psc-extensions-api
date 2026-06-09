@@ -31,14 +31,14 @@ public class AppConfig {
 
     @Bean
     public JsonMapperBuilderCustomizer objectMapperBuilder() {
-        return builder -> {
+        return builder ->
             builder.changeDefaultPropertyInclusion(incl -> incl
                             .withContentInclusion(JsonInclude.Include.NON_NULL)
                             .withValueInclusion(JsonInclude.Include.NON_NULL))
                     .defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd"))
                     .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                     .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        };
+
     }
 
 
