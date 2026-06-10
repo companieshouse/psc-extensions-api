@@ -51,6 +51,8 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <!-->CVE-2025-49125, CVE-2025-48988, CVE-2025-49124, CVE-2025-52520, CVE-2025-53506<-->
         <tomcat-embed.version>10.1.55</tomcat-embed.version>
+
+        <spring-framework.version>7.0.8</spring-framework.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -58,6 +60,13 @@
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
                 <version>2.24.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring-framework.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -96,6 +105,11 @@
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-api</artifactId>
                 <version>1.81.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <version>3.2.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
