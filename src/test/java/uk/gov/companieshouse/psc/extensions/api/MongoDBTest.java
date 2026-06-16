@@ -5,12 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 import uk.gov.companieshouse.psc.extensions.api.mongo.repository.PscExtensionsRepository;
 
 import java.time.Duration;
 
+@Testcontainers(disabledWithoutDocker = true)
 @SpringBootTest
 public abstract class MongoDBTest {
 
