@@ -17,7 +17,6 @@ class MongoConfigTest {
 
     @BeforeEach
     void setUp() {
-        String testUri = "mongodb://localhost:27017/testdb";
         mongoConfig = new MongoConfig();
     }
 
