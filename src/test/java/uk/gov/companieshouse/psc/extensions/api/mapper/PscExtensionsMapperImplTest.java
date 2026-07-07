@@ -9,7 +9,7 @@ import uk.gov.companieshouse.psc.extensions.api.mongo.document.Data;
 import uk.gov.companieshouse.psc.extensions.api.mongo.document.ExtensionDetails;
 
 @SpringBootTest(classes = {PscExtensionsMapperImpl.class})
-public class PscExtensionsMapperImplTest {
+    class PscExtensionsMapperImplTest {
 
     @Autowired
     private PscExtensionsMapperImpl mapper;
