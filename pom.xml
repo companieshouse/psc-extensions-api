@@ -34,7 +34,7 @@
         <structured-logging.version>3.0.51</structured-logging.version>
         <api-security-java.version>2.0.24</api-security-java.version>
         <api-helper-java.version>3.0.3</api-helper-java.version>
-        <api-sdk-java.version>6.6.8</api-sdk-java.version>
+        <api-sdk-java.version>7.0.6</api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <api-sdk-manager-java-library.version>3.0.16</api-sdk-manager-java-library.version>
         <private-api-sdk-java.version>4.0.476</private-api-sdk-java.version>
@@ -50,7 +50,7 @@
         <!-- CVE-2025-48924 -->
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <!-->CVE-2025-49125, CVE-2025-48988, CVE-2025-49124, CVE-2025-52520, CVE-2025-53506<-->
-        <tomcat-embed.version>10.1.55</tomcat-embed.version>
+        <tomcat-embed.version>10.1.56</tomcat-embed.version>
         <!-->CVE-2026-41838,CVE-2026-41842,CVE-2026-41848, CVE-2026-41850<-->
         <springframework.version>7.0.8</springframework.version>
         <!-->CVE-2022-316-91<-->
@@ -91,7 +91,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.18.0</version>
+                <version>3.20.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -108,17 +108,23 @@
                 <artifactId>grpc-api</artifactId>
                 <version>1.81.0</version>
             </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.semconv</groupId>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>1.42.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-opentelemetry</artifactId>
+            <version>4.1.0</version>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-appender-1.0</artifactId>
-            <version>2.26.1-alpha</version>
+            <version>2.28.1-alpha</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -138,6 +144,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mongodb</artifactId>
+            <version>4.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
